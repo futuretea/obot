@@ -5,6 +5,7 @@
 	import { initLayout, getLayout } from '$lib/context/layout.svelte';
 	import { type Component, type Snippet } from 'svelte';
 	import { fade, slide } from 'svelte/transition';
+	import { t } from '$lib/i18n';
 	import {
 		AlarmClock,
 		Boxes,
@@ -97,14 +98,14 @@
 					{
 						id: 'mcp-server-management',
 						icon: RadioTower,
-						label: 'MCP Management',
+						label: $t('nav.mcpManagement'),
 						collapsible: true,
 						items: [
 							{
 								id: 'mcp-servers',
 								icon: Server,
 								href: '/admin/mcp-servers',
-								label: 'MCP Servers',
+								label: $t('nav.mcpServers'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							},
@@ -112,7 +113,7 @@
 								id: 'mcp-registries',
 								icon: SquareLibrary,
 								href: '/admin/mcp-registries',
-								label: 'MCP Registries',
+								label: $t('nav.mcpRegistries'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							},
@@ -120,7 +121,7 @@
 								id: 'audit-logs',
 								href: '/admin/audit-logs',
 								icon: Captions,
-								label: 'Audit Logs',
+								label: $t('nav.auditLogs'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							},
@@ -128,7 +129,7 @@
 								id: 'usage',
 								href: '/admin/usage',
 								icon: ChartBarDecreasing,
-								label: 'Usage',
+								label: $t('nav.usage'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							},
@@ -136,7 +137,7 @@
 								id: 'filters',
 								href: '/admin/filters',
 								icon: Funnel,
-								label: 'Filters',
+								label: $t('nav.filters'),
 								disabled: isBootStrapUser
 							},
 							version.current.engine === 'kubernetes'
@@ -144,7 +145,7 @@
 										id: 'server-scheduling',
 										href: '/admin/server-scheduling',
 										icon: AlarmClock,
-										label: 'Server Scheduling',
+										label: $t('nav.serverScheduling'),
 										collapsible: false
 									}
 								: undefined
@@ -153,7 +154,7 @@
 					{
 						id: 'obot-chat',
 						icon: MessageCircle,
-						label: 'Chat Management',
+						label: $t('nav.chatManagement'),
 						disabled: isBootStrapUser,
 						collapsible: true,
 						items: [
@@ -161,28 +162,28 @@
 								id: 'chat-threads',
 								href: '/admin/chat-threads',
 								icon: MessageCircleMore,
-								label: 'Chat Threads',
+								label: $t('nav.chatThreads'),
 								collapsible: false
 							},
 							{
 								id: 'tasks',
 								href: '/admin/tasks',
 								icon: Cpu,
-								label: 'Tasks',
+								label: $t('nav.tasks'),
 								disabled: isBootStrapUser
 							},
 							{
 								id: 'task-runs',
 								href: '/admin/task-runs',
 								icon: CircuitBoard,
-								label: 'Task Runs',
+								label: $t('nav.taskRuns'),
 								disabled: isBootStrapUser
 							},
 							{
 								id: 'chat-configuration',
 								href: '/admin/chat-configuration',
 								icon: Settings,
-								label: 'Chat Configuration',
+								label: $t('nav.chatConfiguration'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							},
@@ -190,21 +191,21 @@
 								id: 'model-providers',
 								href: '/admin/model-providers',
 								icon: Boxes,
-								label: 'Model Providers',
+								label: $t('nav.modelProviders'),
 								collapsible: false
 							},
 							{
 								id: 'model-access-policies',
 								href: '/admin/model-access-policies',
 								icon: LockKeyhole,
-								label: 'Model Access Policies',
+								label: $t('nav.modelAccessPolicies'),
 								collapsible: false
 							},
 							{
 								id: 'chat',
 								href: '/chat',
 								icon: MessageCircle,
-								label: 'Launch Chat',
+								label: $t('nav.launchChat'),
 								disabled: isBootStrapUser,
 								collapsible: false
 							}
@@ -213,7 +214,7 @@
 					{
 						id: 'user-management',
 						icon: Users,
-						label: 'User Management',
+						label: $t('nav.userManagement'),
 						disabled: false,
 						collapsible: true,
 						items: [
@@ -221,7 +222,7 @@
 								id: 'users',
 								href: '/admin/users',
 								icon: Users,
-								label: 'Users',
+								label: $t('nav.users'),
 								collapsible: false,
 								disabled: !version.current.authEnabled
 							},
@@ -229,7 +230,7 @@
 								id: 'groups',
 								href: '/admin/groups',
 								icon: GroupIcon,
-								label: 'Groups',
+								label: $t('nav.groups'),
 								collapsible: false,
 								disabled: !version.current.authEnabled
 							},
@@ -237,7 +238,7 @@
 								id: 'user-roles',
 								href: '/admin/user-roles',
 								icon: UserCog,
-								label: 'User Roles',
+								label: $t('nav.userRoles'),
 								collapsible: false,
 								disabled: !version.current.authEnabled
 							},
@@ -245,7 +246,7 @@
 								id: 'auth-providers',
 								href: '/admin/auth-providers',
 								icon: LockKeyhole,
-								label: 'Auth Providers',
+								label: $t('nav.authProviders'),
 								disabled: !version.current.authEnabled,
 								collapsible: false
 							},
@@ -253,7 +254,7 @@
 								id: 'api-keys',
 								href: '/admin/api-keys',
 								icon: KeyRound,
-								label: 'API Keys',
+								label: $t('nav.apiKeys'),
 								disabled: !version.current.authEnabled,
 								collapsible: false
 							}
@@ -263,7 +264,7 @@
 						id: 'app-preferences',
 						href: '/admin/app-preferences',
 						icon: Palette,
-						label: 'Branding',
+						label: $t('nav.branding'),
 						disabled: false,
 						collapsible: false
 					}
@@ -273,7 +274,7 @@
 						{
 							id: 'mcp-server-management',
 							icon: RadioTower,
-							label: 'MCP Management',
+							label: $t('nav.mcpManagement'),
 							collapsible: false,
 							disabled: false,
 							items: [
@@ -281,7 +282,7 @@
 									id: 'mcp-servers',
 									href: '/mcp-servers',
 									icon: Server,
-									label: 'MCP Servers',
+									label: $t('nav.mcpServers'),
 									disabled: false,
 									collapsible: false
 								},
@@ -291,7 +292,7 @@
 												id: 'mcp-registries',
 												href: '/mcp-registries',
 												icon: GlobeLock,
-												label: 'MCP Registries',
+												label: $t('nav.mcpRegistries'),
 												disabled: false,
 												collapsible: false
 											}
@@ -301,7 +302,7 @@
 									id: 'audit-logs',
 									href: '/audit-logs',
 									icon: Captions,
-									label: 'Audit Logs',
+									label: $t('nav.auditLogs'),
 									disabled: false,
 									collapsible: false
 								},
@@ -309,7 +310,7 @@
 									id: 'usage',
 									href: '/usage',
 									icon: ChartBarDecreasing,
-									label: 'Usage',
+									label: $t('nav.usage'),
 									disabled: false,
 									collapsible: false
 								}
@@ -319,7 +320,7 @@
 							id: 'chat',
 							href: '/chat',
 							icon: MessageCircle,
-							label: 'Chat',
+							label: $t('nav.chat'),
 							disabled: isBootStrapUser,
 							collapsible: false
 						}
@@ -329,7 +330,7 @@
 							id: 'mcp-servers',
 							href: '/mcp-servers',
 							icon: Server,
-							label: 'MCP Servers',
+							label: $t('nav.mcpServers'),
 							disabled: false,
 							collapsible: false
 						},
@@ -337,16 +338,16 @@
 							id: 'chat',
 							href: '/chat',
 							icon: MessageCircle,
-							label: 'Chat',
+							label: $t('nav.chat'),
 							disabled: isBootStrapUser,
 							collapsible: false
 						}
 					]
 	);
 
-	const tooltips = {
-		'/admin/auth-providers': 'Enable authentication to access this page.'
-	};
+	const tooltips = $derived({
+		'/admin/auth-providers': $t('tooltip.enableAuthToAccess')
+	});
 
 	$effect(() => {
 		if (responsive.isMobile) {
@@ -477,7 +478,7 @@
 
 				<div class="flex justify-end px-3 py-2">
 					<button
-						use:tooltip={'Close Sidebar'}
+						use:tooltip={$t('sidebar.closeSidebar')}
 						class="icon-button"
 						onclick={() => (layout.sidebarOpen = false)}
 					>
@@ -561,7 +562,7 @@
 			<button
 				class="icon-button"
 				onclick={() => (layout.sidebarOpen = true)}
-				use:tooltip={'Open Sidebar'}
+				use:tooltip={$t('sidebar.openSidebar')}
 			>
 				<SidebarOpen class="size-6" />
 			</button>

@@ -7,6 +7,8 @@
 	import SuccessNotifications from '$lib/components/SuccessNotifications.svelte';
 	import type { PageData } from './$types';
 	import { page } from '$app/state';
+	// Import i18n to ensure it's initialized (side effect)
+	import '$lib/i18n';
 	interface Props {
 		children?: import('svelte').Snippet;
 		data: PageData;

@@ -34,6 +34,7 @@
 	import { tooltip } from '$lib/actions/tooltip.svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$lib/url';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		id?: string;
@@ -585,6 +586,7 @@
 					bind:this={input}
 					readonly={messages.inProgress || !hasModelSelected}
 					pending={thread?.pending || promptPending}
+					placeholder={$t('chat.messagePlaceholder')}
 					onAbort={async () => {
 						await thread?.abort();
 					}}

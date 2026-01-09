@@ -15,6 +15,7 @@
 	import { darkMode } from '$lib/stores';
 	import { ModelUsage } from '$lib/services/admin/types';
 	import Logo from '../Logo.svelte';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		threadId: string | undefined;
@@ -370,7 +371,7 @@
 			{:else if fallbackModel}
 				{modelsMap.get(fallbackModel.id)?.name || fallbackModel.id}
 			{:else}
-				No Default Model
+				{$t('chat.noDefaultModel')}
 			{/if}
 		</div>
 

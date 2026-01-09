@@ -16,6 +16,7 @@
 	import CopyButton from '$lib/components/CopyButton.svelte';
 	import InfoTooltip from '$lib/components/InfoTooltip.svelte';
 	import PageLoading from '$lib/components/PageLoading.svelte';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		project: Project;
@@ -100,7 +101,7 @@
 <div class="dark:bg-background bg-surface1 min-h-full w-full flex-col">
 	<div class="mx-auto min-h-full w-full px-4 py-4 md:max-w-[1200px] md:px-8">
 		<div class="mb-4 flex items-center gap-2">
-			<h1 class="text-2xl font-semibold capitalize">Project Configuration</h1>
+			<h1 class="text-2xl font-semibold capitalize">{$t('projectConfig.title')}</h1>
 			<div class="flex grow justify-end">
 				<button class="icon-button" onclick={() => closeAll(layout)}>
 					<X class="size-6" />
@@ -111,9 +112,9 @@
 			{#if copiedProject}
 				<div class="flex flex-col gap-2">
 					<div class="flex items-center gap-2">
-						<h2 class="text-xl font-semibold">Shared Project Info</h2>
+						<h2 class="text-xl font-semibold">{$t('projectConfig.sharedProjectInfo')}</h2>
 						<InfoTooltip
-							text="This project was created by copying a shared project"
+							text={$t('projectConfig.thisProjectWasCopied')}
 							class="size-4"
 							classes={{ icon: 'size-4' }}
 						/>
@@ -122,7 +123,7 @@
 						<div class="flex flex-col gap-4">
 							<div class="flex flex-col gap-2">
 								<div class="flex items-center gap-2">
-									<p class="font-semibold">Public Share URL</p>
+									<p class="font-semibold">{$t('projectConfig.publicShareUrl')}</p>
 									{#if !shareUrl}
 										<AlertTriangle class="size-4 text-yellow-500" />
 									{/if}
@@ -140,13 +141,13 @@
 										/>
 									</div>
 								{:else}
-									<span class="text-sm font-light">Upstream project no longer shared</span>
+									<span class="text-sm font-light">{$t('projectConfig.upstreamNoLongerShared')}</span>
 								{/if}
 							</div>
 
 							{#if project.templateLastUpgraded}
 								<div class="flex flex-col gap-2">
-									<p class="font-semibold">Last Upgraded</p>
+									<p class="font-semibold">{$t('projectConfig.lastUpgraded')}</p>
 									<div class="flex items-baseline gap-2 text-sm">
 										<span class="font-light"
 											>{new Date(project.templateLastUpgraded).toLocaleString()}</span
@@ -160,7 +161,7 @@
 												{#if upgradeLoading}
 													<LoaderCircle class="size-4 animate-spin" />
 												{:else}
-													Upgrade
+													{$t('projectConfig.upgrade')}
 													<CircleFadingArrowUp class="relative top-[1px] size-4 shrink-0" />
 												{/if}
 											</button>
@@ -174,9 +175,7 @@
 							>
 								<AlertCircle class="max-h-3.5 min-h-3.5" />
 								<span>
-									Changing fields such as instructions, MCP servers, tasks, or knowledge will make
-									this project ineligible to receive updates from the shared project snapshot
-									author.
+									{$t('projectConfig.sharedProjectWarning')}
 								</span>
 							</p>
 						</div>
@@ -188,7 +187,7 @@
 				<div class="flex gap-6">
 					<div class="flex grow flex-col gap-4">
 						<div class="flex flex-col gap-1">
-							<label class="text-sm" for="name">Name</label>
+							<label class="text-sm" for="name">{$t('projectConfig.name')}</label>
 							<input
 								type="text"
 								id="name"
@@ -197,7 +196,7 @@
 							/>
 						</div>
 						<div class="flex flex-col gap-1">
-							<label class="text-sm" for="description">Description</label>
+							<label class="text-sm" for="description">{$t('projectConfig.description')}</label>
 							<input
 								type="text"
 								id="description"
@@ -209,7 +208,7 @@
 				</div>
 
 				<div class="flex flex-col gap-1">
-					<label class="text-sm" for="prompt">Instructions</label>
+					<label class="text-sm" for="prompt">{$t('projectConfig.instructions')}</label>
 					<textarea
 						rows={6}
 						id="prompt"
@@ -228,15 +227,15 @@
 			{/if}
 
 			<div class="mb-8 flex flex-col gap-2">
-				<h2 class="text-xl font-semibold">Danger Zone</h2>
+				<h2 class="text-xl font-semibold">{$t('projectConfig.dangerZone')}</h2>
 				<div class="rounded-md border border-red-500 p-4">
 					<div class="flex items-center justify-between gap-4">
 						<div class="flex flex-col">
-							<p class="font-semibold">Delete Project</p>
-							<span class="text-sm font-light">Delete this project and all associated data.</span>
+							<p class="font-semibold">{$t('projectConfig.deleteProject')}</p>
+							<span class="text-sm font-light">{$t('projectConfig.deleteProjectDesc')}</span>
 						</div>
 						<button class="button-destructive text-md" onclick={() => (confirmDelete = true)}>
-							Delete this project
+							{$t('projectConfig.deleteThisProject')}
 						</button>
 					</div>
 				</div>
@@ -246,19 +245,19 @@
 	<div
 		class="dark:bg-background bg-surface1 sticky bottom-0 left-0 flex w-full justify-end gap-4 p-4 md:px-8"
 	>
-		<button disabled={saving} class="button" onclick={() => closeAll(layout)}> Cancel </button>
+		<button disabled={saving} class="button" onclick={() => closeAll(layout)}> {$t('projectConfig.cancel')} </button>
 		<button disabled={saving} class="button-primary" onclick={handleUpdate}>
 			{#if saving}
 				<LoaderCircle class="size-4 animate-spin" />
 			{:else}
-				Update
+				{$t('projectConfig.update')}
 			{/if}
 		</button>
 	</div>
 </div>
 
 <Confirm
-	msg="Are you sure you want to delete this project?"
+	msg={$t('projectConfig.confirmDelete')}
 	show={confirmDelete}
 	onsuccess={handleDeleteProject}
 	oncancel={() => (confirmDelete = false)}

@@ -10,6 +10,7 @@
 	import { closeAll, getLayout } from '$lib/context/chatLayout.svelte';
 	import PageLoading from '../PageLoading.svelte';
 	import { resolve } from '$app/paths';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		project: Project;
@@ -75,7 +76,7 @@
 		<div
 			class="text-on-background text-md flex w-full max-w-[100%-24px] flex-col truncate text-left"
 		>
-			<span class="text-[11px] font-normal">Project</span>
+			<span class="text-[11px] font-normal">{$t('chat.project')}</span>
 			<p class="text-primary text-base font-semibold">{project.name || DEFAULT_PROJECT_NAME}</p>
 		</div>
 		{#if !disabled}
@@ -114,7 +115,7 @@
 				onCreateProject?.();
 			}}
 		>
-			<Plus class="size-4" /> Create New Project
+			<Plus class="size-4" /> {$t('chat.createNewProject')}
 		</button>
 	</div>
 {/if}

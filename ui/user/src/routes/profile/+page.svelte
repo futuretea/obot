@@ -8,6 +8,7 @@
 	import { success } from '$lib/stores/success';
 	import Confirm from '$lib/components/Confirm.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import { t } from '$lib/i18n';
 
 	let toDelete = $state(false);
 	let toRevoke = $state(false);
@@ -52,7 +53,7 @@
 		<div class="mt-8 flex w-full flex-col gap-8">
 			<div class="flex w-full flex-col gap-4">
 				<div class="bg-background sticky top-0 z-30 flex items-center gap-4 px-4 py-4 md:px-12">
-					<h3 class="flex flex-shrink-0 text-2xl font-semibold">My Account</h3>
+					<h3 class="flex flex-shrink-0 text-2xl font-semibold">{$t('account.title')}</h3>
 				</div>
 				<div class="bg-surface1 mx-auto w-full max-w-lg rounded-xl p-6 shadow-md">
 					<img
@@ -61,17 +62,17 @@
 						class="mx-auto mb-3 h-28 w-28 rounded-full object-cover"
 					/>
 					<div class="flex flex-row py-3">
-						<div class="w-1/2 max-w-[150px]">Display Name:</div>
+						<div class="w-1/2 max-w-[150px]">{$t('account.displayName')}</div>
 						<div class="w-1/2 break-words">{profile.current.displayName}</div>
 					</div>
 					<hr />
 					<div class="flex flex-row py-3">
-						<div class="w-1/2 max-w-[150px]">Email:</div>
+						<div class="w-1/2 max-w-[150px]">{$t('account.email')}</div>
 						<div class="w-1/2 break-words">{profile.current.email}</div>
 					</div>
 					<hr />
 					<div class="flex flex-row py-3">
-						<div class="w-1/2 max-w-[150px]">Role:</div>
+						<div class="w-1/2 max-w-[150px]">{$t('account.role')}</div>
 						<div class="w-1/2 break-words">
 							{getUserRoleLabel(profile.current.role)}
 						</div>
@@ -84,7 +85,7 @@
 								onclick={(e) => {
 									e.preventDefault();
 									toRevoke = !toRevoke;
-								}}>Log out all other sessions</button
+								}}>{$t('account.logoutAllSessions')}</button
 							>
 						{/if}
 						<button
@@ -92,7 +93,7 @@
 							onclick={(e) => {
 								e.preventDefault();
 								toDelete = !toDelete;
-							}}>Delete my account</button
+							}}>{$t('account.deleteMyAccount')}</button
 						>
 					</div>
 				</div>
@@ -105,20 +106,20 @@
 
 <Confirm
 	show={toRevoke}
-	msg="Are you sure you want to log out of all other sessions? This will sign you out of all other devices and browsers, except for this one."
+	msg={$t('account.logoutAllConfirm')}
 	onsuccess={logoutAll}
 	oncancel={() => (toRevoke = false)}
 />
 
 <ConfirmDeleteAccount
-	msg="Are you sure you want to delete your account?"
+	msg={$t('account.deleteConfirm')}
 	username={profile.current.username}
 	show={!!toDelete}
-	buttonText="Delete my account"
+	buttonText={$t('account.deleteMyAccount')}
 	onsuccess={deleteAccount}
 	oncancel={() => (toDelete = false)}
 />
 
 <svelte:head>
-	<title>Obot | My Account</title>
+	<title>Obot | {$t('account.title')}</title>
 </svelte:head>

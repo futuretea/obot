@@ -10,6 +10,7 @@
 	import { clickOutside } from '$lib/actions/clickoutside';
 	import { tooltip } from '$lib/actions/tooltip.svelte';
 	import { fade } from 'svelte/transition';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		project: Project;
@@ -90,11 +91,11 @@
 
 <div class="flex flex-col text-xs">
 	<div class="flex items-center justify-between">
-		<p class="text-md grow font-medium">Tasks</p>
+		<p class="text-md grow font-medium">{$t('chat.tasks')}</p>
 		<button
 			class="hover:text-on-background text-on-surface1 p-2 transition-colors duration-200"
 			onclick={() => newTask()}
-			use:tooltip={'Start New Task'}
+			use:tooltip={$t('chat.newTask')}
 		>
 			<Plus class="size-5" />
 		</button>
@@ -126,7 +127,7 @@
 >
 	<div class="flex h-full w-full flex-col justify-between gap-4">
 		<h3 class="default-dialog-title" class:default-dialog-mobile-title={responsive.isMobile}>
-			Run Task
+			{$t('task.runTask')}
 			<button
 				class:mobile-header-button={responsive.isMobile}
 				onclick={() => inputDialog?.close()}
@@ -148,7 +149,7 @@
 				onclick={() => {
 					runTask(waitingTask);
 					inputDialog?.close();
-				}}>Run</button
+				}}>{$t('task.run')}</button
 			>
 		</div>
 	</div>
@@ -156,7 +157,7 @@
 
 <Confirm
 	show={taskToDelete !== undefined}
-	msg={`Are you sure you want to delete ${taskToDelete?.name}?`}
+	msg={$t('task.deleteConfirmNamed', { name: taskToDelete?.name })}
 	onsuccess={deleteTask}
 	oncancel={() => (taskToDelete = undefined)}
 />

@@ -23,6 +23,7 @@
 	import { LoaderCircle, OctagonX, Play } from 'lucide-svelte';
 	import { Thread } from '$lib/services/chat/thread.svelte';
 	import { errors, responsive } from '$lib/stores';
+		import { t } from '$lib/i18n';
 	import { tooltip } from '$lib/actions/tooltip.svelte';
 	import { fade, slide } from 'svelte/transition';
 	import TaskOptions from './TaskOptions.svelte';
@@ -234,7 +235,7 @@
 
 		const hasAtLeastOneInstruction = task.steps.some((step) => (step.step ?? '').trim().length > 0);
 		if (!hasAtLeastOneInstruction) {
-			error = 'At least one instruction is required to run the task.';
+			error = $t('task.instructionRequired');
 			return;
 		}
 
@@ -321,13 +322,13 @@
 				class:grow={responsive.isMobile}
 			>
 				{#if isRunning}
-					Stop
+					{$t('task.stop')}
 					<OctagonX class="h-4 w-4" />
 				{:else if pending}
-					Cancel
+					{$t('task.cancel')}
 					<LoaderCircle class="h-4 w-4 animate-spin" />
 				{:else}
-					Run
+					{$t('task.run')}
 					<Play class="h-4 w-4" />
 				{/if}
 			</button>
@@ -364,7 +365,7 @@
 			<div class="w-full self-center md:max-w-[1200px]">
 				<div class="mt-8 mb-4 flex w-full justify-between gap-8 pb-0">
 					<div class="border-primary flex grow flex-col gap-1 border-l-4 pl-4">
-						<strong class="text-primary text-xs">TASK</strong>
+						<strong class="text-primary text-xs">{$t('task.label')}</strong>
 
 						{#if readOnly}
 							<h1 class="my-2 border-b border-transparent text-2xl font-semibold">{task.name}</h1>
@@ -382,7 +383,7 @@
 							<input
 								class="ghost-input"
 								bind:value={task.description}
-								placeholder="Enter description..."
+								placeholder={$t('task.enterDescription')}
 							/>
 						{/if}
 					</div>
@@ -421,7 +422,7 @@
 				<div class="notification-alert flex w-full flex-col gap-2">
 					<div class="flex items-center gap-2">
 						<TriangleAlert class="size-6 flex-shrink-0 self-start text-yellow-500" />
-						<p class="my-0.5 flex flex-col text-sm font-semibold">Warning</p>
+						<p class="my-0.5 flex flex-col text-sm font-semibold">{$t('task.warning')}</p>
 					</div>
 					<span class="text-sm font-light break-all">{taskRunData.warning}</span>
 				</div>
@@ -481,7 +482,7 @@
 
 		<Confirm
 			show={toDelete}
-			msg="Are you sure you want to delete this task?"
+			msg={$t('task.deleteConfirm')}
 			onsuccess={deleteTask}
 			oncancel={() => (toDelete = false)}
 		/>
@@ -495,7 +496,7 @@
 		>
 			<div class="flex h-full w-full flex-col justify-between gap-4">
 				<h3 class="default-dialog-title" class:default-dialog-mobile-title={responsive.isMobile}>
-					Run Task
+					{$t('task.runTask')}
 					<button
 						class:mobile-header-button={responsive.isMobile}
 						onclick={() => inputDialog?.close()}
@@ -517,7 +518,7 @@
 						onclick={() => {
 							run();
 							inputDialog?.close();
-						}}>Run</button
+						}}>{$t('task.run')}</button
 					>
 				</div>
 			</div>

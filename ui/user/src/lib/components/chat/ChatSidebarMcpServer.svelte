@@ -9,6 +9,7 @@
 	import { mcpServersAndEntries } from '$lib/stores';
 	import EditExistingDeployment from '../mcp/EditExistingDeployment.svelte';
 	import { hasEditableConfiguration } from '$lib/services/chat/mcp';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		mcpServer: ProjectMCP;
@@ -68,7 +69,7 @@
 				{#if matchingConfiguredServer && matchingEntry && hasEditableConfiguration(matchingEntry)}
 					<button
 						class="button-icon size-12"
-						use:tooltip={'Edit Configuration'}
+						use:tooltip={$t('connector.editConfiguration')}
 						onclick={() => {
 							editExistingDialog?.edit({
 								entry: matchingEntry,
@@ -81,7 +82,7 @@
 				{/if}
 				<button
 					class="button-destructive"
-					use:tooltip={'Delete'}
+					use:tooltip={$t('common.delete')}
 					onclick={() => (showDeleteConfirm = true)}
 				>
 					<Trash2 class="size-4" />
@@ -114,7 +115,7 @@
 </div>
 
 <Confirm
-	msg="Are you sure you want to delete this connector from the project?"
+	msg={$t('connector.deleteConfirm')}
 	show={showDeleteConfirm}
 	onsuccess={handleRemoveMcp}
 	oncancel={() => (showDeleteConfirm = false)}

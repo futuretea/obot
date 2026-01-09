@@ -15,6 +15,7 @@
 	import { flip } from 'svelte/animate';
 	import { page } from '$app/state';
 	import { replaceState } from '$lib/url';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		currentThreadID?: string;
@@ -319,7 +320,7 @@
 	{:else}
 		<div class="flex flex-col text-xs">
 			<div class="flex items-center justify-between">
-				<p class="text-md grow font-medium">Chats</p>
+				<p class="text-md grow font-medium">{$t('chat.chats')}</p>
 				<button
 					class="hover:text-on-background text-on-surface1 p-2 transition-colors duration-200"
 					onclick={createThread}
