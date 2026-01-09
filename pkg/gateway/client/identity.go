@@ -25,6 +25,7 @@ var (
 	verifiedAuthProviders = []string{
 		"default/google-auth-provider",
 		"default/github-auth-provider",
+		"default/keycloak-auth-provider",
 	}
 
 	identityGroupResource = schema.GroupResource{
