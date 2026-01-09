@@ -11,6 +11,7 @@
 	import { tooltip } from '$lib/actions/tooltip.svelte';
 	import { twMerge } from 'tailwind-merge';
 	import InfoTooltip from '../InfoTooltip.svelte';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		project: Project;
@@ -48,7 +49,7 @@
 
 <div class="flex flex-col gap-2">
 	<div class={twMerge('flex items-center gap-2', !hasKnowledgeCapability && 'text-on-surface1')}>
-		<h2 class="text-xl font-semibold">Knowledge Files</h2>
+		<h2 class="text-xl font-semibold">{$t('projectConfig.knowledgeFiles')}</h2>
 		{#if !hasKnowledgeCapability}
 			<div use:tooltip={'Capability Required'}>
 				<TriangleAlert class="size-6" />

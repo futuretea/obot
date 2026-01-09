@@ -33,6 +33,7 @@
 	import { debounce } from 'es-toolkit';
 	import ConnectorsView from '$lib/components/mcp/ConnectorsView.svelte';
 	import { onMount } from 'svelte';
+	import { t } from '$lib/i18n';
 
 	let { data } = $props();
 
@@ -144,7 +145,7 @@
 
 	const duration = PAGE_TRANSITION_DURATION;
 	let title = $derived(
-		showServerForm ? `Create ${getServerTypeLabelByType(selectedServerType)} Server` : 'MCP Servers'
+		showServerForm ? `Create ${getServerTypeLabelByType(selectedServerType)} Server` : $t('mcpServers.title')
 	);
 </script>
 
@@ -176,7 +177,7 @@
 					class="dark:bg-surface1 dark:border-surface3 bg-background border border-transparent shadow-sm"
 					value={localStorageViewQuery.current?.registry || ''}
 					onChange={updateSearchQuery}
-					placeholder="Search servers..."
+					placeholder={$t('mcpServers.searchPlaceholder')}
 				/>
 			</div>
 		</div>

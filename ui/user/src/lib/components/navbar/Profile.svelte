@@ -25,6 +25,8 @@
 	import PageLoading from '../PageLoading.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import LanguageSwitcher from './LanguageSwitcher.svelte';
+	import { t } from '$lib/i18n';
 
 	let versionDialog = $state<HTMLDialogElement>();
 	let showChatLink = $state(false);
@@ -97,7 +99,7 @@
 </script>
 
 <Menu
-	title={profile.current.displayName || 'Anonymous'}
+	title={profile.current.displayName || $t('profile.anonymous')}
 	slide={responsive.isMobile ? 'left' : undefined}
 	fixed={responsive.isMobile}
 	classes={{
@@ -124,26 +126,29 @@
 				<ProfileIcon class="size-12" />
 				<div class="flex grow flex-col">
 					<span>
-						{profile.current.displayName || 'Anonymous'}
+						{profile.current.displayName || $t('profile.anonymous')}
 					</span>
 					<span class="text-on-surface1 text-sm">
 						{getUserRoleLabel(profile.current.role)}
 					</span>
 				</div>
 			</div>
-			<button
-				type="button"
-				onclick={() => {
-					darkMode.setDark(!darkMode.isDark);
-				}}
-				role="menuitem"
-				class="after:content=[''] border-surface3 bg-surface2 dark:bg-surface3 relative cursor-pointer flex-col rounded-full border p-2 shadow-inner after:absolute after:top-1 after:left-1 after:z-0 after:size-7 after:rounded-full after:bg-transparent after:transition-all after:duration-200 dark:border-white/15"
-				class:dark-selected={darkMode.isDark}
-				class:light-selected={!darkMode.isDark}
-			>
-				<Sun class="relative z-10 mb-3 size-5" />
-				<Moon class="relative z-10 size-5" />
-			</button>
+			<div class="flex items-center gap-2">
+				<LanguageSwitcher />
+				<button
+					type="button"
+					onclick={() => {
+						darkMode.setDark(!darkMode.isDark);
+					}}
+					role="menuitem"
+					class="after:content=[''] border-surface3 bg-surface2 dark:bg-surface3 relative cursor-pointer flex-col rounded-full border p-2 shadow-inner after:absolute after:top-1 after:left-1 after:z-0 after:size-7 after:rounded-full after:bg-transparent after:transition-all after:duration-200 dark:border-white/15"
+					class:dark-selected={darkMode.isDark}
+					class:light-selected={!darkMode.isDark}
+				>
+					<Sun class="relative z-10 mb-3 size-5" />
+					<Moon class="relative z-10 size-5" />
+				</button>
+			</div>
 		</div>
 	{/snippet}
 	{#snippet body()}
@@ -175,7 +180,7 @@
 					}}
 				>
 					<MessageCircle class="size-4" />
-					Chat
+					{$t('nav.chat')}
 				</button>
 			{/if}
 			{#if showMcpManagement}
@@ -184,30 +189,30 @@
 					rel="external"
 					class="link"
 				>
-					<LayoutDashboard class="size-4" /> MCP Platform
+					<LayoutDashboard class="size-4" /> {$t('profile.mcpPlatform')}
 				</a>
 			{/if}
 			{#if responsive.isMobile}
 				<a href="https://docs.obot.ai" rel="external" target="_blank" class="link"
-					><Book class="size-4" />Docs</a
+					><Book class="size-4" />{$t('common.docs')}</a
 				>
 			{/if}
 			{#if profile.current.email && page.url.pathname !== '/profile'}
 				<a href={resolve('/profile')} role="menuitem" class="link"
-					><User class="size-4" /> My Account</a
+					><User class="size-4" /> {$t('profile.myAccount')}</a
 				>
 				{#if !inAdminRoute}
 					<a href={resolve('/keys')} role="menuitem" class="link"
-						><KeyRound class="size-4" /> API Keys</a
+						><KeyRound class="size-4" /> {$t('profile.apiKeys')}</a
 					>
 				{/if}
 				<button class="link" onclick={handleLogout}>
-					<LogOut class="size-4" /> Log out
+					<LogOut class="size-4" /> {$t('profile.logout')}
 				</button>
 			{/if}
 			{#if profile.current.isBootstrapUser?.()}
 				<button class="link" onclick={handleBootstrapLogout}>
-					<LogOut class="size-4" /> Log out
+					<LogOut class="size-4" /> {$t('profile.logout')}
 				</button>
 			{/if}
 		</div>
@@ -217,12 +222,12 @@
 				<div class="text-on-background flex items-center gap-1 p-1 text-[11px]">
 					<CircleFadingArrowUp class="text-primary size-4 flex-shrink-0" />
 					<p>
-						Upgrade Available. <br /> Check out the
+						{$t('profile.upgradeAvailable')} <br />
 						<a
 							rel="external"
 							target="_blank"
 							class="text-link"
-							href="https://github.com/obot-platform/obot/releases/latest">latest release notes.</a
+							href="https://github.com/obot-platform/obot/releases/latest">{$t('profile.latestRelease')}</a
 						>
 					</p>
 				</div>
@@ -239,7 +244,7 @@
 						{/if}
 					{/if}
 					<button
-						use:tooltip={{ disablePortal: true, text: 'Versions' }}
+						use:tooltip={{ disablePortal: true, text: $t('profile.versions') }}
 						onclick={() => {
 							versionDialog?.showModal();
 						}}
@@ -263,7 +268,7 @@
 			<X class="size-4" />
 		</button>
 	</div>
-	<h4 class="mb-4 text-base font-semibold">Version Information</h4>
+	<h4 class="mb-4 text-base font-semibold">{$t('profile.versionInfo')}</h4>
 	<div class="flex flex-col gap-1 text-xs">
 		{#each Object.entries(version.current) as [key, value] (key)}
 			{@const canDisplay = typeof value === 'string' && value && key !== 'sessionStore'}
@@ -285,7 +290,7 @@
 	</div>
 </dialog>
 
-<PageLoading show={loadingChat} text="Loading chat..." />
+<PageLoading show={loadingChat} text={$t('chat.loadingChat')} />
 
 <style lang="postcss">
 	.link {

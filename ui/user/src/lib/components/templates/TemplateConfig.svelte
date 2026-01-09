@@ -26,6 +26,7 @@
 	import { tooltip } from '$lib/actions/tooltip.svelte';
 	import { poll } from '$lib/utils';
 	import { resolve } from '$app/paths';
+	import { t } from '$lib/i18n';
 
 	interface Props {
 		assistantID: string;
@@ -151,7 +152,7 @@
 {#snippet displayTasks(taskList: Task[])}
 	{#if taskList.length > 0}
 		<div class="p-3">
-			<h4 class="text-on-surface1 mb-1 text-xs font-medium">Tasks</h4>
+			<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('chat.tasks')}</h4>
 			<div class="flex flex-col gap-2">
 				{#each taskList as t (t.id)}
 					<div class="rounded-md border border-gray-100 p-2 text-xs dark:border-gray-700">
@@ -189,7 +190,7 @@
 	<div class="flex items-center justify-center p-6">
 		<div class="flex flex-col items-center gap-2">
 			<Loader2 class="text-on-surface1 size-6 animate-spin" />
-			<span class="text-on-surface1 text-sm">Loading Project Share...</span>
+			<span class="text-on-surface1 text-sm">{$t('projectShare.loading')}</span>
 		</div>
 	</div>
 {:else}
@@ -206,21 +207,15 @@
 		{#if !template}
 			<div class="card gap-4">
 				<img src="/user/images/share-project-snapshot.webp" class="max-h-48" alt="invitation" />
-				<h4 class="text-2xl font-semibold">Project Sharing</h4>
+				<h4 class="text-2xl font-semibold">{$t('projectShare.title')}</h4>
 
 				<div class="flex flex-col items-center gap-6">
 					<div class="max-w-2xl space-y-3 text-sm font-light text-gray-600 dark:text-gray-300">
 						<p>
-							When you share this project, we'll take a snapshot of its configuration that includes
-							instructions, connectors, knowledge files, and task definitions. You can share the
-							generated link with others and they can use it to launch their own instance of the
-							project from your snapshot.
+							{$t('projectShare.description1')}
 						</p>
 						<p>
-							If you make changes to your project, you can return to this page to take a new
-							snapshot. When you do, owners of existing projects launched using your link will be
-							notified that an update is available and new instances will automatically get the new
-							version.
+							{$t('projectShare.description2')}
 						</p>
 					</div>
 					<button
@@ -229,12 +224,12 @@
 						disabled={hasCompositeServer}
 						use:tooltip={hasCompositeServer
 							? {
-									text: 'Projects with composite MCP servers cannot be shared. Remove composite servers to enable sharing.',
+									text: $t('projectShare.compositeServerWarning'),
 									classes: ['w-md']
 								}
 							: undefined}
 					>
-						Share This Project
+						{$t('projectShare.shareThisProject')}
 					</button>
 				</div>
 			</div>
@@ -243,14 +238,14 @@
 				<AssistantIcon project={template.projectSnapshot} class="shrink-0" />
 				<div class="flex flex-1 items-center justify-between">
 					<h3 class="text-base font-medium">
-						{template.projectSnapshot.name || 'Unnamed Template'}
+						{template.projectSnapshot.name || $t('projectShare.unnamedTemplate')}
 					</h3>
 					<div class="flex items-center gap-2">
 						{#if template.projectSnapshotStale}
 							{#if template.projectSnapshotUpgradeInProgress}
 								<div class="text-on-surface1 flex items-center gap-1 text-xs">
 									<Loader2 class="size-4 animate-spin" />
-									Updating...
+									{$t('projectShare.updating')}
 								</div>
 							{:else}
 								<button
@@ -259,19 +254,19 @@
 									disabled={hasCompositeServer}
 									use:tooltip={hasCompositeServer
 										? {
-												text: 'Projects with composite MCP servers cannot be shared. Remove composite servers to enable sharing.',
+												text: $t('projectShare.compositeServerWarning'),
 												classes: ['w-md']
 											}
-										: 'Update Project Share with current project state'}
+										: $t('projectShare.updateProjectShare')}
 								>
-									Update Project Share
+									{$t('projectShare.updateProjectShare')}
 								</button>
 							{/if}
 						{/if}
 						<button
 							class="icon-button hover:text-red-500"
 							onclick={() => (toDelete = true)}
-							use:tooltip={'Delete Project Share'}
+							use:tooltip={$t('projectShare.deleteProjectShare')}
 						>
 							<Trash2 class="size-4" />
 						</button>
@@ -282,7 +277,7 @@
 			{#if template.publicID}
 				<div class="rounded-md border border-gray-100 dark:border-gray-700">
 					<div class="border-b border-gray-100 p-3 dark:border-gray-700">
-						<h3 class="text-sm font-medium">Project Share URL</h3>
+						<h3 class="text-sm font-medium">{$t('projectShare.projectShareUrl')}</h3>
 					</div>
 					<div class="p-3">
 						<div class="flex items-center gap-1">
@@ -299,7 +294,7 @@
 			{#if templateTools.length > 0}
 				<div class="rounded-md border border-gray-100 dark:border-gray-700">
 					<div class="border-b border-gray-100 p-3 dark:border-gray-700">
-						<h3 class="text-sm font-medium">Tools</h3>
+						<h3 class="text-sm font-medium">{$t('projectShare.tools')}</h3>
 					</div>
 					<div class="flex flex-wrap gap-2 p-3">
 						{#each templateTools as tool (tool.id)}
@@ -316,12 +311,12 @@
 
 			<div class="rounded-md border border-gray-100 dark:border-gray-700">
 				<div class="border-b border-gray-100 p-3 dark:border-gray-700">
-					<h3 class="text-sm font-medium">Project Share details</h3>
+					<h3 class="text-sm font-medium">{$t('projectShare.projectShareDetails')}</h3>
 				</div>
 				<div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-700">
 					{#if template.projectSnapshotLastUpgraded}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-1 text-xs font-medium">Last Updated</h4>
+							<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('projectShare.lastUpdated')}</h4>
 							<p class="text-sm text-gray-600 dark:text-gray-300">
 								{formatDate(template.projectSnapshotLastUpgraded)}
 							</p>
@@ -330,7 +325,7 @@
 
 					{#if template.projectSnapshot.description}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-1 text-xs font-medium">Description</h4>
+							<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('projectConfig.description')}</h4>
 							<p class="text-sm text-gray-600 dark:text-gray-300">
 								{template.projectSnapshot.description}
 							</p>
@@ -339,7 +334,7 @@
 
 					{#if template.projectSnapshot.prompt}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-1 text-xs font-medium">System Prompt</h4>
+							<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('projectShare.systemPrompt')}</h4>
 							<p class="text-xs whitespace-pre-wrap text-gray-600 dark:text-gray-300">
 								{template.projectSnapshot.prompt}
 							</p>
@@ -348,7 +343,7 @@
 
 					{#if template.projectSnapshot.introductionMessage}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-1 text-xs font-medium">Introduction Message</h4>
+							<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('projectShare.introMessage')}</h4>
 							<p class="text-xs whitespace-pre-wrap text-gray-600 dark:text-gray-300">
 								{template.projectSnapshot.introductionMessage}
 							</p>
@@ -357,7 +352,7 @@
 
 					{#if template.projectSnapshot.starterMessages && template.projectSnapshot.starterMessages.length > 0}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-2 text-xs font-medium">Conversation Starters</h4>
+							<h4 class="text-on-surface1 mb-2 text-xs font-medium">{$t('projectShare.conversationStarters')}</h4>
 							<div class="flex flex-col gap-2">
 								{#each template.projectSnapshot.starterMessages as message (message)}
 									<div
@@ -372,7 +367,7 @@
 
 					{#if mcpServers.length > 0}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-2 text-xs font-medium">Connectors</h4>
+							<h4 class="text-on-surface1 mb-2 text-xs font-medium">{$t('chat.connectors')}</h4>
 							<div class="flex flex-col gap-2">
 								{#each mcpServers as mcpServer (mcpServer.id)}
 									<div
@@ -402,7 +397,7 @@
 
 					{#if knowledgeFiles.length > 0}
 						<div class="p-3">
-							<h4 class="text-on-surface1 mb-1 text-xs font-medium">Knowledge Files</h4>
+							<h4 class="text-on-surface1 mb-1 text-xs font-medium">{$t('projectConfig.knowledgeFiles')}</h4>
 							<ul class="mt-2">
 								{#each knowledgeFiles as file (file.fileName)}
 									<li class="mb-1 text-xs text-gray-600 last:mb-0 dark:text-gray-300">
@@ -420,7 +415,7 @@
 
 		{#if template}
 			<Confirm
-				msg={`Are you sure you want to delete this Project Share: ${template.projectSnapshot.name || 'Unnamed Project Snapshot'}?`}
+				msg={$t('projectShare.deleteConfirm', { name: template.projectSnapshot.name || $t('projectShare.unnamedSnapshot') })}
 				show={toDelete}
 				onsuccess={handleDeleteTemplate}
 				oncancel={() => (toDelete = false)}

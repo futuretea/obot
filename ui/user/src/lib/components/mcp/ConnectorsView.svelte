@@ -51,6 +51,7 @@
 	import EditExistingDeployment from './EditExistingDeployment.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { t } from '$lib/i18n';
 
 	type Item = ReturnType<typeof convertEntriesAndServersToTableData>[number];
 	type ServerSelectMode = 'connect' | 'rename' | 'edit' | 'disconnect' | 'chat' | 'server-details';
@@ -213,7 +214,12 @@
 			fields={profile.current.hasAdminAccess?.()
 				? ['name', 'connected', 'type', 'users', 'created', 'registry']
 				: ['name', 'connected', 'created', 'registry']}
-			headers={[{ title: 'Status', property: 'connected' }]}
+			headers={[
+				{ title: $t('common.name'), property: 'name' },
+				{ title: $t('common.status'), property: 'connected' },
+				{ title: $t('common.created'), property: 'created' },
+				{ title: $t('mcpServers.registry'), property: 'registry' }
+			]}
 			filterable={['name', 'type', 'registry']}
 			{filters}
 			onClickRow={(d, isCtrlClick) => {
@@ -259,7 +265,7 @@
 			{onClearAllFilters}
 			{onSort}
 			sortable={['name', 'connected', 'type', 'users', 'created', 'registry']}
-			noDataMessage="No catalog servers added."
+			noDataMessage={$t('mcpServers.noServers')}
 			classes={{
 				root: 'rounded-none rounded-b-md shadow-none',
 				thead: classes?.tableHeader
@@ -311,7 +317,7 @@
 					</div>
 				{:else if property === 'connected'}
 					{#if d.connected}
-						<div class="pill-primary bg-primary">Connected</div>
+						<div class="pill-primary bg-primary">{$t('mcpServers.connected')}</div>
 					{/if}
 				{:else if property === 'type'}
 					{getServerTypeLabelByType(d.type)}
