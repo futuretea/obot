@@ -1,5 +1,5 @@
-ARG TOOLS_IMAGE=ghcr.io/obot-platform/tools:latest
-ARG PROVIDER_IMAGE=ghcr.io/obot-platform/tools/providers:latest
+ARG TOOLS_IMAGE=ghcr.io/futuretea/obot-tools:latest
+ARG PROVIDER_IMAGE=ghcr.io/futuretea/obot-tools/providers:latest
 ARG ENTERPRISE_IMAGE=cgr.dev/chainguard/wolfi-base:latest
 ARG BASE_IMAGE=cgr.dev/chainguard/wolfi-base
 
