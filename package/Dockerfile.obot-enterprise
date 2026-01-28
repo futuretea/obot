@@ -1,0 +1,14 @@
+FROM ghcr.io/futuretea/obot:master
+
+# Switch to root to install CA certificate
+USER root
+
+# Copy your enterprise CA certificate
+COPY enterprise-ca.crt /usr/local/share/ca-certificates/enterprise-ca.crt
+
+# Merge enterprise CA with system CA bundle
+# Wolfi doesn't have update-ca-certificates, so we concatenate manually
+RUN cat /usr/local/share/ca-certificates/enterprise-ca.crt >> /etc/ssl/certs/ca-certificates.crt
+
+# Switch back to original user if needed
+# USER obot
