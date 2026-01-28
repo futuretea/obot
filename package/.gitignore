@@ -1,0 +1,11 @@
+# Enterprise CA Certificate (do not commit)
+*.crt
+*.pem
+*.key
+
+# Generated Helm values
+values-custom.yaml
+values-*.yaml
+
+# Build artifacts
+*.log

@@ -1,0 +1,12 @@
+-----BEGIN CERTIFICATE-----
+REPLACE THIS WITH YOUR ENTERPRISE CA CERTIFICATE
+
+Your enterprise CA certificate should be in PEM format.
+Copy this file to enterprise-ca.crt and replace the content with
+your actual certificate.
+
+Example:
+  cp enterprise-ca.crt.example enterprise-ca.crt
+  # Edit enterprise-ca.crt with your actual certificate
+
+-----END CERTIFICATE-----
