@@ -43,6 +43,17 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -131,6 +142,17 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -157,7 +179,7 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }}
           build-args: |
-            ENTERPRISE_IMAGE=ghcr.io/obot-platform/enterprise-tools:latest
+            ENTERPRISE_IMAGE=cgr.dev/chainguard/wolfi-base:latest
             BASE_IMAGE=ghcr.io/obot-platform/obot/base:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
