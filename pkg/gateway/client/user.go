@@ -348,6 +348,10 @@ func (c *Client) UpdateProfileIfNeeded(ctx context.Context, user *types.User, au
 			user.DisplayName = displayName
 		}
 	case "keycloak-auth-provider":
+		if iconURL, ok := profile["picture"].(string); ok {
+			user.IconURL = iconURL
+			identity.IconURL = iconURL
+		}
 		if displayName, ok := profile["name"].(string); ok {
 			user.DisplayName = displayName
 		}
