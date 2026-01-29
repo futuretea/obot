@@ -9,16 +9,6 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - "v*"
-    paths-ignore:
-      - docs/**
-      - chart/**
-      - .github/workflows/**
 
 jobs:
   pin-phat:
