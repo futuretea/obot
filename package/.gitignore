@@ -9,3 +9,7 @@ values-*.yaml
 
 # Build artifacts
 *.log
+
+# Copied source for local builds (do not commit)
+keycloak-auth-provider/
+auth-providers-common/
