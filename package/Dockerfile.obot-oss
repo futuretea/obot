@@ -1,5 +1,5 @@
 ARG TOOLS_IMAGE=ghcr.io/futuretea/obot-tools:latest
-ARG BASE_IMAGE=ghcr.io/futuretea/obot-enterprise:master
+ARG BASE_IMAGE=ghcr.io/futuretea/obot:master
 
 # Stage 1: Get pre-built tools
 FROM ${TOOLS_IMAGE} AS tools
