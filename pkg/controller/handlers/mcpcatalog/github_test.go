@@ -6,6 +6,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Test GitHub.com URL detection
+func TestIsGitHubURL(t *testing.T) {
+	tests := []struct {
+		name       string
+		url        string
+		wantGitHub bool
+	}{
+		// Should detect as GitHub (github.com only)
+		{"github.com with .git", "https://github.com/org/repo.git", true},
+		{"github.com without .git", "https://github.com/org/repo", true},
+		{"github.com with branch", "https://github.com/org/repo/tree/main", true},
+		{"github.com http", "http://github.com/org/repo.git", true},
+		{"github.com trailing slash", "https://github.com/org/repo.git/", true},
+
+		// Should NOT detect as GitHub (other domains)
+		{"github enterprise", "https://github.enterprise.com/org/repo.git", false},
+		{"github subdomain", "https://git.github.company.com/org/repo.git", false},
+		{"gitlab", "https://gitlab.com/org/repo.git", false},
+		{"bitbucket", "https://bitbucket.org/org/repo.git", false},
+		{"other git", "https://git.enterprise.com/org/repo.git", false},
+
+		// Edge cases
+		{"invalid URL", "not-a-url", false},
+		{"empty string", "", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isGitHubURL(tt.url)
+			assert.Equal(t, tt.wantGitHub, result)
+		})
+	}
+}
+
 func TestReadGitHubCatalog(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -14,8 +48,8 @@ func TestReadGitHubCatalog(t *testing.T) {
 		numEntries int
 	}{
 		{
-			name:       "valid github url with https",
-			catalog:    "https://github.com/obot-platform/test-mcp-catalog",
+			name:       "valid github url with https and .git suffix",
+			catalog:    "https://github.com/obot-platform/test-mcp-catalog.git",
 			wantErr:    false,
 			numEntries: 3,
 		},

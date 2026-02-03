@@ -26,7 +26,11 @@ type GitHubRepoInfo struct {
 
 func isGitHubURL(catalogURL string) bool {
 	u, err := url.Parse(catalogURL)
-	return err == nil && u.Host == "github.com"
+	if err != nil {
+		return false
+	}
+	// Only github.com uses this path - all other Git servers (including GitHub Enterprise) use git.go
+	return u.Host == "github.com"
 }
 
 // checkRepoSize checks the repository size using GitHub API before cloning
@@ -158,6 +162,8 @@ func readGitHubCatalog(catalogURL string) ([]types.MCPServerCatalogEntryManifest
 		return nil, fmt.Errorf("invalid GitHub URL format, expected github.com/org/repo")
 	}
 	org, repo := parts[0], parts[1]
+	// Remove .git suffix if present
+	repo = strings.TrimSuffix(repo, ".git")
 	branch := "main"
 	if len(parts) > 2 {
 		branch = strings.Join(parts[2:], "/")

@@ -138,7 +138,15 @@ func (h *Handler) readMCPCatalog(catalogName, sourceURL string) ([]client.Object
 	var entries []types.MCPServerCatalogEntryManifest
 
 	if strings.HasPrefix(sourceURL, "http://") || strings.HasPrefix(sourceURL, "https://") {
-		if isGitHubURL(sourceURL) {
+		// First check if it's a Git repository (has .git suffix) but not github.com
+		if isGitURL(sourceURL) && !isGitHubURL(sourceURL) {
+			var err error
+			entries, err = readGitCatalog(sourceURL)
+			if err != nil {
+				return nil, fmt.Errorf("failed to read Git catalog %s: %w", sourceURL, err)
+			}
+		} else if isGitHubURL(sourceURL) {
+			// GitHub.com (with or without .git suffix)
 			var err error
 			entries, err = readGitHubCatalog(sourceURL)
 			if err != nil {
