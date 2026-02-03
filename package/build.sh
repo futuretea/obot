@@ -206,9 +206,12 @@ build_mcp_images() {
     fi
     
     local images=(
-        "mcp-base:Dockerfile.mcp-base"
-        "nanobot-shim:Dockerfile.nanobot-shim"
-        "webhook-converter:Dockerfile.webhook-converter"
+        "nanobot:Dockerfile.nanobot"
+        "mcp-phat:Dockerfile.mcp-phat"
+        "mcp-webhook-converter:Dockerfile.mcp-webhook-converter"
+        "mcp-github:Dockerfile.mcp-github"
+        "mcp-grafana:Dockerfile.mcp-grafana"
+        "mcp-elasticsearch:Dockerfile.mcp-elasticsearch"
     )
     
     for image_def in "${images[@]}"; do
@@ -260,7 +263,7 @@ push_images() {
     fi
     
     if [ "$BUILD_MCP" = true ]; then
-        local images=("mcp-base" "nanobot-shim" "webhook-converter")
+        local images=("nanobot" "mcp-phat" "mcp-webhook-converter" "mcp-github" "mcp-grafana" "mcp-elasticsearch")
         for image_name in "${images[@]}"; do
             if docker image inspect "$REGISTRY/$MCP_REPO/$image_name:$MCP_TAG" &> /dev/null; then
                 log_info "Pushing $REGISTRY/$MCP_REPO/$image_name:$MCP_TAG"
