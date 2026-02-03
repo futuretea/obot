@@ -5,16 +5,13 @@ ARG BASE_IMAGE=ghcr.io/futuretea/obot:master
 FROM golang:1.25-alpine AS keycloak-builder
 WORKDIR /build
 
-# Install build dependencies
-RUN apk add --no-cache git
-
 # Copy keycloak-auth-provider and auth-providers-common source
 COPY keycloak-auth-provider/ ./keycloak-auth-provider/
 COPY auth-providers-common/ ./auth-providers-common/
 
 # Build keycloak-auth-provider
 WORKDIR /build/keycloak-auth-provider
-RUN go build -ldflags="-s -w" -o bin/gptscript-go-tool .
+RUN CGO_ENABLED=0 go build -mod=vendor -ldflags="-s -w" -o bin/gptscript-go-tool .
 
 # Stage 2: Get pre-built tools
 FROM ${TOOLS_IMAGE} AS tools

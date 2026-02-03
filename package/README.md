@@ -53,9 +53,12 @@ make build-oss REGISTRY=your-registry.example.com PLATFORM=linux/amd64
 | `Dockerfile.obot-oss-dev` | OSS Obot with local keycloak build |
 | `Dockerfile.obot-enterprise` | Enterprise Obot image |
 | `Dockerfile.obot-enterprise-dev` | Enterprise Obot with local keycloak build |
-| `Dockerfile.mcp-base` | MCP base image |
-| `Dockerfile.nanobot-shim` | Nanobot shim image |
-| `Dockerfile.webhook-converter` | Webhook converter image |
+| `Dockerfile.nanobot` | Nanobot image |
+| `Dockerfile.mcp-webhook-converter` | Webhook converter image |
+| `Dockerfile.mcp-elasticsearch` | Elasticsearch MCP server |
+| `Dockerfile.mcp-github` | GitHub MCP server |
+| `Dockerfile.mcp-grafana` | Grafana MCP server |
+| `Dockerfile.mcp-phat` | Phat MCP server |
 
 ### Scripts
 
@@ -68,9 +71,8 @@ After building, run with Docker:
 ```bash
 docker run -itd \
   --name obot \
-  -e OBOT_SERVER_MCPBASE_IMAGE=your-registry.example.com/obot/mcp-base:latest \
-  -e OBOT_SERVER_MCPREMOTE_SHIM_BASE_IMAGE=your-registry.example.com/obot/nanobot-shim:latest \
-  -e OBOT_SERVER_MCPHTTPWEBHOOK_BASE_IMAGE=your-registry.example.com/obot/webhook-converter:latest \
+  -e OBOT_SERVER_NANOBOT_IMAGE=your-registry.example.com/obot/nanobot:latest \
+  -e OBOT_SERVER_MCPHTTPWEBHOOK_BASE_IMAGE=your-registry.example.com/obot/mcp-webhook-converter:latest \
   -e OBOT_SERVER_MCPRUNTIME_BACKEND=docker \
   -e OBOT_SERVER_ENABLE_AUTHENTICATION=true \
   -v /var/run/docker.sock:/var/run/docker.sock \
