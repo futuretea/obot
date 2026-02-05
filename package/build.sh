@@ -211,6 +211,7 @@ build_mcp_images() {
         "mcp-webhook-converter:Dockerfile.mcp-webhook-converter"
         "mcp-github:Dockerfile.mcp-github"
         "mcp-grafana:Dockerfile.mcp-grafana"
+        "mcp-rancher:Dockerfile.mcp-rancher"
         "mcp-elasticsearch:Dockerfile.mcp-elasticsearch"
     )
     
@@ -263,7 +264,7 @@ push_images() {
     fi
     
     if [ "$BUILD_MCP" = true ]; then
-        local images=("nanobot" "mcp-phat" "mcp-webhook-converter" "mcp-github" "mcp-grafana" "mcp-elasticsearch")
+        local images=("nanobot" "mcp-phat" "mcp-webhook-converter" "mcp-github" "mcp-grafana" "mcp-rancher" "mcp-elasticsearch")
         for image_name in "${images[@]}"; do
             if docker image inspect "$REGISTRY/$MCP_REPO/$image_name:$MCP_TAG" &> /dev/null; then
                 log_info "Pushing $REGISTRY/$MCP_REPO/$image_name:$MCP_TAG"
