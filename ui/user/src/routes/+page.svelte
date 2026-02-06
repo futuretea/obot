@@ -47,7 +47,7 @@
 				class="absolute top-1/2 left-1/2 flex w-md -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-4"
 			>
 				<Logo class="h-16" />
-				<h1 class="text-2xl font-semibold">Welcome to Obot</h1>
+				<h1 class="text-2xl font-semibold">Welcome</h1>
 				<p class="text-md text-on-surface1 mb-1 text-center font-light">
 					Log in or create your account to continue
 				</p>
