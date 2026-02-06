@@ -1,4 +1,4 @@
-FROM ghcr.io/obot-platform/mcp-images/elasticsearch:main
+FROM futuretea/mcp-elasticsearch:latest
 
 USER root
 
