@@ -276,5 +276,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | Admin</title>
+	<title>Admin</title>
 </svelte:head>

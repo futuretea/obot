@@ -300,5 +300,5 @@
 />
 
 <svelte:head>
-	<title>Obot | MCP Servers</title>
+	<title>MCP Servers</title>
 </svelte:head>

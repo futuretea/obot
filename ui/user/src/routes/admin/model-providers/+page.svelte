@@ -206,5 +206,5 @@
 </ProviderConfigure>
 
 <svelte:head>
-	<title>Obot | Model Providers</title>
+	<title>Model Providers</title>
 </svelte:head>

@@ -448,5 +448,5 @@
 </ResponsiveDialog>
 
 <svelte:head>
-	<title>Obot | Branding</title>
+	<title>Branding</title>
 </svelte:head>

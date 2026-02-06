@@ -18,5 +18,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | Usage</title>
+	<title>Usage</title>
 </svelte:head>

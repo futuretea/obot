@@ -162,5 +162,5 @@
 />
 
 <svelte:head>
-	<title>Obot | My Account</title>
+	<title>My Account</title>
 </svelte:head>

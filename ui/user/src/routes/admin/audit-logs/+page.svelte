@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Audit Logs</title>
+	<title>Audit Logs</title>
 </svelte:head>
 
 <Layout
