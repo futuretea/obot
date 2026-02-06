@@ -11,6 +11,7 @@ import (
 	"github.com/obot-platform/nah/pkg/router"
 	"github.com/obot-platform/nah/pkg/untriggered"
 	"github.com/obot-platform/obot/apiclient/types"
+	"github.com/obot-platform/obot/logger"
 	"github.com/obot-platform/obot/pkg/mcp"
 	v1 "github.com/obot-platform/obot/pkg/storage/apis/obot.obot.ai/v1"
 	"github.com/obot-platform/obot/pkg/system"
@@ -22,6 +23,8 @@ import (
 	"k8s.io/client-go/util/retry"
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+var log = logger.Package()
 
 type Handler struct {
 	gptClient         *gptscript.GPTScript
@@ -479,10 +482,11 @@ func (h *Handler) EnsureCompositeComponents(req router.Request, _ router.Respons
 	}
 
 	// Create index of existing catalog entry components by ID
-	existingServers := make(map[string]v1.MCPServer, len(componentServers.Items))
+	// Use a slice to handle multiple servers with the same catalog entry (due to race conditions or bugs)
+	existingServers := make(map[string][]v1.MCPServer, len(componentServers.Items))
 	for _, existing := range componentServers.Items {
 		if id := existing.Spec.MCPServerCatalogEntryName; id != "" {
-			existingServers[id] = existing
+			existingServers[id] = append(existingServers[id], existing)
 		}
 	}
 
@@ -544,7 +548,8 @@ func (h *Handler) EnsureCompositeComponents(req router.Request, _ router.Respons
 		}
 
 		// Catalog entry component
-		if existingServer, exists := existingServers[component.CatalogEntryID]; !exists {
+		existingServerList, exists := existingServers[component.CatalogEntryID]
+		if !exists || len(existingServerList) == 0 {
 			// New server, create it
 			newServer := withNeedsURL(v1.MCPServer{
 				ObjectMeta: metav1.ObjectMeta{
@@ -563,27 +568,43 @@ func (h *Handler) EnsureCompositeComponents(req router.Request, _ router.Respons
 			if err := req.Client.Create(req.Ctx, &newServer); err != nil {
 				return fmt.Errorf("failed to create new component server: %w", err)
 			}
-		} else if hash.Digest(existingServer.Spec.Manifest) != hash.Digest(component.Manifest) {
-			// Ensure the server is shut down before updating it
-			if err := h.mcpSessionManager.ShutdownServer(req.Ctx, existingServer.Name); err != nil {
-				return err
+		} else {
+			// We have at least one existing server for this catalog entry
+			// Keep the first one and delete any duplicates
+			existingServer := existingServerList[0]
+
+			// Delete duplicate servers (bug cleanup)
+			for i := 1; i < len(existingServerList); i++ {
+				dup := existingServerList[i]
+				log.Warnf("Deleting duplicate component server %s for catalog entry %s", dup.Name, component.CatalogEntryID)
+				if err := req.Delete(&dup); kclient.IgnoreNotFound(err) != nil {
+					return fmt.Errorf("failed to delete duplicate server %s: %w", dup.Name, err)
+				}
 			}
 
-			if err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
-				var latestServer v1.MCPServer
-				if err := req.Get(&latestServer, compositeServer.Namespace, existingServer.Name); err != nil {
+			// Check if the remaining server needs updating
+			if hash.Digest(existingServer.Spec.Manifest) != hash.Digest(component.Manifest) {
+				// Ensure the server is shut down before updating it
+				if err := h.mcpSessionManager.ShutdownServer(req.Ctx, existingServer.Name); err != nil {
 					return err
 				}
 
-				latestServer.Spec.Manifest = component.Manifest
-				latestServer = withNeedsURL(latestServer)
-				return req.Client.Update(req.Ctx, &latestServer)
-			}); err != nil {
-				return fmt.Errorf("failed to update existing component server: %w", err)
+				if err := retry.RetryOnConflict(retry.DefaultBackoff, func() error {
+					var latestServer v1.MCPServer
+					if err := req.Get(&latestServer, compositeServer.Namespace, existingServer.Name); err != nil {
+						return err
+					}
+
+					latestServer.Spec.Manifest = component.Manifest
+					latestServer = withNeedsURL(latestServer)
+					return req.Client.Update(req.Ctx, &latestServer)
+				}); err != nil {
+					return fmt.Errorf("failed to update existing component server: %w", err)
+				}
 			}
 		}
 
-		// Remove the server to build the list of existing servers to delete
+		// Remove the server(s) to build the list of existing servers to delete
 		delete(existingServers, component.CatalogEntryID)
 	}
 
@@ -595,9 +616,11 @@ func (h *Handler) EnsureCompositeComponents(req router.Request, _ router.Respons
 	}
 
 	// Delete existing servers that were not in the updated manifest
-	for _, server := range existingServers {
-		if err := req.Delete(&server); kclient.IgnoreNotFound(err) != nil {
-			return fmt.Errorf("failed to delete server %s: %w", server.Name, err)
+	for _, serverList := range existingServers {
+		for _, server := range serverList {
+			if err := req.Delete(&server); kclient.IgnoreNotFound(err) != nil {
+				return fmt.Errorf("failed to delete server %s: %w", server.Name, err)
+			}
 		}
 	}
 
