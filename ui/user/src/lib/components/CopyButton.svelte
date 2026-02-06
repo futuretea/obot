@@ -54,27 +54,39 @@
 	}
 
 	async function copy() {
-		if (!text) return;
+		// Capture the text value immediately to avoid reactivity issues
+		const textToCopy = text;
+		console.log('CopyButton: Attempting to copy:', textToCopy);
+		if (!textToCopy) {
+			console.warn('CopyButton: No text to copy');
+			return;
+		}
 
 		let success = false;
 
 		if (navigator.clipboard) {
 			try {
-				await navigator.clipboard.writeText(text);
+				await navigator.clipboard.writeText(textToCopy);
 				success = true;
-			} catch {
-				success = fallbackCopy(text);
+				console.log('CopyButton: Successfully copied via Clipboard API');
+			} catch (error) {
+				console.warn('CopyButton: Clipboard API failed, trying fallback:', error);
+				success = fallbackCopy(textToCopy);
 			}
 		} else {
-			success = fallbackCopy(text);
+			console.warn('CopyButton: Clipboard API not available, using fallback');
+			success = fallbackCopy(textToCopy);
 		}
 
 		if (success) {
+			console.log('CopyButton: Copy operation reported success');
 			message = COPIED_TEXT;
 			buttonTextToShow = COPIED_TEXT;
 			setTimeout(() => {
 				message = tooltipText;
 			}, 750);
+		} else {
+			console.error('CopyButton: Copy operation failed');
 		}
 	}
 
