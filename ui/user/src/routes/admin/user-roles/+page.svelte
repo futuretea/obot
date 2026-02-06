@@ -115,5 +115,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | User Roles</title>
+	<title>User Roles</title>
 </svelte:head>

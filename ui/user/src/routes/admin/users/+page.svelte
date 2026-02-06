@@ -394,5 +394,5 @@
 </Confirm>
 
 <svelte:head>
-	<title>Obot | Users</title>
+	<title>Users</title>
 </svelte:head>

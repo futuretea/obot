@@ -267,5 +267,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | Audit Log Exports</title>
+	<title>Audit Log Exports</title>
 </svelte:head>

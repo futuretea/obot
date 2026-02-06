@@ -22,7 +22,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot - Build AI agents with MCP</title>
+	<title>Build AI agents with MCP</title>
 </svelte:head>
 
 {#if !loggedIn}

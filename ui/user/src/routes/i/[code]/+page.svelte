@@ -226,5 +226,5 @@
 </div>
 
 <svelte:head>
-	<title>Obot | Project Invitation</title>
+	<title>Project Invitation</title>
 </svelte:head>

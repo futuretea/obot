@@ -228,5 +228,5 @@
 />
 
 <svelte:head>
-	<title>Obot | Filters</title>
+	<title>Filters</title>
 </svelte:head>
