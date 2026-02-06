@@ -18,13 +18,13 @@
 	let showRightChevron = $state(false);
 
 	const optionMap: Record<string, { label: string; icon: string }> = {
-		cursor: {
-			label: 'Cursor',
-			icon: '/user/images/assistant/cursor-mark.svg'
+		oauth: {
+			label: 'OAuth Clients',
+			icon: '/user/images/assistant/oauth-mark.svg'
 		},
-		claude: {
-			label: 'Claude',
-			icon: '/user/images/assistant/claude-mark.svg'
+		apikey: {
+			label: 'API Key Clients',
+			icon: '/user/images/assistant/apikey-mark.svg'
 		},
 		vscode: {
 			label: 'VSCode',
@@ -161,11 +161,9 @@
 					out:fade={{ duration: 150 }}
 					class="w-1/2 p-4"
 				>
-					{#if option.key === 'cursor'}
+					{#if option.key === 'oauth'}
 						<p>
-							To add this MCP server to Cursor, update your <span class="snippet"
-								>~/.cursor/mcp.json</span
-							>
+							For clients that support OAuth authentication (browser-based login). Use the configuration below and authenticate through your browser.
 						</p>
 						{@render codeSnippet(`
 	{
@@ -181,11 +179,9 @@ ${servers
 	}
 
 `)}
-					{:else if option.key === 'claude'}
+					{:else if option.key === 'apikey'}
 						<p>
-							To add this MCP server to Claude Desktop, update your <span class="snippet"
-								>claude_desktop_config.json</span
-							>
+							For clients that require API key/bearer token authentication. Add your API key in the Authorization header.
 						</p>
 						{@render codeSnippet(`
 	{
@@ -193,11 +189,10 @@ ${servers
 ${servers
 	.map(
 		(server) => `			"${server.name}": {
-				"command": "npx",
-				"args": [
-					"mcp-remote@latest",
-					"${server.url}"
-				]
+				"url": "${server.url}",
+				"headers": {
+					"Authorization": "Bearer YOUR_API_KEY"
+				}
 			}`
 	)
 	.join(',\n')}
