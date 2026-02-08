@@ -32,6 +32,9 @@ COPY enterprise-ca.crt /usr/local/share/ca-certificates/enterprise-ca.crt
 # Wolfi doesn't have update-ca-certificates, so we concatenate manually
 RUN cat /usr/local/share/ca-certificates/enterprise-ca.crt >> /etc/ssl/certs/ca-certificates.crt
 
+# Disable default MCP catalog GitHub access
+ENV OBOT_SERVER_DEFAULT_MCPCATALOG_PATH=""
+
 # Switch back to original user if needed
 # USER obot
 
