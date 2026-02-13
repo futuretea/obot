@@ -18,7 +18,7 @@
 	let currentThreadID = $state<string | undefined>(
 		(browser && new URL(window.location.href).searchParams.get('thread')) || undefined
 	);
-	let title = $derived(project?.name || 'Obot');
+	let title = $derived(project?.name || 'My Project');
 
 	untrack(() => {
 		initToolReferences(data.toolReferences ?? []);

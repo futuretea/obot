@@ -5,7 +5,7 @@
 	import { goto } from '$lib/url';
 
 	let { data }: PageProps = $props();
-	let title = $derived(data.project?.name || 'Obot');
+	let title = $derived(data.project?.name || 'My Project');
 
 	initLayout({
 		items: []
