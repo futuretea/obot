@@ -32,7 +32,7 @@ serve-docs:
 GIT_TAG := $(shell git describe --tags --exact-match 2>/dev/null | xargs -I {} echo -X 'github.com/obot-platform/obot/pkg/version.Tag={}')
 GO_LD_FLAGS := "-s -w $(GIT_TAG)"
 build:
-	go build -ldflags=$(GO_LD_FLAGS) -o bin/obot .
+	CGO_ENABLED=0 go build -ldflags=$(GO_LD_FLAGS) -o bin/obot .
 
 dev:
 	./tools/dev.sh $(ARGS)
