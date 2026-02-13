@@ -26,3 +26,7 @@ ENV OBOT_SERVER_DEFAULT_MCPCATALOG_PATH=""
 # Remove existing keycloak-auth-provider and copy from pre-built tools
 RUN rm -rf /obot-tools/tools/keycloak-auth-provider
 COPY --link --from=tools /obot-tools/tools/keycloak-auth-provider /obot-tools/tools/keycloak-auth-provider
+
+# Remove existing qwen-model-provider and copy from pre-built tools
+RUN rm -rf /obot-tools/tools/qwen-model-provider
+COPY --link --from=tools /obot-tools/tools/qwen-model-provider /obot-tools/tools/qwen-model-provider
