@@ -287,7 +287,7 @@ func (p *Proxy) authenticateRequest(req *http.Request) (*authenticator.Response,
 
 	var ss serializableState
 	if err = json.Unmarshal(body, &ss); err != nil {
-		return nil, false, err
+		return nil, false, ErrInvalidSession
 	}
 
 	userName := getUsername(p.name, ss)

@@ -66,6 +66,10 @@ export async function doGet(path: string, opts?: GetOptions): Promise<unknown> {
 	if (!resp.ok) {
 		if (resp.status === 401) {
 			handle401Redirect();
+			// If session expired and user was logged in, don't show error notification
+			if (profile.current.expired) {
+				throw new Error(`${resp.status} ${path}: unauthorized`);
+			}
 		}
 		const body = await resp.text();
 		const e = new Error(`${resp.status} ${path}: ${body}`);
@@ -101,6 +105,9 @@ export async function doDelete(
 
 	if (!resp.ok && resp.status === 401) {
 		handle401Redirect();
+		if (profile.current.expired) {
+			throw new Error(`${resp.status} ${path}: unauthorized`);
+		}
 	}
 	return opts?.responseHandler?.(resp, path, opts) ?? handleResponse(resp, path, opts);
 }
@@ -179,6 +186,9 @@ export async function doWithBody(
 
 		if (!resp.ok && resp.status === 401) {
 			handle401Redirect();
+			if (profile.current.expired) {
+				throw new Error(`${resp.status} ${path}: unauthorized`);
+			}
 		}
 		return handleResponse(resp, path, opts);
 	} catch (e) {
