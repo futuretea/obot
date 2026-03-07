@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"sort"
 	"strconv"
 	"strings"
@@ -307,6 +308,11 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 			"mcp-user-id":             server.UserID,
 		}
 
+		// For multi-user (catalog-scoped) servers, the deployment is shared across all users.
+		// Using the requesting user's UID in pod template labels would cause a rolling restart
+		// every time a different user connects. Use an empty string for shared deployments.
+		podLabelUserID         = server.UserID
+
 		fileMapping            = make(map[string]string, len(server.Files))
 		secretEnvStringData    = make(map[string]string, len(server.Env)+10)
 		secretVolumeStringData = make(map[string]string, len(server.Files))
@@ -410,6 +416,22 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 
 	// Add K8s settings hash to annotations
 	annotations["obot.ai/k8s-settings-hash"] = ComputeK8sSettingsHash(k8sSettings)
+
+	// For multi-user (catalog-scoped) servers, the deployment is shared across all users.
+	// Using the requesting user's UID in pod template labels would cause a rolling restart
+	// every time a different user connects. Use an empty string for shared deployments.
+	if server.MCPCatalogName != "" {
+		podLabelUserID = ""
+	}
+
+	// podAnnotations is used for the pod template. For multi-user (catalog-scoped) servers,
+	// mcp-user-id must be stable (empty) so that different users don't cause rolling restarts.
+	// Pod template annotations are part of the pod spec compared by Kubernetes —
+	// any difference triggers a rolling restart. Deployment-level annotations keep the real value.
+	podAnnotations := maps.Clone(annotations)
+	if server.MCPCatalogName != "" {
+		podAnnotations["mcp-user-id"] = ""
+	}
 
 	webhookSecretStringData := make(map[string]string, len(webhooks))
 	containers := make([]corev1.Container, 0, len(webhooks)+2)
@@ -665,7 +687,7 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 			Annotations: annotations,
 			Labels: map[string]string{
 				"app":         server.MCPServerName,
-				"mcp-user-id": server.UserID,
+				"mcp-user-id": podLabelUserID,
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
@@ -677,10 +699,10 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 			},
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Annotations: annotations,
+					Annotations: podAnnotations,
 					Labels: map[string]string{
 						"app":         server.MCPServerName,
-						"mcp-user-id": server.UserID,
+						"mcp-user-id": podLabelUserID,
 					},
 				},
 				Spec: corev1.PodSpec{
