@@ -919,7 +919,10 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 	for attempt := range maxRetries {
 		// Wait for the deployment to be updated.
 		_, err := wait.For(ctx, k.client, &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: id, Namespace: k.mcpNamespace}}, func(dep *appsv1.Deployment) (bool, error) {
-			return dep.Generation == dep.Status.ObservedGeneration && dep.Status.UpdatedReplicas == 1 && dep.Status.ReadyReplicas == 1 && dep.Status.AvailableReplicas == 1, nil
+			// Require generation to be observed and at least one replica available.
+			// Using >= 1 instead of == 1 to support multi-replica deployments managed
+			// externally (e.g. HPA), where UpdatedReplicas and ReadyReplicas may be > 1.
+			return dep.Generation == dep.Status.ObservedGeneration && dep.Status.AvailableReplicas >= 1, nil
 		}, wait.Option{Timeout: time.Minute})
 		if err == nil {
 			// Deployment is ready, now ensure the server is ready
