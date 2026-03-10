@@ -45,6 +45,9 @@ type Options struct {
 	ServiceName      string `usage:"The Kubernetes service name for the obot server" env:"OBOT_SERVER_SERVICE_NAME"`
 	ServiceNamespace string `usage:"The Kubernetes namespace where the obot server runs" env:"OBOT_SERVER_SERVICE_NAMESPACE"`
 
+	// Extra headers propagated to remote MCP servers as outbound request headers
+	MCPExtraHeaders map[string]string `usage:"Extra headers to pass to remote MCP servers (Key=Value format)" env:"OBOT_SERVER_MCP_EXTRA_HEADERS"`
+
 	// Audit log configuration
 	MCPAuditLogPersistIntervalSeconds int `usage:"The interval in seconds to persist MCP audit logs to the database" default:"5"`
 	MCPAuditLogsPersistBatchSize      int `usage:"The number of MCP audit logs to persist in a single batch" default:"1000"`

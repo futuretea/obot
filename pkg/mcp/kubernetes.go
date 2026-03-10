@@ -47,6 +47,7 @@ type kubernetesBackend struct {
 	imagePullSecrets              []string
 	auditLogsBatchSize            int
 	auditLogsFlushIntervalSeconds int
+	extraHeaders                  map[string]string
 	obotClient                    kclient.Client
 }
 
@@ -68,6 +69,7 @@ func newKubernetesBackend(clientset *kubernetes.Clientset, client kclient.WithWa
 		imagePullSecrets:              opts.MCPImagePullSecrets,
 		auditLogsBatchSize:            opts.MCPAuditLogsPersistBatchSize,
 		auditLogsFlushIntervalSeconds: opts.MCPAuditLogPersistIntervalSeconds,
+		extraHeaders:                  opts.MCPExtraHeaders,
 		obotClient:                    obotClient,
 	}
 }
@@ -403,6 +405,19 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 	// API key authentication webhook URL
 	secretEnvStringData["NANOBOT_RUN_APIKEY_AUTH_WEBHOOK_URL"] = k.replaceHostWithServiceFQDN(server.Issuer + "/api/api-keys/auth")
 	secretEnvStringData["NANOBOT_RUN_MCPSERVER_ID"] = strings.TrimSuffix(server.MCPServerName, "-shim")
+	if len(k.extraHeaders) > 0 {
+		// Serialize as Key=Value,Key2=Value2, sorted for deterministic hashing
+		keys := make([]string, 0, len(k.extraHeaders))
+		for key := range k.extraHeaders {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		parts := make([]string, 0, len(keys))
+		for _, key := range keys {
+			parts = append(parts, key+"="+k.extraHeaders[key])
+		}
+		secretEnvStringData["NANOBOT_EXTRA_HEADERS"] = strings.Join(parts, ",")
+	}
 
 	annotations["obot-revision"] = hash.Digest(hash.Digest(secretEnvStringData) + hash.Digest(secretVolumeStringData) + hash.Digest(webhooks))
 
