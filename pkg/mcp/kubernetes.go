@@ -48,6 +48,7 @@ type kubernetesBackend struct {
 	auditLogsBatchSize            int
 	auditLogsFlushIntervalSeconds int
 	extraHeaders                  map[string]string
+	passThroughHeaders            []string
 	obotClient                    kclient.Client
 }
 
@@ -70,6 +71,7 @@ func newKubernetesBackend(clientset *kubernetes.Clientset, client kclient.WithWa
 		auditLogsBatchSize:            opts.MCPAuditLogsPersistBatchSize,
 		auditLogsFlushIntervalSeconds: opts.MCPAuditLogPersistIntervalSeconds,
 		extraHeaders:                  opts.MCPExtraHeaders,
+		passThroughHeaders:            opts.MCPPassThroughHeaders,
 		obotClient:                    obotClient,
 	}
 }
@@ -417,6 +419,12 @@ func (k *kubernetesBackend) k8sObjects(ctx context.Context, server ServerConfig,
 			parts = append(parts, key+"="+k.extraHeaders[key])
 		}
 		secretEnvStringData["NANOBOT_EXTRA_HEADERS"] = strings.Join(parts, ",")
+	}
+	if len(k.passThroughHeaders) > 0 {
+		sorted := make([]string, len(k.passThroughHeaders))
+		copy(sorted, k.passThroughHeaders)
+		sort.Strings(sorted)
+		secretEnvStringData["NANOBOT_PASS_THROUGH_HEADERS"] = strings.Join(sorted, ",")
 	}
 
 	annotations["obot-revision"] = hash.Digest(hash.Digest(secretEnvStringData) + hash.Digest(secretVolumeStringData) + hash.Digest(webhooks))

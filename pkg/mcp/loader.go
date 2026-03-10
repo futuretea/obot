@@ -48,6 +48,9 @@ type Options struct {
 	// Extra headers propagated to remote MCP servers as outbound request headers
 	MCPExtraHeaders map[string]string `usage:"Extra headers to pass to remote MCP servers (Key=Value format)" env:"OBOT_SERVER_MCP_EXTRA_HEADERS"`
 
+	// Inbound request headers to pass through to remote MCP servers (comma-separated header names)
+	MCPPassThroughHeaders []string `usage:"Inbound request header names to pass through to remote MCP servers" env:"OBOT_SERVER_MCP_PASS_THROUGH_HEADERS"`
+
 	// Audit log configuration
 	MCPAuditLogPersistIntervalSeconds int `usage:"The interval in seconds to persist MCP audit logs to the database" default:"5"`
 	MCPAuditLogsPersistBatchSize      int `usage:"The number of MCP audit logs to persist in a single batch" default:"1000"`
