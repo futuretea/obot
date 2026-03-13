@@ -10,7 +10,7 @@
 	import { AdminService, ChatService } from '$lib/services/index.js';
 	import { profile } from '$lib/stores/index.js';
 	import { formatTimeAgo } from '$lib/time.js';
-	import { Handshake, Info, LoaderCircle, ShieldAlert } from 'lucide-svelte';
+	import { Handshake, Info, LoaderCircle, LockOpen, ShieldAlert } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 	import { getUserRoleLabel } from '$lib/utils';
 	import Search from '$lib/components/Search.svelte';
@@ -26,9 +26,12 @@
 	} from '$lib/url.js';
 	import { untrack } from 'svelte';
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
+	import CreateLocalUserDialog from '$lib/components/local-auth/CreateLocalUserDialog.svelte';
+	import ResetPasswordDialog from '$lib/components/local-auth/ResetPasswordDialog.svelte';
 
 	let { data } = $props();
 	let users = $state<OrgUser[]>(untrack(() => data.users));
+	let localAuthEnabled = $state(data.localAuthEnabled ?? false);
 	let query = $state('');
 	let urlFilters = $derived(getTableUrlParamsFilters());
 	let initSort = $derived(getTableUrlParamsSort({ property: 'created', order: 'desc' }));
@@ -46,17 +49,21 @@
 			.filter(
 				(user) =>
 					user.name.toLowerCase().includes(query.toLowerCase()) ||
-					user.email.toLowerCase().includes(query.toLowerCase())
+					(user.email ?? '').toLowerCase().includes(query.toLowerCase()) ||
+					(user.username ?? '').toLowerCase().includes(query.toLowerCase())
 			)
 	);
 
 	type TableItem = (typeof tableData)[0];
 
 	let updateRoleDialog = $state<ReturnType<typeof ResponsiveDialog>>();
+	let createLocalUserDialogRef = $state<CreateLocalUserDialog>();
+	let resetPasswordDialogRef = $state<ResetPasswordDialog>();
 	let updatingRole = $state<TableItem>();
 	let deletingUser = $state<TableItem>();
 	let confirmHandoffToUser = $state<TableItem>();
 	let confirmAuditorAdditionToUser = $state<TableItem>();
+	let resetPasswordUser = $state<TableItem>();
 	let loading = $state(false);
 	let roleOptions = $derived([
 		...(profile.current.groups.includes(Group.OWNER) ? [{ label: 'Owner', id: Role.OWNER }] : []),
@@ -84,6 +91,10 @@
 		}
 		loading = false;
 		closeUpdateRoleDialog();
+	}
+
+	function handleUsersCreated(newUsers: OrgUser[]) {
+		users = newUsers;
 	}
 
 	function getUserDisplayName(user: OrgUser): string {
@@ -122,12 +133,22 @@
 	<div class="mb-4" in:fade={{ duration }} out:fade={{ duration }}>
 		<div class="flex flex-col gap-8">
 			<div class="flex flex-col gap-2">
-				<Search
-					value={query}
-					class="dark:bg-surface1 dark:border-surface3 bg-background border border-transparent shadow-sm"
-					onChange={updateQuery}
-					placeholder="Search by name or email..."
-				/>
+				<div class="flex items-center gap-2">
+					<Search
+						value={query}
+						class="dark:bg-surface1 dark:border-surface3 bg-background flex-1 border border-transparent shadow-sm"
+						onChange={updateQuery}
+						placeholder="Search by name or email..."
+					/>
+					{#if localAuthEnabled && !isAdminReadonly}
+						<button
+							class="button-primary shrink-0"
+							onclick={() => createLocalUserDialogRef?.open()}
+						>
+							Create Local User
+						</button>
+					{/if}
+				</div>
 				<Table
 					data={tableData}
 					fields={['name', 'email', 'role', 'effectiveRole', 'lastActiveDay', 'created']}
@@ -185,6 +206,31 @@
 								>
 									Update Role
 								</button>
+								{#if localAuthEnabled}
+									<button
+										class="menu-button"
+										onclick={() => {
+											resetPasswordUser = d;
+											resetPasswordDialogRef?.open();
+										}}
+									>
+										Reset Password
+									</button>
+									{#if d.localAuthDisabled}
+										<button
+											class="menu-button"
+											onclick={async () => {
+												loading = true;
+												await AdminService.unlockLocalUser(d.id);
+												users = await AdminService.listUsers();
+												loading = false;
+											}}
+										>
+											<LockOpen class="size-4" />
+											Unlock Account
+										</button>
+									{/if}
+								{/if}
 								<button
 									class="menu-button text-red-500"
 									disabled={d.explicitRole ||
@@ -318,6 +364,9 @@
 		</div>
 	{/if}
 </ResponsiveDialog>
+
+<CreateLocalUserDialog bind:this={createLocalUserDialogRef} onCreated={handleUsersCreated} />
+<ResetPasswordDialog bind:this={resetPasswordDialogRef} bind:user={resetPasswordUser} />
 
 <Confirm
 	show={Boolean(confirmHandoffToUser)}

@@ -157,6 +157,7 @@ export interface OrgUser {
 	deletedAt?: string;
 	originalEmail?: string;
 	originalUsername?: string;
+	localAuthDisabled?: boolean;
 }
 
 export interface TempUser {
@@ -185,6 +186,8 @@ export const Role = {
 	POWERUSER_PLUS: 64,
 	POWERUSER: 128
 };
+
+export type RoleValue = (typeof Role)[keyof typeof Role];
 
 export const Group = {
 	OWNER: 'owner',

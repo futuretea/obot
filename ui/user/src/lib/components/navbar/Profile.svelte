@@ -66,7 +66,12 @@
 	async function handleLogout() {
 		try {
 			localStorage.removeItem('seenSplashDialog');
-			window.location.href = '/oauth2/sign_out?rd=/';
+			if (profile.current.currentAuthProvider === 'local-auth-provider') {
+				await AdminService.localLogout();
+				window.location.href = '/';
+			} else {
+				window.location.href = '/oauth2/sign_out?rd=/';
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -200,14 +205,9 @@
 			<a href={resolve('/keys')} role="menuitem" class="link"
 				><KeyRound class="size-4" /> API Keys</a
 			>
-			<button class="link" onclick={handleLogout}>
+			<button class="link" onclick={profile.current.isBootstrapUser?.() ? handleBootstrapLogout : handleLogout}>
 				<LogOut class="size-4" /> Log out
 			</button>
-			{#if profile.current.isBootstrapUser?.()}
-				<button class="link" onclick={handleBootstrapLogout}>
-					<LogOut class="size-4" /> Log out
-				</button>
-			{/if}
 		</div>
 
 		{#if version.current.obot}

@@ -39,7 +39,10 @@ func (c *Client) UserFromToken(ctx context.Context, token string) (*types.User, 
 	// Look up the auth token to get user ID and auth provider info
 	if err := c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		tkn := new(types.AuthToken)
-		if err := tx.Where("id = ? AND hashed_token = ?", id, hash.String(token)).First(tkn).Error; err != nil {
+		if err := tx.Where(
+			"id = ? AND hashed_token = ? AND (no_expiration = true OR expires_at > ?)",
+			id, hash.String(token), time.Now(),
+		).First(tkn).Error; err != nil {
 			return err
 		}
 
@@ -185,6 +188,11 @@ func (c *Client) DeleteUser(ctx context.Context, userID string) (*types.User, er
 		// Clean up group memberships for the deleted user
 		if err := c.deleteGroupMembershipsForUser(ctx, tx, existingUser.ID); err != nil {
 			return err
+		}
+
+		// Clean up local credential if the user has one
+		if err := tx.Where("user_id = ?", existingUser.ID).Delete(&types.LocalCredential{}).Error; err != nil {
+			return fmt.Errorf("failed to delete local credential: %w", err)
 		}
 
 		// Update the user with soft delete fields and modified email/username

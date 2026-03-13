@@ -109,4 +109,15 @@ func (s *Server) AddRoutes(mux *server.Server) {
 		mux.HandleFunc("GET /api/mcp-tokens/{id}", wrap(s.getObotMCPToken))
 		mux.HandleFunc("DELETE /api/mcp-tokens/{id}", wrap(s.deleteObotMCPToken))
 	}
+
+	// Local auth endpoints — only enabled when OBOT_LOCAL_AUTH_ENABLED=true
+	if s.localAuthEnabled {
+		mux.HandleFunc("GET /api/local/status", s.localAuthStatus)
+		mux.HandleFunc("POST /api/local/login", wrap(s.localLogin))
+		mux.HandleFunc("POST /api/local/logout", wrap(s.localLogout))
+		mux.HandleFunc("PUT /api/local/me/password", wrap(s.changeOwnPassword))
+		mux.HandleFunc("POST /api/local/users", wrap(s.createLocalUser))
+		mux.HandleFunc("PUT /api/local/users/{user_id}/password", wrap(s.updateLocalPassword))
+		mux.HandleFunc("POST /api/local/users/{user_id}/unlock", wrap(s.unlockLocalUser))
+	}
 }

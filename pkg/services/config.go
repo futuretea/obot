@@ -663,13 +663,19 @@ func New(ctx context.Context, config Config) (*Services, error) {
 
 	gatewayOpts := gserver.Options(config.GatewayConfig)
 	gatewayOpts.NanobotIntegration = config.NanobotIntegration
-	gatewayServer, err := gserver.New(ctx, gatewayDB, persistentTokenServer, providerDispatcher, acrHelper, mapHelper, gatewayOpts)
+	gatewayServer, err := gserver.New(ctx, gatewayDB, gatewayClient, persistentTokenServer, providerDispatcher, acrHelper, mapHelper, gatewayOpts)
 	if err != nil {
 		return nil, err
 	}
 
 	authenticators := gserver.NewGatewayTokenReviewer(gatewayClient, gptscriptClient, providerDispatcher)
 	if config.EnableAuthentication {
+		// When local auth is enabled, wrap the authenticator chain so that
+		// the obot_access_token cookie is promoted to an Authorization header
+		// before any authenticator runs.  This avoids modifying tokenreview.go.
+		if gatewayOpts.LocalAuthEnabled {
+			authenticators = gserver.NewCookieAuthenticator(authenticators)
+		}
 		proxyManager = proxy.NewProxyManager(providerDispatcher, gptscriptClient)
 
 		// Token Auth + OAuth auth

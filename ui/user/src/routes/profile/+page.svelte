@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChatService } from '$lib/services';
+	import { ChatService, AdminService } from '$lib/services';
 	import { profile, errors, version } from '$lib/stores';
 	import { goto } from '$lib/url';
 	import Notifications from '$lib/components/Notifications.svelte';
@@ -43,7 +43,14 @@
 	async function deleteAccount() {
 		try {
 			await ChatService.deleteProfile();
-			goto('/oauth2/sign_out?rd=/');
+			// Local-auth users must use the local logout endpoint to clear the cookie.
+			// OAuth users redirect to the OAuth proxy sign-out page.
+			if (profile.current.currentAuthProvider === 'local-auth-provider') {
+				await AdminService.localLogout();
+				window.location.href = '/';
+			} else {
+				goto('/oauth2/sign_out?rd=/');
+			}
 		} catch (error) {
 			console.error('Failed to delete account:', error);
 			errors.items.push(new Error('Failed to delete account'));

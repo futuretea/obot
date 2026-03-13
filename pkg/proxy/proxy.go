@@ -55,13 +55,22 @@ func (pm *Manager) AuthenticateRequest(req *http.Request) (*authenticator.Respon
 		return nil, false, nil
 	}
 
+	// If the Authorization header is already set, the cookie was promoted to a Bearer token
+	// by CookieAuthenticator (local-auth flow). Let the upstream token reviewer handle it;
+	// the OAuth proxy authenticator is not applicable here.
+	if req.Header.Get("Authorization") != "" {
+		return nil, false, nil
+	}
+
 	configuredProvider, err := pm.dispatcher.GetConfiguredAuthProvider(req.Context())
 	if err != nil {
 		return nil, false, err
 	} else if configuredProvider == "" {
-		// No provider is configured, but the user has a session cookie.
-		// Probably the old provider was deconfigured.
-		return nil, false, ErrInvalidSession
+		// No OAuth provider is configured, but the user has a session cookie.
+		// This can happen in a local-auth-only setup when the token has already been
+		// validated (or rejected) by the token reviewer above. Do not return an error
+		// so that the request can fall through to the anonymous authenticator.
+		return nil, false, nil
 	}
 
 	proxy, err := pm.createProxy(req.Context(), pm.gptClient, system.DefaultNamespace+"/"+configuredProvider)

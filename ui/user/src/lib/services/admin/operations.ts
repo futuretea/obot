@@ -49,7 +49,8 @@ import type {
 	GroupRoleAssignmentList,
 	MCPCapacityInfo,
 	MCPServerOAuthCredentialRequest,
-	MCPServerOAuthCredentialStatus
+	MCPServerOAuthCredentialStatus,
+	RoleValue
 } from './types';
 import { MCPCompositeDeletionDependencyError } from './types';
 
@@ -770,6 +771,60 @@ export async function bootstrapLogin(token: string) {
 
 export async function bootstrapLogout() {
 	return doPost('/bootstrap/logout', {});
+}
+
+export async function getLocalAuthStatus(): Promise<{ enabled: boolean }> {
+	return (await doGet('/local/status')) as { enabled: boolean };
+}
+
+export async function localLogin(
+	username: string,
+	password: string,
+	newPassword?: string
+): Promise<{ success?: boolean; mustChangePassword?: boolean }> {
+	const body: Record<string, string> = { username, password };
+	if (newPassword) {
+		body.newPassword = newPassword;
+	}
+	return (await doPost('/local/login', body)) as {
+		success?: boolean;
+		mustChangePassword?: boolean;
+	};
+}
+
+export async function createLocalUser(opts: {
+	username: string;
+	email?: string;
+	password: string;
+	role?: RoleValue;
+}): Promise<void> {
+	await doPost('/local/users', opts);
+}
+
+export async function changeOwnPassword(
+	currentPassword: string,
+	newPassword: string
+): Promise<void> {
+	await doPut('/local/me/password', { currentPassword, newPassword });
+}
+
+export async function localLogout(): Promise<void> {
+	await doPost('/local/logout', {});
+}
+
+export async function updateLocalPassword(
+	userID: string,
+	newPassword: string,
+	mustChangePassword = false
+): Promise<void> {
+	await doPut(`/local/users/${userID}/password`, {
+		newPassword,
+		mustChangePassword
+	});
+}
+
+export async function unlockLocalUser(userID: string): Promise<void> {
+	await doPost(`/local/users/${userID}/unlock`, {});
 }
 
 function camelToSnakeCase(str: string): string {

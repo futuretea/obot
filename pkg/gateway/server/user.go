@@ -36,7 +36,8 @@ func (s *Server) getCurrentUser(apiContext api.Context) error {
 
 	name, namespace := apiContext.AuthProviderNameAndNamespace()
 
-	if name != "" && namespace != "" {
+	// Local-auth users have no ToolReference daemon — skip the provider URL lookup.
+	if name != "" && namespace != "" && name != client.LocalAuthProviderName {
 		providerURL, err := s.dispatcher.URLForAuthProvider(apiContext.Context(), apiContext.GPTClient, namespace, name)
 		if err != nil {
 			return fmt.Errorf("failed to get auth provider URL: %v", err)
@@ -63,11 +64,12 @@ func (s *Server) getUsers(apiContext api.Context) error {
 		return fmt.Errorf("failed to get users: %v", err)
 	}
 
-	// Filter out bootstrap user and collect valid users with their IDs
+	// Filter out bootstrap user and collect valid users with their IDs.
+	// Local users have no email but do have a username, so accept either.
 	validUsers := make([]types.User, 0, len(users))
 	userIDs := make([]uint, 0, len(users))
 	for _, user := range users {
-		if user.Username != "bootstrap" && user.Email != "" {
+		if user.Username != "bootstrap" {
 			validUsers = append(validUsers, user)
 			userIDs = append(userIDs, user.ID)
 		}
@@ -99,6 +101,12 @@ func (s *Server) getUsers(apiContext api.Context) error {
 		return fmt.Errorf("failed to resolve effective roles: %v", err)
 	}
 
+	// Bulk fetch disabled local credential flags (single query)
+	disabledLocalUsers, err := apiContext.GatewayClient.DisabledLocalUserIDs(apiContext.Context(), userIDs)
+	if err != nil {
+		return fmt.Errorf("failed to get disabled local user IDs: %v", err)
+	}
+
 	// Build response with computed effective roles
 	items := make([]types2.User, 0, len(validUsers))
 	for _, user := range validUsers {
@@ -107,7 +115,9 @@ func (s *Server) getUsers(apiContext api.Context) error {
 			effectiveRole = role
 		}
 
-		items = append(items, *types.ConvertUserWithEffectiveRole(&user, apiContext.GatewayClient.HasExplicitRole(user.Email) != types2.RoleUnknown, "", effectiveRole))
+		convertedUser := types.ConvertUserWithEffectiveRole(&user, apiContext.GatewayClient.HasExplicitRole(user.Email) != types2.RoleUnknown, "", effectiveRole)
+		convertedUser.LocalAuthDisabled = disabledLocalUsers[user.ID]
+		items = append(items, *convertedUser)
 	}
 
 	return apiContext.Write(types2.UserList{Items: items})
@@ -170,7 +180,8 @@ func (s *Server) getUser(apiContext api.Context) error {
 
 func (s *Server) updateUser(apiContext api.Context) error {
 	userID := apiContext.PathValue("user_id")
-	if userID == "" {
+	isSelfUpdate := userID == ""
+	if isSelfUpdate {
 		// This is a request to /api/me
 		userID = apiContext.User.GetUID()
 	}
@@ -235,7 +246,13 @@ func (s *Server) updateUser(apiContext api.Context) error {
 		}
 	}
 
-	return apiContext.Write(types.ConvertUser(existingUser, apiContext.GatewayClient.HasExplicitRole(existingUser.Email) != types2.RoleUnknown, ""))
+	// For self-updates (PATCH /api/me), include the currentAuthProvider in the response
+	// so the frontend profile store retains it (needed for local-auth logout/delete-account checks).
+	authProviderName := ""
+	if isSelfUpdate {
+		authProviderName, _ = apiContext.AuthProviderNameAndNamespace()
+	}
+	return apiContext.Write(types.ConvertUser(existingUser, apiContext.GatewayClient.HasExplicitRole(existingUser.Email) != types2.RoleUnknown, authProviderName))
 }
 
 func (s *Server) markUserInternal(apiContext api.Context) error {
@@ -330,7 +347,8 @@ func (s *Server) deleteUser(apiContext api.Context) (err error) {
 
 func (s *Server) listAuthGroups(apiContext api.Context) error {
 	name, namespace := apiContext.AuthProviderNameAndNamespace()
-	if name == "" || namespace == "" {
+	// Local-auth users have no ToolReference daemon and no auth groups.
+	if name == "" || namespace == "" || name == client.LocalAuthProviderName {
 		return apiContext.Write([]types.Group{})
 	}
 

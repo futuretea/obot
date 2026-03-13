@@ -6,12 +6,13 @@ import (
 	"strings"
 
 	"github.com/gptscript-ai/go-gptscript"
-	"github.com/obot-platform/obot/pkg/auth"
-	"github.com/obot-platform/obot/pkg/gateway/client"
-	"github.com/obot-platform/obot/pkg/gateway/server/dispatcher"
 	"gorm.io/gorm"
 	"k8s.io/apiserver/pkg/authentication/authenticator"
 	"k8s.io/apiserver/pkg/authentication/user"
+
+	"github.com/obot-platform/obot/pkg/auth"
+	"github.com/obot-platform/obot/pkg/gateway/client"
+	"github.com/obot-platform/obot/pkg/gateway/server/dispatcher"
 )
 
 type gatewayTokenReview struct {
@@ -65,11 +66,10 @@ func (g *gatewayTokenReview) AuthenticateRequest(req *http.Request) (*authentica
 func populateContext(req *http.Request, gptClient *gptscript.GPTScript, dispatcher *dispatcher.Dispatcher, namespace, name string) error {
 	providerURL, err := dispatcher.URLForAuthProvider(req.Context(), gptClient, namespace, name)
 	if err != nil {
-		return err
+		// Local-auth and other non-ToolReference providers don't have a daemon —
+		// skip gracefully instead of failing the entire authentication.
+		return nil
 	}
-
-	// Store the provider URL in context for later group fetching
 	*req = *req.WithContext(auth.ContextWithProviderURL(req.Context(), providerURL.String()))
-
 	return nil
 }

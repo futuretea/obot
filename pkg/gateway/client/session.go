@@ -21,11 +21,11 @@ func (e LogoutAllErr) Error() string {
 	return "logout all is not supported in the current configuration"
 }
 
-func (c *Client) DeleteSessionsForUser(ctx context.Context, storageClient kclient.Client, identities []types.Identity, sessionID string) error {
-	return c.deleteSessionsForUser(ctx, c.db.WithContext(ctx), storageClient, identities, sessionID)
+func (c *Client) DeleteSessionsForUser(ctx context.Context, storageClient kclient.Client, identities []types.Identity, sessionID, localSessionID string) error {
+	return c.deleteSessionsForUser(ctx, c.db.WithContext(ctx), storageClient, identities, sessionID, localSessionID)
 }
 
-func (c *Client) deleteSessionsForUser(ctx context.Context, db *gorm.DB, storageClient kclient.Client, identities []types.Identity, sessionID string) error {
+func (c *Client) deleteSessionsForUser(ctx context.Context, db *gorm.DB, storageClient kclient.Client, identities []types.Identity, sessionID, localSessionID string) error {
 	// Logout all sessions is only supported when using PostgreSQL.
 	if db.Name() != "postgres" {
 		return LogoutAllErr{}
@@ -35,6 +35,25 @@ func (c *Client) deleteSessionsForUser(ctx context.Context, db *gorm.DB, storage
 	var errs []error
 	for _, identity := range identities {
 		if identity.AuthProviderName == "" || identity.AuthProviderNamespace == "" {
+			continue
+		}
+
+		// Local-auth sessions are stored in auth_tokens (not the OAuth proxy sessions table).
+		// Delete them directly instead of trying to look up a non-existent ToolReference.
+		if identity.AuthProviderName == LocalAuthProviderName {
+			q := db.Where(
+				"user_id = ? AND auth_provider_namespace = ? AND auth_provider_name = ?",
+				identity.UserID, identity.AuthProviderNamespace, identity.AuthProviderName,
+			)
+			if localSessionID != "" {
+				// Exclude the current session's token so the user stays logged in.
+				q = q.Where("id != ?", localSessionID)
+			}
+			if err := q.Delete(&types.AuthToken{}).Error; err != nil {
+				errs = append(errs, fmt.Errorf("failed to delete local-auth sessions: %w", err))
+			} else {
+				logger.Info("deleted local-auth sessions", "userID", identity.UserID)
+			}
 			continue
 		}
 

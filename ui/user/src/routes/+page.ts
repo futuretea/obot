@@ -6,6 +6,7 @@ import { redirect } from '@sveltejs/kit';
 export const load: PageLoad = async ({ fetch, url }) => {
 	let bootstrapStatus: BootstrapStatus | undefined;
 	let authProviders: AuthProvider[] = [];
+	let localAuthEnabled = false;
 	let profile;
 
 	try {
@@ -15,6 +16,15 @@ export const load: PageLoad = async ({ fetch, url }) => {
 			AdminService.getBootstrapStatus(),
 			ChatService.listAuthProviders({ fetch })
 		]);
+		try {
+			const localStatus = await AdminService.getLocalAuthStatus();
+			localAuthEnabled = localStatus.enabled;
+		} catch (err: unknown) {
+			// Ignore 404 (feature not enabled); surface any other error
+			if (!String((err as Error)?.message).startsWith('404')) {
+				console.warn('Failed to check local auth status:', err);
+			}
+		}
 	}
 
 	const loggedIn = profile?.loaded ?? false;
@@ -30,13 +40,15 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		throw redirect(302, isAdmin ? '/admin/mcp-servers' : '/mcp-servers');
 	}
 
-	if (bootstrapStatus?.enabled && authProviders.length === 0) {
+	if (bootstrapStatus?.enabled && authProviders.length === 0 && !localAuthEnabled) {
 		// If no auth providers are configured, redirect to admin page for bootstrap login
 		throw redirect(302, '/admin');
 	}
 
 	return {
 		loggedIn,
-		authProviders
+		authProviders,
+		localAuthEnabled,
+		bootstrapEnabled: bootstrapStatus?.enabled ?? false
 	};
 };

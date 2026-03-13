@@ -129,6 +129,11 @@ var (
 		"GET /api/admin-api-keys",
 		"GET /api/admin-api-keys/{id}",
 		"DELETE /api/admin-api-keys/{id}",
+
+		// Local auth admin endpoints
+		"POST /api/local/users",
+		"PUT /api/local/users/{user_id}/password",
+		"POST /api/local/users/{user_id}/unlock",
 	}
 	staticRules = map[string][]string{
 		types.GroupAdmin: adminAndOwnerRules,
@@ -239,6 +244,11 @@ var (
 			// Integrated MCP server - authentication is handled in the HTTP handler
 			"/mcp",
 			"/mcp/",
+
+			// Local auth — status is a feature-detection probe (safe to expose unauthenticated),
+			// login is the credential submission endpoint (obviously must be unauthenticated).
+			"GET /api/local/status",
+			"POST /api/local/login",
 		},
 
 		types.GroupBasic: {
@@ -270,6 +280,12 @@ var (
 			"GET /api/mcp-audit-logs/{mcp_id}",
 			"GET /api/mcp-stats",
 			"GET /api/mcp-stats/{mcp_id}",
+
+			// Any authenticated user may change their own local password via the self-service endpoint.
+			"PUT /api/local/me/password",
+
+			// Any authenticated local user may log out.
+			"POST /api/local/logout",
 		},
 
 		types.GroupPowerUserPlus: {

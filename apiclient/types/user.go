@@ -124,6 +124,8 @@ type User struct {
 	OriginalEmail              string   `json:"originalEmail,omitempty"`
 	OriginalUsername           string   `json:"originalUsername,omitempty"`
 	AutonomousToolUseEnabled   *bool    `json:"autonomousToolUseEnabled,omitempty"`
+	// LocalAuthDisabled is true when the user's local credential has been disabled (e.g. due to inactivity).
+	LocalAuthDisabled          bool     `json:"localAuthDisabled,omitempty"`
 }
 
 type UserList List[User]

@@ -12,12 +12,42 @@ import (
 func (s *Server) logoutAll(apiContext api.Context) error {
 	sessionID := getSessionID(apiContext.Request)
 
+	// For local-auth sessions, the cookie format is "id:secret".
+	// getSessionID only handles the OAuth proxy ticket format, so we must
+	// extract the token ID separately to preserve the current session.
+	localSessionID := getLocalAuthSessionID(apiContext.Request)
+
 	identities, err := apiContext.GatewayClient.FindIdentitiesForUser(apiContext.Context(), apiContext.UserID())
 	if err != nil {
 		return err
 	}
 
-	return apiContext.GatewayClient.DeleteSessionsForUser(apiContext.Context(), apiContext.Storage, identities, sessionID)
+	// For non-local-auth identities, use the OAuth proxy session ID.
+	// For local-auth identities, use the local token ID.
+	return apiContext.GatewayClient.DeleteSessionsForUser(
+		apiContext.Context(), apiContext.Storage, identities, sessionID, localSessionID,
+	)
+}
+
+// getLocalAuthSessionID extracts the token ID portion from a local-auth cookie.
+// Local-auth cookies have the format "id:secret"; the id is returned.
+// Returns "" if the cookie is absent or not in local-auth format.
+func getLocalAuthSessionID(req *http.Request) string {
+	cookie, err := req.Cookie(proxy.ObotAccessTokenCookie)
+	if err != nil || cookie.Value == "" {
+		return ""
+	}
+	id, _, ok := strings.Cut(cookie.Value, ":")
+	if !ok {
+		return ""
+	}
+	// OAuth proxy tickets also contain ":" characters after base64 decoding,
+	// but they always start with a base64 segment followed by "|".
+	// A local-auth id is a short hex string with no "|", so guard against false positives.
+	if strings.Contains(id, "|") {
+		return ""
+	}
+	return id
 }
 
 func getSessionID(req *http.Request) string {
