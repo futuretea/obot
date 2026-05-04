@@ -86,6 +86,7 @@
 {#if text}
 	<button
 		use:tooltip={message}
+		aria-label={buttonText ? undefined : (buttonTextToShow ?? tooltipText)}
 		onclick={() => copy()}
 		{disabled}
 		onmouseenter={() => (buttonTextToShow = buttonText)}

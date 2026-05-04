@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CopyButton from '../CopyButton.svelte';
-	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, KeyRound, ShieldCheck } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { twMerge } from 'tailwind-merge';
@@ -16,29 +16,46 @@
 	let scrollContainer: HTMLUListElement;
 	let showLeftChevron = $state(false);
 	let showRightChevron = $state(false);
+	let animationTimeout: ReturnType<typeof setTimeout> | undefined;
 
-	const optionMap: Record<string, { label: string; icon: string }> = {
-		cursor: {
-			label: 'Cursor',
-			icon: '/user/images/assistant/cursor-mark.svg'
+	type ConnectOptionKey = 'oauth' | 'apikey' | 'vscode';
+	type ConnectOption = {
+		label: string;
+		description: string;
+		instruction: string;
+	};
+
+	const optionMap: Record<ConnectOptionKey, ConnectOption> = {
+		oauth: {
+			label: 'OAuth Clients',
+			description:
+				'Use this format for MCP clients that support browser-based OAuth. The client will open a browser sign-in flow when authentication is needed.',
+			instruction: 'Add this under the MCP configuration section used by your client.'
 		},
-		claude: {
-			label: 'Claude',
-			icon: '/user/images/assistant/claude-mark.svg'
+		apikey: {
+			label: 'API Key Clients',
+			description:
+				'Use this format for clients that cannot complete OAuth and need a static bearer token. Create an MCP-scoped API key, then replace YOUR_API_KEY.',
+			instruction: 'Add this under the MCP configuration section used by your client.'
 		},
 		vscode: {
-			label: 'VSCode',
-			icon: '/user/images/assistant/vscode-mark.svg'
+			label: 'VS Code',
+			description:
+				'Use this format for VS Code with an MCP-scoped API key. VS Code stores HTTP MCP servers under a top-level servers object.',
+			instruction:
+				'Add this to .vscode/mcp.json or your VS Code user MCP configuration. VS Code will prompt for the key.'
 		}
 	};
 
-	const options = Object.keys(optionMap).map((key) => ({ key, value: optionMap[key] }));
-	let selected = $state(options[0].key);
-	let previousSelected = $state(options[0].key);
+	const options = (Object.entries(optionMap) as [ConnectOptionKey, ConnectOption][]).map(
+		([key, value]) => ({ key, value })
+	);
+	let selected = $state<ConnectOptionKey>(options[0].key);
+	let previousSelected = $state<ConnectOptionKey>(options[0].key);
 	let isAnimating = $state(false);
 	let flyDirection = $state(100); // 100 for right, -100 for left
 
-	function getFlyDirection(newSelection: string, oldSelection: string): number {
+	function getFlyDirection(newSelection: ConnectOptionKey, oldSelection: ConnectOptionKey): number {
 		const newIndex = options.findIndex((option) => option.key === newSelection);
 		const oldIndex = options.findIndex((option) => option.key === oldSelection);
 
@@ -67,18 +84,87 @@
 		}
 	}
 
-	function handleSelectionChange(newSelection: string) {
+	function clearAnimationTimeout() {
+		if (animationTimeout) {
+			clearTimeout(animationTimeout);
+			animationTimeout = undefined;
+		}
+	}
+
+	function handleSelectionChange(newSelection: ConnectOptionKey) {
 		if (newSelection !== selected) {
 			previousSelected = selected;
 			selected = newSelection;
 			flyDirection = getFlyDirection(newSelection, previousSelected);
 			isAnimating = true;
 
+			clearAnimationTimeout();
+
 			// Reset animation state after animation completes
-			setTimeout(() => {
+			animationTimeout = setTimeout(() => {
 				isAnimating = false;
+				animationTimeout = undefined;
 			}, 300); // Match the CSS animation duration
 		}
+	}
+
+	function buildConfig(includeApiKey: boolean) {
+		const mcpServers = Object.fromEntries(
+			servers.map((server) => [
+				server.name,
+				includeApiKey
+					? {
+							url: server.url,
+							headers: {
+								Authorization: 'Bearer YOUR_API_KEY'
+							}
+						}
+					: {
+							url: server.url
+						}
+			])
+		);
+
+		return JSON.stringify({ mcpServers }, null, '\t');
+	}
+
+	function buildVSCodeConfig() {
+		const vscodeServers = Object.fromEntries(
+			servers.map((server) => [
+				server.name,
+				{
+					type: 'http',
+					url: server.url,
+					headers: {
+						Authorization: 'Bearer ${input:obot-api-key}'
+					}
+				}
+			])
+		);
+
+		return JSON.stringify(
+			{
+				inputs: [
+					{
+						type: 'promptString',
+						id: 'obot-api-key',
+						description: 'Obot API Key',
+						password: true
+					}
+				],
+				servers: vscodeServers
+			},
+			null,
+			'\t'
+		);
+	}
+
+	function buildCodeSnippet(option: ConnectOptionKey) {
+		if (option === 'vscode') {
+			return buildVSCodeConfig();
+		}
+
+		return buildConfig(option === 'apikey');
 	}
 
 	onMount(() => {
@@ -87,6 +173,7 @@
 		window.addEventListener('resize', checkScrollPosition);
 
 		return () => {
+			clearAnimationTimeout();
 			scrollContainer?.removeEventListener('scroll', checkScrollPosition);
 			window.removeEventListener('resize', checkScrollPosition);
 		};
@@ -96,7 +183,7 @@
 <div class="flex w-full items-center gap-2">
 	<div class="size-4">
 		{#if showLeftChevron}
-			<button onclick={scrollLeft}>
+			<button type="button" aria-label="Scroll connection options left" onclick={scrollLeft}>
 				<ChevronLeft class="size-4" />
 			</button>
 		{/if}
@@ -110,6 +197,8 @@
 		{#each options as option (option.key)}
 			<li class="w-49 flex-shrink-0">
 				<button
+					type="button"
+					aria-pressed={selected === option.key}
 					class={twMerge(
 						'dark:hover:bg-surface3 relative flex w-full items-center justify-center gap-1.5 rounded-t-xs border-b-2 border-transparent py-2 text-[13px] font-light transition-all duration-200 hover:bg-gray-50',
 						selected === option.key &&
@@ -119,11 +208,17 @@
 						handleSelectionChange(option.key);
 					}}
 				>
-					<img
-						src={option.value.icon}
-						alt={option.value.label}
-						class="size-5 rounded-sm p-0.5 dark:bg-gray-600"
-					/>
+					{#if option.key === 'oauth'}
+						<ShieldCheck class="text-on-surface1 size-5 rounded-sm p-0.5" />
+					{:else if option.key === 'apikey'}
+						<KeyRound class="text-on-surface1 size-5 rounded-sm p-0.5" />
+					{:else}
+						<img
+							src="/user/images/assistant/vscode-mark.svg"
+							alt=""
+							class="size-5 rounded-sm p-0.5 dark:bg-gray-600"
+						/>
+					{/if}
 					{option.value.label}
 
 					{#if selected === option.key}
@@ -145,7 +240,7 @@
 
 	<div class="size-4">
 		{#if showRightChevron}
-			<button onclick={scrollRight}>
+			<button type="button" aria-label="Scroll connection options right" onclick={scrollRight}>
 				<ChevronRight class="size-4" />
 			</button>
 		{/if}
@@ -161,71 +256,11 @@
 					out:fade={{ duration: 150 }}
 					class="w-1/2 p-4"
 				>
-					{#if option.key === 'cursor'}
-						<p>
-							To add this MCP server to Cursor, update your <span class="snippet"
-								>~/.cursor/mcp.json</span
-							>
-						</p>
-						{@render codeSnippet(`
-	{
-		"mcpServers": {
-${servers
-	.map(
-		(server) => `			"${server.name}": {
-				"url": "${server.url}"
-			}`
-	)
-	.join(',\n')}
-		}
-	}
-
-`)}
-					{:else if option.key === 'claude'}
-						<p>
-							To add this MCP server to Claude Desktop, update your <span class="snippet"
-								>claude_desktop_config.json</span
-							>
-						</p>
-						{@render codeSnippet(`
-	{
-		"mcpServers": {
-${servers
-	.map(
-		(server) => `			"${server.name}": {
-				"command": "npx",
-				"args": [
-					"mcp-remote@latest",
-					"${server.url}"
-				]
-			}`
-	)
-	.join(',\n')}
-		}
-	}
-
-`)}
-					{:else if option.key === 'vscode'}
-						<p>
-							To add this MCP server to VSCode, update your <span class="snippet"
-								>.vscode/mcp.json</span
-							>
-						</p>
-						{@render codeSnippet(`
-	{
-		"servers": {
-${servers
-	.map(
-		(server) => `			"${server.name}": {
-				"url": "${server.url}"
-			}`
-	)
-	.join(',\n')}
-		}
-	}
-
-`)}
-					{/if}
+					<p>{option.value.description}</p>
+					<p class="text-on-surface1 mt-2 text-sm font-light">
+						{option.value.instruction}
+					</p>
+					{@render codeSnippet(buildCodeSnippet(option.key))}
 				</div>
 			{/if}
 		{/each}
@@ -238,6 +273,7 @@ ${servers
 			<CopyButton
 				text={code}
 				showTextLeft
+				tooltipText="Copy MCP configuration"
 				class="text-white"
 				classes={{ button: 'flex gap-1 flex-shrink-0 items-center text-white' }}
 			/>
@@ -247,17 +283,6 @@ ${servers
 {/snippet}
 
 <style lang="postcss">
-	.snippet {
-		background-color: var(--surface1);
-		border-radius: 0.375rem;
-		padding: 0.125rem 0.5rem;
-		font-size: 13px;
-		font-weight: 300;
-
-		.dark & {
-			background-color: var(--surface3);
-		}
-	}
 	@keyframes slideOut {
 		from {
 			transform: scaleX(1);
