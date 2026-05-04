@@ -234,5 +234,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | Admin - Tasks</title>
+	<title>Admin - Tasks</title>
 </svelte:head>

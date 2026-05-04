@@ -38,5 +38,5 @@
 {/if}
 
 <svelte:head>
-	<title>Obot | {session?.title || 'Untitled'}</title>
+	<title>{session?.title || 'Untitled'}</title>
 </svelte:head>

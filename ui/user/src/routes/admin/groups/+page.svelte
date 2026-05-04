@@ -358,7 +358,7 @@
 />
 
 <svelte:head>
-	<title>Obot | Groups</title>
+	<title>Groups</title>
 </svelte:head>
 
 <style>

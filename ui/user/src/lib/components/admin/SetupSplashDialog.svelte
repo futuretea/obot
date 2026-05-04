@@ -58,12 +58,12 @@
 	<div class="flex w-full items-center justify-center">
 		<Logo class="size-18" />
 	</div>
-	<h2 class="mb-8 text-center text-2xl font-semibold">Welcome to Obot!</h2>
+	<h2 class="mb-8 text-center text-2xl font-semibold">Welcome!</h2>
 
 	<div class="w-fit self-center">
 		{#if !isAuthProviderConfigured || !storeData.modelProviderConfigured}
 			{#if isBootstrapUser}
-				<p>Before using Obot, you'll need to:</p>
+				<p>Before continuing, you'll need to:</p>
 			{:else}
 				<p class="text-center">
 					You're almost there! You just need to configure your model provider.

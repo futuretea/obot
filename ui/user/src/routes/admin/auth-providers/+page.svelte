@@ -349,5 +349,5 @@
 </ResponsiveDialog>
 
 <svelte:head>
-	<title>Obot | Auth Providers</title>
+	<title>Auth Providers</title>
 </svelte:head>

@@ -464,5 +464,5 @@
 </div>
 
 <svelte:head>
-	<title>Obot | Files</title>
+	<title>Files</title>
 </svelte:head>

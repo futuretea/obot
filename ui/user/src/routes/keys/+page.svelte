@@ -193,5 +193,5 @@
 <ApiKeyRevealDialog keyValue={createdKeyValue} onClose={() => (createdKeyValue = undefined)} />
 
 <svelte:head>
-	<title>Obot | My API Keys</title>
+	<title>My API Keys</title>
 </svelte:head>

@@ -166,7 +166,7 @@
 								{:else if property === 'status'}
 									<span
 										class={d.status === 'Disabled'
-											? 'text-on-surface1 font-light italic text-xs'
+											? 'text-on-surface1 text-xs font-light italic'
 											: 'pill-primary bg-primary'}>{d.status}</span
 									>
 								{:else}
@@ -243,7 +243,7 @@
 />
 
 <ResponsiveDialog
-	class="bg-surface1 dark:bg-background md:max-w-dvw md:w-6xl"
+	class="bg-surface1 dark:bg-background md:w-6xl md:max-w-dvw"
 	title="Select Built-in Filter"
 	bind:this={builtInFiltersDialog}
 >
@@ -258,5 +258,5 @@
 </ResponsiveDialog>
 
 <svelte:head>
-	<title>Obot | Filters</title>
+	<title>Filters</title>
 </svelte:head>

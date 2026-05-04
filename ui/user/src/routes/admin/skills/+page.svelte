@@ -541,5 +541,5 @@
 </dialog>
 
 <svelte:head>
-	<title>Obot | Admin - Skills</title>
+	<title>Admin - Skills</title>
 </svelte:head>

@@ -19,9 +19,9 @@
 	const hasExistingConfigured = $derived(
 		Boolean(
 			catalogEntry &&
-			mcpServersAndEntries.current.userConfiguredServers.some(
-				(server) => server.catalogEntryID === catalogEntry?.id
-			)
+				mcpServersAndEntries.current.userConfiguredServers.some(
+					(server) => server.catalogEntryID === catalogEntry?.id
+				)
 		)
 	);
 	const configuredServers = $derived(
@@ -82,5 +82,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | {title}</title>
+	<title>{title}</title>
 </svelte:head>

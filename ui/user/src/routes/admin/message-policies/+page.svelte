@@ -161,5 +161,5 @@
 />
 
 <svelte:head>
-	<title>Obot | Message Policies</title>
+	<title>Message Policies</title>
 </svelte:head>

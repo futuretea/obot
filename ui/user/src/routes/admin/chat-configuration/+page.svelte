@@ -314,5 +314,5 @@
 </ResponsiveDialog>
 
 <svelte:head>
-	<title>Obot | Chat Configuration</title>
+	<title>Chat Configuration</title>
 </svelte:head>

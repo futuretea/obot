@@ -259,7 +259,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Message Policy Violations</title>
+	<title>Message Policy Violations</title>
 </svelte:head>
 
 <Layout

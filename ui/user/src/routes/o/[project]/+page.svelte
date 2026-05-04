@@ -2,6 +2,7 @@
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import Obot from '$lib/components/Obot.svelte';
+	import { DEFAULT_PROJECT_NAME } from '$lib/constants';
 	import { getLayout, initLayout } from '$lib/context/chatLayout.svelte';
 	import { initHelperMode } from '$lib/context/helperMode.svelte.js';
 	import { initProjectMCPs } from '$lib/context/projectMcps.svelte.js';
@@ -18,7 +19,7 @@
 	let currentThreadID = $state<string | undefined>(
 		(browser && new URL(window.location.href).searchParams.get('thread')) || undefined
 	);
-	let title = $derived(project?.name || 'Obot');
+	let title = $derived(project?.name || DEFAULT_PROJECT_NAME);
 
 	untrack(() => {
 		initToolReferences(data.toolReferences ?? []);

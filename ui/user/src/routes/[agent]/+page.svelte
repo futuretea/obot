@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { initLayout } from '$lib/context/chatLayout.svelte';
+	import { DEFAULT_PROJECT_NAME } from '$lib/constants';
 	import { profile } from '$lib/stores';
 	import { goto } from '$lib/url';
 	import { type PageProps } from './$types';
 
 	let { data }: PageProps = $props();
-	let title = $derived(data.project?.name || 'Obot');
+	let title = $derived(data.project?.name || DEFAULT_PROJECT_NAME);
 
 	initLayout({
 		items: []

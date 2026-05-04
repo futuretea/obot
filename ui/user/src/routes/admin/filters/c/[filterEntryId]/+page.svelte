@@ -33,5 +33,5 @@
 <FilterView {title} {filter} entry={data.entry} />
 
 <svelte:head>
-	<title>Obot | {title}</title>
+	<title>{title}</title>
 </svelte:head>

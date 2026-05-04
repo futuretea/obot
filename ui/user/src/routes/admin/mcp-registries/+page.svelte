@@ -248,5 +248,5 @@
 />
 
 <svelte:head>
-	<title>Obot | MCP Registries</title>
+	<title>MCP Registries</title>
 </svelte:head>

@@ -135,5 +135,5 @@
 </div>
 
 <svelte:head>
-	<title>Obot</title>
+	<title>My Project</title>
 </svelte:head>

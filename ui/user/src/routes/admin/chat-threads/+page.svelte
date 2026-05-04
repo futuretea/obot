@@ -227,5 +227,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | Admin - Chat Threads</title>
+	<title>Admin - Chat Threads</title>
 </svelte:head>

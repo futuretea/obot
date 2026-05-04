@@ -256,7 +256,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Scheduler</title>
+	<title>Scheduler</title>
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 md:px-8" bind:this={tasksContainer}>

@@ -170,5 +170,5 @@
 />
 
 <svelte:head>
-	<title>Obot | Model Access Policies</title>
+	<title>Model Access Policies</title>
 </svelte:head>

@@ -216,5 +216,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | What would you like to work on?</title>
+	<title>What would you like to work on?</title>
 </svelte:head>

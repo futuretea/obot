@@ -724,5 +724,5 @@
 </Confirm>
 
 <svelte:head>
-	<title>Obot | Workflows</title>
+	<title>Workflows</title>
 </svelte:head>
