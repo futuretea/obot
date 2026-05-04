@@ -29,7 +29,7 @@
 	import { goto } from '$lib/url';
 	import ResponsiveDialog from './ResponsiveDialog.svelte';
 	import McpPrompts from './mcp/McpPrompts.svelte';
-	import { Bug, LoaderCircle, X } from 'lucide-svelte';
+	import { LoaderCircle, X } from 'lucide-svelte';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import type { UIEventHandler } from 'svelte/elements';
 	import { fade } from 'svelte/transition';
@@ -669,25 +669,6 @@
 						/>
 					{/snippet}
 				</Input>
-				{#if !centerInput}
-					<div
-						class="mt-3 grid grid-cols-[auto_auto] items-center justify-center gap-x-2 px-5 text-xs font-light"
-					>
-						<span class="text-on-surface1">Obot isn't perfect. Double check its work.</span>
-						<a
-							href="https://github.com/obot-platform/obot/issues/new?template=bug_report.md"
-							target="_blank"
-							rel="noopener noreferrer"
-							class="whitespace-nowrap text-blue-500/50 hover:underline"
-						>
-							{#if responsive.isMobile}
-								<Bug class="h-4 w-4" />
-							{:else}
-								Report issues here
-							{/if}
-						</a>
-					</div>
-				{/if}
 			</div>
 		</div>
 	</div>
