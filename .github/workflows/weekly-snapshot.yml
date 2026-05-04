@@ -7,8 +7,6 @@ permissions:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 21 * * 5"
 
 jobs:
   copy-tag:
@@ -27,8 +25,18 @@ jobs:
 
       - name: Copy to oss snapshot tag
         run: |
-          crane tag ghcr.io/${{ github.repository }}:main main-$(date +%Y%m%d)
+          if crane manifest ghcr.io/${{ github.repository }}:main > /dev/null 2>&1; then
+            crane tag ghcr.io/${{ github.repository }}:main main-$(date +%Y%m%d)
+          fi
+          if crane manifest ghcr.io/${{ github.repository }}:master > /dev/null 2>&1; then
+            crane tag ghcr.io/${{ github.repository }}:master master-$(date +%Y%m%d)
+          fi
 
       - name: Copy to enterprise snapshot tag
         run: |
-          crane tag ghcr.io/${{ github.repository }}-enterprise:main main-$(date +%Y%m%d)
+          if crane manifest ghcr.io/${{ github.repository }}-enterprise:main > /dev/null 2>&1; then
+            crane tag ghcr.io/${{ github.repository }}-enterprise:main main-$(date +%Y%m%d)
+          fi
+          if crane manifest ghcr.io/${{ github.repository }}-enterprise:master > /dev/null 2>&1; then
+            crane tag ghcr.io/${{ github.repository }}-enterprise:master master-$(date +%Y%m%d)
+          fi

@@ -1,3 +1,16 @@
 **/node_modules/
 .local/
 obot-tools/
+
+bin/
+obot*.db*
+ui/user/.svelte-kit/
+ui/user/build/
+ui/user/build-node/
+docs/.docusaurus/
+docs/build/
+
+packaging/
+
+third-party-projects/
+.qoder/

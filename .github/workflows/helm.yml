@@ -1,16 +1,7 @@
 name: Helm Chart
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - chart/**
-  pull_request:
-    branches:
-      - main
-    paths:
-      - chart/**
+  workflow_dispatch:
 
 jobs:
   lint:

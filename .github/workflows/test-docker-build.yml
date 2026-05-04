@@ -1,11 +1,17 @@
 name: Test Docker Build
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - docs/**
-      - chart/**
+  workflow_dispatch:
+    inputs:
+      base_image:
+        description: Base builder image to use. Empty uses ghcr.io/<repo>/base:latest.
+        required: false
+      runtime_base_image:
+        description: Runtime base image to use. Empty uses ghcr.io/<repo owner>/obot-runtime-base:latest. Use runtime-base to build it from this Dockerfile.
+        required: false
+
+env:
+  BASE_IMAGE: ghcr.io/${{ github.repository }}/base:latest
+  RUNTIME_BASE_IMAGE: ghcr.io/${{ github.repository_owner }}/obot-runtime-base:latest
 
 jobs:
   build:
@@ -22,6 +28,7 @@ jobs:
         with:
           project: bbqjs4tj1g
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           build-args: |
-            BASE_IMAGE=ghcr.io/obot-platform/obot/base:latest
+            BASE_IMAGE=${{ inputs.base_image || env.BASE_IMAGE }}
+            RUNTIME_BASE_IMAGE=${{ inputs.runtime_base_image || env.RUNTIME_BASE_IMAGE }}

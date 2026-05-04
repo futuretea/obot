@@ -2,20 +2,35 @@
 
 default: build
 
+DOCKER_IMAGE ?= obot:local
+DOCKER_REGISTRY ?= ghcr.io
+DOCKER_NAMESPACE ?= futuretea
+DOCKER_IMAGE_NAME ?= obot
+DOCKER_BASE_IMAGE ?= $(DOCKER_REGISTRY)/$(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME)/base:latest
+DOCKER_RUNTIME_BASE_IMAGE ?= $(DOCKER_REGISTRY)/$(DOCKER_NAMESPACE)/$(DOCKER_IMAGE_NAME)-runtime-base:latest
+DOCKER_LOCAL_RUNTIME_BASE_IMAGE ?= obot/runtime-base:local
+DOCKER_PLATFORM ?=
+DOCKER_BUILD := docker build$(if $(DOCKER_PLATFORM), --platform $(DOCKER_PLATFORM),)
+
 # All target
 all: ui
 	$(MAKE) build
 
-ui: ui-user ui-user-node
-
-ui-user:
+ui: ui-user-install
 	cd ui/user && \
-	pnpm install && \
+	pnpm run build && \
+	BUILD=node pnpm run build
+
+ui-user-install:
+	cd ui/user && \
+	pnpm install
+
+ui-user: ui-user-install
+	cd ui/user && \
 	pnpm run build
 
-ui-user-node:
+ui-user-node: ui-user-install
 	cd ui/user && \
-	pnpm install && \
 	BUILD=node pnpm run build
 
 clean:
@@ -31,8 +46,33 @@ serve-docs:
 
 GIT_TAG := $(shell git describe --tags --exact-match 2>/dev/null | xargs -I {} echo -X 'github.com/obot-platform/obot/pkg/version.Tag={}')
 GO_LD_FLAGS := "-s -w $(GIT_TAG)"
+GO_BUILD_MOD_FLAG :=
+ifneq ($(wildcard vendor/modules.txt),)
+GO_BUILD_MOD_FLAG := -mod=vendor
+endif
 build:
-	go build -ldflags=$(GO_LD_FLAGS) -o bin/obot .
+	go build $(GO_BUILD_MOD_FLAG) -ldflags=$(GO_LD_FLAGS) -o bin/obot .
+
+docker-build:
+	$(DOCKER_BUILD) \
+		--build-arg BASE_IMAGE=$(DOCKER_BASE_IMAGE) \
+		--build-arg RUNTIME_BASE_IMAGE=$(DOCKER_RUNTIME_BASE_IMAGE) \
+		-t $(DOCKER_IMAGE) .
+
+docker-build-fast:
+	$(DOCKER_BUILD) \
+		--build-arg BASE_IMAGE=$(DOCKER_BASE_IMAGE) \
+		--build-arg RUNTIME_BASE_IMAGE=$(DOCKER_RUNTIME_BASE_IMAGE) \
+		-t $(DOCKER_IMAGE) .
+
+docker-build-full:
+	$(DOCKER_BUILD) --build-arg RUNTIME_BASE_IMAGE=runtime-base -t $(DOCKER_IMAGE) .
+
+docker-build-runtime-base:
+	$(DOCKER_BUILD) --target runtime-base -t $(DOCKER_LOCAL_RUNTIME_BASE_IMAGE) .
+
+docker-build-local-runtime-base: docker-build-runtime-base
+	$(MAKE) docker-build DOCKER_RUNTIME_BASE_IMAGE=$(DOCKER_LOCAL_RUNTIME_BASE_IMAGE) DOCKER_PLATFORM=$(DOCKER_PLATFORM)
 
 dev:
 	./tools/dev.sh $(ARGS)
@@ -102,4 +142,4 @@ remove-docs-version:
 	jq 'del(.[] | select(. == "${version}"))' ./docs/versions.json > tmp.json && mv tmp.json ./docs/versions.json
 	grep -v '"${version}": {label: "${version}", banner: "none", path: "${version}"},' ./docs/docusaurus.config.ts  > tmp.config.ts && mv tmp.config.ts ./docs/docusaurus.config.ts
 
-.PHONY: ui ui-user build all clean dev dev-open otel-jaeger-up otel-jaeger-down otel-jaeger-logs lint lint-admin lint-api no-changes fmt tidy gen-docs-release deprecate-docs-release remove-docs-version
+.PHONY: ui ui-user-install ui-user ui-user-node build docker-build docker-build-fast docker-build-full docker-build-runtime-base docker-build-local-runtime-base all clean dev dev-open otel-jaeger-up otel-jaeger-down otel-jaeger-logs lint lint-admin lint-api no-changes fmt tidy gen-docs-release deprecate-docs-release remove-docs-version

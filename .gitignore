@@ -64,3 +64,7 @@ thoughts/
 thoughts
 
 .opencode/
+
+third-party-projects/
+.tool-versions
+.qoder/

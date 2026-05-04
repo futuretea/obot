@@ -1,12 +1,15 @@
-ARG TOOLS_IMAGE=ghcr.io/obot-platform/tools:latest
-ARG PROVIDER_IMAGE=ghcr.io/obot-platform/tools/providers:latest
+ARG TOOLS_IMAGE=ghcr.io/futuretea/obot-tools:latest
+ARG PROVIDER_IMAGE=ghcr.io/futuretea/obot-tools/providers:latest
 ARG ENTERPRISE_IMAGE=cgr.dev/chainguard/wolfi-base:latest
 ARG BASE_IMAGE=cgr.dev/chainguard/wolfi-base
+ARG RUNTIME_BASE_IMAGE=ghcr.io/futuretea/obot-runtime-base:latest
+ARG PGVECTOR_VERSION=v0.8.1
 
 FROM ${BASE_IMAGE} AS base
 ARG BASE_IMAGE
-RUN if [ "${BASE_IMAGE}" = "cgr.dev/chainguard/wolfi-base" ]; then \
-  apk add --no-cache gcc=14.2.0-r13 go make git nodejs npm pnpm; \
+RUN --mount=type=cache,id=apk-base,target=/var/cache/apk \
+  if [ "${BASE_IMAGE}" = "cgr.dev/chainguard/wolfi-base" ]; then \
+  apk add --update-cache gcc=14.2.0-r13 go make git nodejs npm pnpm; \
   fi
 
 FROM base AS bin
@@ -28,13 +31,16 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/bin
 WORKDIR /home/postgres
 
-RUN apk add --no-cache postgresql-17 postgresql-17-oci-entrypoint postgresql-17-client postgresql-17-contrib gosu ecpg-17 glibc-locale-en glibc-locale-posix posix-libc-utils
+RUN --mount=type=cache,id=apk-final-base,target=/var/cache/apk \
+  apk add --update-cache postgresql-17 postgresql-17-oci-entrypoint postgresql-17-client postgresql-17-contrib gosu ecpg-17 glibc-locale-en glibc-locale-posix posix-libc-utils
 
 ENTRYPOINT [ "/usr/bin/docker-entrypoint.sh", "postgres" ]
 
 FROM final-base AS build-pgvector
-RUN apk add --no-cache build-base git postgresql-17-dev clang-19
-RUN git clone --branch v0.8.1 https://github.com/pgvector/pgvector.git && \
+ARG PGVECTOR_VERSION
+RUN --mount=type=cache,id=apk-pgvector-build,target=/var/cache/apk \
+  apk add --update-cache build-base git postgresql-17-dev clang-19
+RUN git clone --depth 1 --branch "${PGVECTOR_VERSION}" https://github.com/pgvector/pgvector.git && \
   cd pgvector && \
   make clean && \
   make OPTFLAGS="" && \
@@ -42,21 +48,22 @@ RUN git clone --branch v0.8.1 https://github.com/pgvector/pgvector.git && \
   cd .. && \
   rm -rf pgvector
 
+FROM final-base AS runtime-base
+COPY --from=build-pgvector /usr/lib/postgresql17/vector.so /usr/lib/postgresql17/
+COPY --from=build-pgvector /usr/share/postgresql17/extension/vector* /usr/share/postgresql17/extension/
+RUN --mount=type=cache,id=apk-runtime-base,target=/var/cache/apk \
+  apk add --update-cache git python-3.13 py3.13-pip npm nodejs bash tini procps libreoffice docker perl-utils sqlite sqlite-dev curl kubectl jq
+
 FROM ${TOOLS_IMAGE} AS tools
 FROM ${PROVIDER_IMAGE} AS provider
 FROM ${ENTERPRISE_IMAGE} AS enterprise-tools
 RUN mkdir -p /obot-tools
 
-FROM final-base AS final
+FROM ${RUNTIME_BASE_IMAGE} AS final
 ENV POSTGRES_USER=obot
 ENV POSTGRES_PASSWORD=obot
 ENV POSTGRES_DB=obot
 ENV PGDATA=/data/postgresql
-
-COPY --from=build-pgvector /usr/lib/postgresql17/vector.so /usr/lib/postgresql17/
-COPY --from=build-pgvector /usr/share/postgresql17/extension/vector* /usr/share/postgresql17/extension/
-
-RUN apk add --no-cache git python-3.13 py3.13-pip npm nodejs bash tini procps libreoffice docker perl-utils sqlite sqlite-dev curl kubectl jq
 
 ENV OBOT_SERVER_DEFAULT_MCPCATALOG_PATH=https://github.com/obot-platform/mcp-catalog
 ENV OBOT_SERVER_DEFAULT_SYSTEM_MCPCATALOG_PATH=https://github.com/obot-platform/system-mcp-catalog
