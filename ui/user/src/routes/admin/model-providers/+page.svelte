@@ -49,7 +49,8 @@
 		CommonModelProviderIds.AMAZON_BEDROCK_API_KEY,
 		CommonModelProviderIds.AZURE,
 		CommonModelProviderIds.AZURE_ENTRA,
-		CommonModelProviderIds.OLLAMA
+		CommonModelProviderIds.OLLAMA,
+		CommonModelProviderIds.GENERIC_OPENAI
 	];
 	const defaultModelAliases = $derived(defaultModelAliasesStore.current);
 
@@ -184,7 +185,11 @@
 						adminConfigStore.updateModelProviders(modelProviders);
 					}}
 					readonly={isAdminReadonly}
-					isComingSoon={isLegacyDisabled && !nanobotIntegratedModels.includes(modelProvider.id)}
+					isComingSoon={
+						isLegacyDisabled &&
+						!modelProvider.dialect &&
+						!nanobotIntegratedModels.includes(modelProvider.id)
+					}
 				>
 					{#snippet configuredActions(provider)}
 						<ListModels {provider} readonly={isAdminReadonly} />

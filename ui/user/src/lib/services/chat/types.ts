@@ -711,6 +711,7 @@ export interface ModelProvider {
 	description?: string;
 	icon?: string;
 	iconDark?: string;
+	dialect?: string;
 	configured: boolean;
 	modelsBackPopulated?: boolean;
 	requiredConfigurationParameters?: {
