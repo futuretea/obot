@@ -1,0 +1,4 @@
+# Placeholder only.
+#
+# Put the real PEM certificate at enterprise-ca.crt or pass --ca-cert PATH.
+# enterprise-ca.crt is ignored by git and must not be committed.

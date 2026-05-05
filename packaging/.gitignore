@@ -1,0 +1,3 @@
+runbooks/
+# Ignore local enterprise CA files
+enterprise-ca.crt
