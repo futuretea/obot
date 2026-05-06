@@ -114,7 +114,7 @@ type Config struct {
 	RetentionPolicyHours        int      `usage:"The retention policy for the system. Set to 0 to disable retention." default:"2160"` // default 90 days
 	DefaultMCPCatalogPath       string   `usage:"The path to the default MCP catalog (accessible to all users)" default:""`
 	DefaultSystemMCPCatalogPath string   `usage:"The path to the default System MCP catalog" default:""`
-	DefaultSkillRepoURL         string   `usage:"The default skill repository URL (must be HTTPS GitHub URL)" default:"https://github.com/obot-platform/skills" env:"OBOT_DEFAULT_SKILL_REPO_URL"`
+	DefaultSkillRepoURL         string   `usage:"The default skill repository URL (must be an HTTPS GitHub URL or an HTTPS Git URL ending in .git)" default:"https://github.com/obot-platform/skills" env:"OBOT_DEFAULT_SKILL_REPO_URL"`
 	DefaultSkillRepoRef         string   `usage:"The ref (branch/tag) for the default skill repository" default:"" env:"OBOT_DEFAULT_SKILL_REPO_REF"`
 	DisableUpdateCheck          bool     `usage:"Disable Obot server update checks"`
 	EnableAutonomousToolUse     bool     `usage:"Allow all chat sessions to use tools without requesting user approval" default:"false" env:"OBOT_SERVER_ENABLE_AUTONOMOUS_TOOL_USE"`

@@ -84,7 +84,12 @@ func newGitHubRepositoryFetcher() *githubRepositoryFetcher {
 }
 
 func ValidateRepositoryURL(repoURL string) error {
-	_, err := parseGitHubRepository(repoURL)
+	if isGitHubRepositoryURL(repoURL) {
+		_, err := parseGitHubRepository(repoURL)
+		return err
+	}
+
+	_, err := parseGitRepositoryURL(repoURL)
 	return err
 }
 
@@ -132,18 +137,12 @@ func (f *githubRepositoryFetcher) MaterializeCommit(ctx context.Context, repoURL
 }
 
 func parseGitHubRepository(repoURL string) (githubRepository, error) {
-	u, err := url.Parse(repoURL)
+	u, err := parseHTTPSRepositoryURL(repoURL)
 	if err != nil {
-		return githubRepository{}, fmt.Errorf("invalid repository URL: %w", err)
-	}
-	if u.Scheme != "https" {
-		return githubRepository{}, fmt.Errorf("repository URL must use HTTPS")
+		return githubRepository{}, err
 	}
 	if u.Host != "github.com" {
 		return githubRepository{}, fmt.Errorf("repository host must be github.com")
-	}
-	if u.User != nil {
-		return githubRepository{}, fmt.Errorf("repository URL must not include credentials")
 	}
 
 	trimmed := strings.Trim(strings.TrimSuffix(u.Path, ".git"), "/")

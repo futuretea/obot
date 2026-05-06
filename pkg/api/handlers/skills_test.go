@@ -39,6 +39,15 @@ func TestReadAndValidateSkillRepositoryManifest(t *testing.T) {
 	assert.Equal(t, "https://github.com/example/repo", manifest.RepoURL)
 	assert.Equal(t, "main", manifest.Ref)
 
+	req = httptest.NewRequest(http.MethodPost, "/api/skill-repositories", strings.NewReader(`{"displayName":"Repo","repoURL":"https://git.example.com/acme/skills.git"}`))
+	rec = httptest.NewRecorder()
+	manifest, err = readAndValidateSkillRepositoryManifest(api.Context{
+		ResponseWriter: rec,
+		Request:        req,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, "https://git.example.com/acme/skills.git", manifest.RepoURL)
+
 	req = httptest.NewRequest(http.MethodPost, "/api/skill-repositories", strings.NewReader(`{"displayName":"Repo","repoURL":"http://github.com/example/repo"}`))
 	rec = httptest.NewRecorder()
 	_, err = readAndValidateSkillRepositoryManifest(api.Context{

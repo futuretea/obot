@@ -30,7 +30,7 @@ type Handler struct {
 
 func New() *Handler {
 	return &Handler{
-		fetcher: newGitHubRepositoryFetcher(),
+		fetcher: newRepositoryFetcher(),
 		now:     time.Now,
 	}
 }
@@ -253,7 +253,7 @@ func materializeSkillSource(ctx context.Context, fetcher repositoryFetcher, skil
 }
 
 func MaterializeSkillSource(ctx context.Context, skill *v1.Skill) (func(), string, error) {
-	fetched, skillDir, err := materializeSkillSource(ctx, newGitHubRepositoryFetcher(), skill)
+	fetched, skillDir, err := materializeSkillSource(ctx, newRepositoryFetcher(), skill)
 	if err != nil {
 		return nil, "", err
 	}

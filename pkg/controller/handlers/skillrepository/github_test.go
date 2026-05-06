@@ -112,7 +112,9 @@ func TestParseGitHubRepository(t *testing.T) {
 
 func TestValidateRepositoryURL(t *testing.T) {
 	assert.NoError(t, ValidateRepositoryURL("https://github.com/owner/repo"))
+	assert.NoError(t, ValidateRepositoryURL("https://git.example.com/acme/skills.git"))
 	assert.Error(t, ValidateRepositoryURL("http://github.com/owner/repo"))
+	assert.Error(t, ValidateRepositoryURL("https://git.example.com/acme/skills"))
 }
 
 // zipEntry describes a single entry in a test ZIP archive.
