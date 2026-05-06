@@ -16,6 +16,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/cache"
+	githttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	gitfs "github.com/go-git/go-git/v5/storage/filesystem"
 )
 
@@ -27,6 +28,7 @@ type repositoryFetcherSelector struct {
 }
 
 type gitRepositoryFetcher struct {
+	token             string
 	maxRepoSizeMB     int
 	maxExtractedFiles int
 }
@@ -51,6 +53,7 @@ func newRepositoryFetcher() repositoryFetcher {
 
 func newGitRepositoryFetcher() *gitRepositoryFetcher {
 	return &gitRepositoryFetcher{
+		token:             os.Getenv("GITHUB_AUTH_TOKEN"),
 		maxRepoSizeMB:     maxRepoSizeMB,
 		maxExtractedFiles: maxExtractedFiles,
 	}
@@ -119,9 +122,7 @@ func (f *gitRepositoryFetcher) fetchCloneURL(ctx context.Context, cloneURL, ref 
 	storer := gitfs.NewStorage(chroot.New(limitedFS, "git"), cache.NewObjectLRUDefault())
 	worktreeFS := chroot.New(limitedFS, "repo")
 
-	repository, err := git.CloneContext(ctx, storer, worktreeFS, &git.CloneOptions{
-		URL: cloneURL,
-	})
+	repository, err := git.CloneContext(ctx, storer, worktreeFS, f.cloneOptions(cloneURL))
 	if err != nil {
 		cleanup()
 		if errors.Is(err, errGitRepoTooLarge) {
@@ -146,6 +147,17 @@ func (f *gitRepositoryFetcher) fetchCloneURL(ctx context.Context, cloneURL, ref 
 		CommitSHA: commitSHA,
 		cleanup:   cleanup,
 	}, nil
+}
+
+func (f *gitRepositoryFetcher) cloneOptions(cloneURL string) *git.CloneOptions {
+	options := &git.CloneOptions{URL: cloneURL}
+	if f.token != "" {
+		options.Auth = &githttp.BasicAuth{
+			Username: "x-access-token",
+			Password: f.token,
+		}
+	}
+	return options
 }
 
 func checkoutAndResolveGitRef(repository *git.Repository, ref string) (string, error) {
