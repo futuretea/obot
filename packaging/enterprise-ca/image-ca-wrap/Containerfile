@@ -1,4 +1,5 @@
-ARG BASE_IMAGE
+# Default only satisfies Docker's static FROM check; wrapper scripts override it.
+ARG BASE_IMAGE=scratch
 FROM ${BASE_IMAGE} AS ca
 
 ARG FINAL_USER=root
