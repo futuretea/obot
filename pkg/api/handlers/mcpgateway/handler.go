@@ -1,12 +1,15 @@
 package mcpgateway
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"maps"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/gptscript-ai/go-gptscript"
 	"github.com/obot-platform/obot/apiclient/types"
@@ -105,7 +108,7 @@ func (h *Handler) ensureServerIsDeployed(req api.Context) (string, bool, error) 
 		return h.ensureSystemServerIsDeployed(req, mcpID)
 	}
 
-	mcpID, mcpServer, mcpServerConfig, err := handlers.ServerForActionWithConnectID(req, mcpID)
+	mcpID, mcpServer, mcpServerConfig, err := serverForActionWithConnectID(req, mcpID)
 	if err != nil {
 		return "", false, fmt.Errorf("failed to get mcp server config: %w", err)
 	}
@@ -130,6 +133,32 @@ func (h *Handler) ensureServerIsDeployed(req api.Context) (string, bool, error) 
 	}
 
 	return url, h.nanobotIntegrationEnabled && mcpServerConfig.NanobotAgentName != "", nil
+}
+
+func serverForActionWithConnectID(req api.Context, mcpID string) (string, v1.MCPServer, mcp.ServerConfig, error) {
+	ctx, cancel := context.WithTimeout(req.Context(), 15*time.Second)
+	defer cancel()
+
+	for {
+		id, server, serverConfig, err := handlers.ServerForActionWithConnectID(req, mcpID)
+		if err == nil || server.Spec.NanobotAgentID == "" || !isMissingNanobotCredentialConfig(err) {
+			return id, server, serverConfig, err
+		}
+
+		select {
+		case <-ctx.Done():
+			return id, server, serverConfig, err
+		case <-time.After(500 * time.Millisecond):
+		}
+	}
+}
+
+func isMissingNanobotCredentialConfig(err error) bool {
+	var errHTTP *types.ErrHTTP
+	return errors.As(err, &errHTTP) &&
+		errHTTP.Code == http.StatusBadRequest &&
+		(strings.Contains(errHTTP.Message, "NANOBOT_ENV_FILE") ||
+			strings.Contains(errHTTP.Message, "NANOBOT_CONFIG_FILE"))
 }
 
 func (h *Handler) ensureSystemServerIsDeployed(req api.Context, mcpID string) (string, bool, error) {

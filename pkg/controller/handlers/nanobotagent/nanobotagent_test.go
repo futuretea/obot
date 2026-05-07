@@ -3,8 +3,10 @@ package nanobotagent
 import (
 	"context"
 	"testing"
+	"time"
 
 	nanobottypes "github.com/nanobot-ai/nanobot/pkg/types"
+	"github.com/obot-platform/nah/pkg/router"
 	"github.com/obot-platform/obot/apiclient/types"
 	v1 "github.com/obot-platform/obot/pkg/storage/apis/obot.obot.ai/v1"
 	storagescheme "github.com/obot-platform/obot/pkg/storage/scheme"
@@ -13,6 +15,63 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	sigsyaml "sigs.k8s.io/yaml"
 )
+
+func TestScheduleNanobotCredentialRefreshBeforeExpiry(t *testing.T) {
+	now := time.Date(2026, 5, 7, 12, 0, 0, 0, time.UTC)
+	resp := &router.ResponseWrapper{}
+
+	untilRefresh := scheduleNanobotCredentialRefreshFrom(resp, now, now.Add(nanobotTokenTTL))
+
+	expected := nanobotTokenTTL - nanobotRefreshBefore
+	if untilRefresh != expected {
+		t.Fatalf("untilRefresh = %s, want %s", untilRefresh, expected)
+	}
+	if resp.Delay != expected {
+		t.Fatalf("retry delay = %s, want %s", resp.Delay, expected)
+	}
+}
+
+func TestScheduleNanobotCredentialRefreshImmediatelyWhenDue(t *testing.T) {
+	now := time.Date(2026, 5, 7, 12, 0, 0, 0, time.UTC)
+	resp := &router.ResponseWrapper{}
+
+	untilRefresh := scheduleNanobotCredentialRefreshFrom(resp, now, now.Add(nanobotRefreshBefore))
+
+	if untilRefresh > 0 {
+		t.Fatalf("untilRefresh = %s, want non-positive", untilRefresh)
+	}
+	if resp.Delay != time.Second {
+		t.Fatalf("retry delay = %s, want %s", resp.Delay, time.Second)
+	}
+}
+
+func TestNanobotAgentArgsLoadGeneratedEnvFile(t *testing.T) {
+	args := nanobotAgentArgs("")
+
+	want := []string{
+		"run",
+		"--env-file", "${NANOBOT_ENV_FILE}",
+		"--state", ".nanobot/state/nanobot.db",
+		"--config", ".nanobot/",
+		"--config", "${NANOBOT_CONFIG_FILE}",
+	}
+	if len(args) != len(want) {
+		t.Fatalf("args length = %d, want %d: %#v", len(args), len(want), args)
+	}
+	for i := range want {
+		if args[i] != want[i] {
+			t.Fatalf("args[%d] = %q, want %q: %#v", i, args[i], want[i], args)
+		}
+	}
+}
+
+func TestNanobotAgentArgsIncludeDefaultAgent(t *testing.T) {
+	args := nanobotAgentArgs("assistant")
+
+	if got := args[len(args)-2:]; got[0] != "--agent" || got[1] != "assistant" {
+		t.Fatalf("last args = %#v, want --agent assistant", got)
+	}
+}
 
 func TestChooseModelPrefersKnownNames(t *testing.T) {
 	models := []v1.Model{

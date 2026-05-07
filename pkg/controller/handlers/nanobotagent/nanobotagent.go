@@ -69,10 +69,7 @@ func (h *Handler) EnsureMCPServer(req router.Request, resp router.Response) erro
 
 	mcpServerName := system.MCPServerPrefix + agent.Name
 
-	expectedArgs := []string{"run", "--state", ".nanobot/state/nanobot.db", "--config", ".nanobot/", "--config", "${NANOBOT_CONFIG_FILE}"}
-	if agent.Spec.DefaultAgent != "" {
-		expectedArgs = append(expectedArgs, "--agent", agent.Spec.DefaultAgent)
-	}
+	expectedArgs := nanobotAgentArgs(agent.Spec.DefaultAgent)
 
 	// Check if MCPServer already exists
 	var existing v1.MCPServer
@@ -221,6 +218,20 @@ func (h *Handler) EnsureMCPServer(req router.Request, resp router.Response) erro
 	return nil
 }
 
+func nanobotAgentArgs(defaultAgent string) []string {
+	args := []string{
+		"run",
+		"--env-file", "${NANOBOT_ENV_FILE}",
+		"--state", ".nanobot/state/nanobot.db",
+		"--config", ".nanobot/",
+		"--config", "${NANOBOT_CONFIG_FILE}",
+	}
+	if defaultAgent != "" {
+		args = append(args, "--agent", defaultAgent)
+	}
+	return args
+}
+
 // ensureCredentials ensures that the MCP server has credentials with API keys that are valid
 // and refreshes them when they are close to expiration.
 func (h *Handler) ensureCredentials(ctx context.Context, req router.Request, resp router.Response, agent *v1.NanobotAgent, mcpServerName string) error {
@@ -267,14 +278,10 @@ func (h *Handler) ensureCredentials(ctx context.Context, req router.Request, res
 				needsRefresh = true
 				log.Debugf("Nanobot credential token invalid, refreshing: agent=%s mcpServer=%s", agent.Name, mcpServerName)
 			} else {
-				if untilRefresh := time.Until(tokenCtx.ExpiresAt) - nanobotRefreshBefore; untilRefresh <= 0 {
+				if untilRefresh := scheduleNanobotCredentialRefresh(resp, tokenCtx.ExpiresAt); untilRefresh <= 0 {
 					// If the token expires soon, then refresh it
 					needsRefresh = true
-					resp.RetryAfter(time.Second)
 					log.Debugf("Nanobot credential due for refresh: agent=%s mcpServer=%s expiresAt=%s", agent.Name, mcpServerName, tokenCtx.ExpiresAt.UTC().Format(time.RFC3339))
-				} else {
-					// Otherwise, look at the agent again around the time the refresh would be needed.
-					resp.RetryAfter(untilRefresh)
 				}
 			}
 		} else {
@@ -378,6 +385,11 @@ func (h *Handler) ensureCredentials(ctx context.Context, req router.Request, res
 		return fmt.Errorf("failed to create credential: %w", err)
 	}
 
+	// Requeue before the freshly-created API key/token expire. Without this,
+	// credentials created from a missing or invalid state would not refresh
+	// until some unrelated resource event happened.
+	scheduleNanobotCredentialRefresh(resp, expiresAt)
+
 	if h.localK8SBackend != nil {
 		// If local Kubernetes backend is available, trigger a sync to update the secret with the new credentials
 		triggerKey := fmt.Sprintf("%s/%s", h.mcpServerNamespace, name.SafeConcatName(mcpServerName, "mcp", "files"))
@@ -393,6 +405,22 @@ func (h *Handler) ensureCredentials(ctx context.Context, req router.Request, res
 	}
 	log.Infof("Nanobot credentials refreshed: agent=%s mcpServer=%s apiKeyID=%d", agent.Name, mcpServerName, apiKeyResp.ID)
 	return nil
+}
+
+func scheduleNanobotCredentialRefresh(resp router.Response, expiresAt time.Time) time.Duration {
+	return scheduleNanobotCredentialRefreshFrom(resp, time.Now(), expiresAt)
+}
+
+func scheduleNanobotCredentialRefreshFrom(resp router.Response, now, expiresAt time.Time) time.Duration {
+	untilRefresh := expiresAt.Sub(now) - nanobotRefreshBefore
+	if untilRefresh <= 0 {
+		resp.RetryAfter(time.Second)
+		return untilRefresh
+	}
+
+	// Look at the agent again around the time the refresh will be needed.
+	resp.RetryAfter(untilRefresh)
+	return untilRefresh
 }
 
 // resolvedLLMModel pairs the resolved target model name with its configured provider reference

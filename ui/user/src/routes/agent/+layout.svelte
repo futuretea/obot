@@ -81,21 +81,15 @@
 		const projectChanged = storedChat && storedChat.projectId !== projects[0].id;
 		if (!storedChat || isNewAgent || projectChanged) {
 			loading = true;
-			if (isNewAgent) {
-				try {
-					await NanobotService.launchProjectV2Agent(projects[0].id, agent.id);
-				} catch (error) {
-					console.error(error);
-					errors.append(error);
-				}
-			}
-
 			try {
+				await NanobotService.launchProjectV2Agent(projects[0].id, agent.id);
 				await initNanobotStore();
 			} catch (error) {
 				console.error(`Error initializing nanobot store`, error);
+				errors.append(error);
+			} finally {
+				loading = false;
 			}
-			loading = false;
 		}
 	});
 </script>
