@@ -63,8 +63,11 @@ __debug_*
 thoughts/
 thoughts
 
-.opencode/
-
-third-party-projects/
 .tool-versions
+
+.opencode/
 .qoder/
+third-party-projects/
+enhancements/
+.auto-runs/
+.project/

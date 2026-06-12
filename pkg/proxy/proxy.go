@@ -21,6 +21,7 @@ import (
 	"github.com/obot-platform/obot/pkg/system"
 	"k8s.io/apiserver/pkg/authentication/authenticator"
 	"k8s.io/apiserver/pkg/authentication/user"
+	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var log = logger.Package()
@@ -35,14 +36,28 @@ const (
 var ErrInvalidSession = errors.New("invalid session")
 
 type Manager struct {
-	dispatcher *dispatcher.Dispatcher
-	gptClient  *gptscript.GPTScript
+	dispatcher    *dispatcher.Dispatcher
+	gptClient     *gptscript.GPTScript
+	singleSession *singleSessionEnforcer
 }
 
-func NewProxyManager(dispatcher *dispatcher.Dispatcher, gptClient *gptscript.GPTScript) *Manager {
+type ManagerOption func(*Manager)
+
+func WithSingleSession(client singleSessionClient, storage kclient.Client, enabled bool) ManagerOption {
+	return func(m *Manager) {
+		if enabled {
+			m.singleSession = newSingleSessionEnforcer(client, storage)
+		}
+	}
+}
+
+func NewProxyManager(dispatcher *dispatcher.Dispatcher, gptClient *gptscript.GPTScript, opts ...ManagerOption) *Manager {
 	m := &Manager{
 		dispatcher: dispatcher,
 		gptClient:  gptClient,
+	}
+	for _, opt := range opts {
+		opt(m)
 	}
 
 	return m
@@ -186,7 +201,7 @@ func (pm *Manager) ServeHTTP(user user.Info, w http.ResponseWriter, r *http.Requ
 
 	log.Infof("forwarding request for %s to provider %s", r.URL.Path, provider)
 
-	proxy.serveHTTP(w, r)
+	proxy.serveHTTPWithSingleSession(w, r, pm.singleSession)
 }
 
 func (pm *Manager) createProxy(ctx context.Context, gptClient *gptscript.GPTScript, provider string) (*Proxy, error) {

@@ -6,6 +6,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: obot_test
+          POSTGRES_USER: obot
+          POSTGRES_PASSWORD: obot
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U obot -d obot_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -25,3 +39,4 @@ jobs:
           make test
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OBOT_TEST_POSTGRES_DSN: postgres://obot:obot@localhost:5432/obot_test?sslmode=disable

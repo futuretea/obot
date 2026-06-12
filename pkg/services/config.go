@@ -106,6 +106,7 @@ type Config struct {
 	RunWorkers                  int      `usage:"The number of workers to process runs" default:"1000"`
 	ElectionFile                string   `usage:"Use this file for leader election instead of database leases"`
 	EnableAuthentication        bool     `usage:"Enable authentication" default:"false"`
+	SingleSessionEnabled        bool     `usage:"Enable single-session login enforcement" default:"false" env:"OBOT_SINGLE_SESSION_ENABLED"`
 	ForceEnableBootstrap        bool     `usage:"Enables the bootstrap user even if other admin users have been created" default:"false"`
 	AuthAdminEmails             []string `usage:"Emails of admin users"`
 	AuthOwnerEmails             []string `usage:"Emails of owner users"`
@@ -337,6 +338,23 @@ func parsePSASettingsFromHelm(opts mcp.Options) (*v1.PodSecurityAdmissionSetting
 		Warn:           opts.MCPPodSecurityWarn,
 		WarnVersion:    opts.MCPPodSecurityWarnVersion,
 	}, nil
+}
+
+func validateSingleSessionConfig(config Config, postgresDSN string) error {
+	if !config.SingleSessionEnabled {
+		return nil
+	}
+	if !config.EnableAuthentication {
+		return errors.New("single-session login requires authentication to be enabled")
+	}
+	if postgresDSN == "" {
+		return errors.New("single-session login requires Postgres")
+	}
+	return nil
+}
+
+func newProxyManagerForConfig(providerDispatcher *dispatcher.Dispatcher, gptscriptClient *gptscript.GPTScript, gatewayClient *client.Client, storageClient storage.Client, config Config) *proxy.Manager {
+	return proxy.NewProxyManager(providerDispatcher, gptscriptClient, proxy.WithSingleSession(gatewayClient, storageClient, config.SingleSessionEnabled))
 }
 
 // parsePodSchedulingSettingsFromHelm parses pod scheduling settings (affinity, tolerations, resources,
@@ -581,6 +599,9 @@ func New(ctx context.Context, config Config) (*Services, error) {
 	var postgresDSN string
 	if strings.HasPrefix(config.DSN, "postgres://") {
 		postgresDSN = config.DSN
+	}
+	if err := validateSingleSessionConfig(config, postgresDSN); err != nil {
+		return nil, err
 	}
 
 	credOnlyGPTscriptClient, err := newGPTScript(ctx, config.EnvKeys, credStore, credStoreEnv, nil)
@@ -871,7 +892,7 @@ func New(ctx context.Context, config Config) (*Services, error) {
 
 	authenticators := gserver.NewGatewayTokenReviewer(gatewayClient, gptscriptClient, providerDispatcher)
 	if config.EnableAuthentication {
-		proxyManager = proxy.NewProxyManager(providerDispatcher, gptscriptClient)
+		proxyManager = newProxyManagerForConfig(providerDispatcher, gptscriptClient, gatewayClient, storageClient, config)
 
 		// Token Auth + OAuth auth
 		authenticators = union.NewFailOnError(authenticators, proxyManager)
