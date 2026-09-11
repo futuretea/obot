@@ -93,6 +93,7 @@ type Config struct {
 	AllowedOrigin        string   `usage:"Allowed origin for CORS"`
 	ProviderRegistries   []string `usage:"Local filesystem paths to provider registries (directories) to load providers from"`
 	EnableAuthentication bool     `usage:"Enable authentication" default:"false"`
+	SingleSessionEnabled bool     `usage:"Enable single-session login enforcement" default:"false" env:"OBOT_SINGLE_SESSION_ENABLED"`
 	AuthAdminEmails      []string `usage:"Emails of admin users"`
 	AuthOwnerEmails      []string `usage:"Emails of owner users"`
 	TunnelPeerID         string   `usage:"Unique Pod UID of this Obot replica for tunnel peering"`
@@ -316,6 +317,23 @@ func parsePSASettingsFromHelm(opts mcp.Options) (*v1.PodSecurityAdmissionSetting
 // parsePodSchedulingSettingsFromHelm parses pod scheduling settings (affinity, tolerations, resources,
 // runtimeClassName) from Helm options. These settings can be managed via Helm OR UI.
 // If this returns non-nil, SetViaHelm will be true and UI cannot modify these settings.
+func validateSingleSessionConfig(config Config, postgresDSN string) error {
+	if !config.SingleSessionEnabled {
+		return nil
+	}
+	if !config.EnableAuthentication {
+		return errors.New("single-session login requires authentication to be enabled")
+	}
+	if postgresDSN == "" {
+		return errors.New("single-session login requires Postgres")
+	}
+	return nil
+}
+
+func newProxyManagerForConfig(providerDispatcher *dispatcher.Dispatcher, gatewayClient *client.Client, storageClient storage.Client, config Config) *proxy.Manager {
+	return proxy.NewProxyManager(providerDispatcher, proxy.WithSingleSession(gatewayClient, storageClient, config.SingleSessionEnabled))
+}
+
 func parsePodSchedulingSettingsFromHelm(opts mcp.Options) (*v1.K8sSettingsSpec, error) {
 	hasPodSettings := (opts.MCPK8sSettingsAffinity != "" && opts.MCPK8sSettingsAffinity != "{}") ||
 		(opts.MCPK8sSettingsTolerations != "" && opts.MCPK8sSettingsTolerations != "[]") ||
@@ -603,6 +621,9 @@ func New(ctx context.Context, config Config) (*Services, error) {
 	if strings.HasPrefix(config.DSN, "postgres://") {
 		postgresDSN = config.DSN
 	}
+	if err := validateSingleSessionConfig(config, postgresDSN); err != nil {
+		return nil, err
+	}
 
 	persistentTokenServer, err := persistent.NewTokenService(config.Hostname, gatewayClient)
 	if err != nil {
@@ -887,7 +908,7 @@ func New(ctx context.Context, config Config) (*Services, error) {
 	authenticators := gserver.NewGatewayTokenReviewer(gatewayClient, providerDispatcher)
 	var localAuthProvider *localauth.Provider
 	if config.EnableAuthentication {
-		proxyManager = proxy.NewProxyManager(providerDispatcher)
+		proxyManager = newProxyManagerForConfig(providerDispatcher, gatewayClient, storageClient, config)
 
 		// The local auth provider runs in-process, rather than as a daemon launched from the
 		// provider registry, so that it can use Obot's own database for users and sessions.

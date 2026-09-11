@@ -9,15 +9,15 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    tags:
-      - "v*"
-    paths-ignore:
-      - docs/**
-      - chart/**
-      - .github/workflows/**
+    inputs:
+      tag:
+        description: Image tag for ghcr.io/futuretea/obot
+        required: true
+        default: latest
+      providers_image:
+        description: Providers image baked into Obot
+        required: true
+        default: ghcr.io/futuretea/obot-providers:latest
 
 jobs:
   build:
@@ -45,13 +45,6 @@ jobs:
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Log in to Docker Hub
-        if: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build and push Docker images
         uses: depot/build-push-action@v1
         id: build-and-push
@@ -62,11 +55,11 @@ jobs:
           pull: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }}
-            ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') && format('docker.io/obot/{0}:{1}', github.event.repository.name, github.ref_name) || '' }}
+            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
+            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
           build-args: |
             BASE_IMAGE=ghcr.io/obot-platform/obot/base:latest
+            PROVIDERS_IMAGE=${{ inputs.providers_image }}
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.8.1
@@ -79,9 +72,8 @@ jobs:
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
           TAGS: >-
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }}
-            ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') && format('docker.io/obot/{0}:{1}', github.event.repository.name, github.ref_name) || '' }}
+            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
+            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
         run: |
           images=""
           for tag in ${TAGS}; do
@@ -93,11 +85,10 @@ jobs:
         uses: imjasonh/setup-crane@v0.5
 
       - name: Copy images to latest tag
-        if: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') }}
+        if: ${{ inputs.tag != 'latest' && !contains(inputs.tag, '-') }}
         run: |
-          crane tag ghcr.io/${{ github.repository }}:${{ github.ref_name }} latest
-          crane tag ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }} latest
-          crane tag docker.io/obot/${{ github.event.repository.name }}:${{ github.ref_name }} latest
+          crane tag ghcr.io/${{ github.repository }}:${{ inputs.tag }} latest
+          crane tag ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }} latest
 
   image-scan:
     runs-on: depot-ubuntu-22.04
@@ -120,7 +111,7 @@ jobs:
       - name: Run Trivy
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          image-ref: ghcr.io/${{ github.repository }}:${{ inputs.tag }}
           skip-dirs: "**/venv"
           format: "sarif"
           output: "trivy-results.sarif"

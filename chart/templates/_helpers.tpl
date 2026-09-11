@@ -2,7 +2,7 @@
 Return the chart name and version.
 */}}
 {{- define "obot.chart" -}}
-{{ printf "%s-%s" .Chart.Name .Chart.Version | quote }}
+{{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | quote }}
 {{- end -}}
 
 {{/*

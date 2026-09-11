@@ -1,8 +1,7 @@
 name: Post Community Issues to Slack
 
 on:
-  issues:
-    types: [opened]
+  workflow_dispatch:
 
 jobs:
   notify-slack:
