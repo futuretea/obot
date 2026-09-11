@@ -112,7 +112,7 @@
 						in:slide={{ axis: 'x', duration: 150 }}
 						class="flex items-center gap-1 self-end text-2xl font-semibold"
 					>
-						obot
+						uni
 						<span class="border-primary text-primary rounded-full border-2 px-2 text-sm">
 							agent
 						</span>

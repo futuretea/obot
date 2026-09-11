@@ -348,6 +348,35 @@ func (c *Client) UpdateProfileIfNeeded(ctx context.Context, user *types.User, au
 		return err
 	}
 
+	applyAuthProviderProfile(authProviderName, profile, user, &identity)
+
+	// Update the provider-native group lookup ID from the profile response.
+	if lookupID := extractProfileID(profile); lookupID != "" {
+		identity.ProviderGroupLookupID = lookupID
+	}
+
+	identity.IconLastChecked = time.Now()
+
+	if err = c.encryptIdentity(ctx, &identity); err != nil {
+		return fmt.Errorf("failed to encrypt identity: %w", err)
+	}
+
+	// Copy user so that the caller's copy doesn't get encrypted.
+	u := *user
+	if err = c.encryptUser(ctx, &u); err != nil {
+		return fmt.Errorf("failed to encrypt user: %w", err)
+	}
+
+	return c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Updates(u).Error; err != nil {
+			return err
+		}
+		// Omit the group check column to prevent resetting the group refresh window
+		return tx.Omit(groupsLastCheckedColumn).Updates(&identity).Error
+	})
+}
+
+func applyAuthProviderProfile(authProviderName string, profile map[string]any, user *types.User, identity *types.Identity) {
 	switch authProviderName {
 	case "github-auth-provider":
 		if iconURL, ok := profile["avatar_url"].(string); ok {
@@ -363,6 +392,14 @@ func (c *Client) UpdateProfileIfNeeded(ctx context.Context, user *types.User, au
 			}
 		}
 	case "google-auth-provider":
+		if iconURL, ok := profile["picture"].(string); ok {
+			user.IconURL = iconURL
+			identity.IconURL = iconURL
+		}
+		if displayName, ok := profile["name"].(string); ok {
+			user.DisplayName = displayName
+		}
+	case "keycloak-auth-provider":
 		if iconURL, ok := profile["picture"].(string); ok {
 			user.IconURL = iconURL
 			identity.IconURL = iconURL
@@ -409,32 +446,6 @@ func (c *Client) UpdateProfileIfNeeded(ctx context.Context, user *types.User, au
 			user.DisplayName = displayName
 		}
 	}
-
-	// Update the provider-native group lookup ID from the profile response.
-	if lookupID := extractProfileID(profile); lookupID != "" {
-		identity.ProviderGroupLookupID = lookupID
-	}
-
-	identity.IconLastChecked = time.Now()
-
-	if err = c.encryptIdentity(ctx, &identity); err != nil {
-		return fmt.Errorf("failed to encrypt identity: %w", err)
-	}
-
-	// Copy user so that the caller's copy doesn't get encrypted.
-	u := *user
-	if err = c.encryptUser(ctx, &u); err != nil {
-		return fmt.Errorf("failed to encrypt user: %w", err)
-	}
-
-	return c.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Updates(u).Error; err != nil {
-			return err
-		}
-
-		// Omit the group check column to prevent resetting the group refresh window
-		return tx.Omit(groupsLastCheckedColumn).Updates(&identity).Error
-	})
 }
 
 // EncryptUsers will pull all users out of the database and ensure they are encrypted.

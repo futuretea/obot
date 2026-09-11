@@ -21,12 +21,12 @@ func TestProviderDeviceLimit(t *testing.T) {
 	}{
 		{
 			name: "default",
-			want: gatewayclient.DeviceLimit{Maximum: gatewayclient.DefaultDeviceLimit},
+			want: gatewayclient.DeviceLimit{Unlimited: true},
 		},
 		{
 			name:         "unrelated entitlement",
 			entitlements: []string{EnterpriseModelProvidersEntitlement, "OBOT_ENTERPRISE_500_USERS"},
-			want:         gatewayclient.DeviceLimit{Maximum: gatewayclient.DefaultDeviceLimit},
+			want:         gatewayclient.DeviceLimit{Unlimited: true},
 		},
 		{
 			name:         "enterprise edition grants unlimited devices",
@@ -48,7 +48,7 @@ func TestProviderDeviceLimit(t *testing.T) {
 				"OBOT_ENTERPRISE_500_DEVICE_LIMIT_EXTRA",
 				"OBOT_ENTERPRISE_0_DEVICES",
 			},
-			want: gatewayclient.DeviceLimit{Maximum: gatewayclient.DefaultDeviceLimit},
+			want: gatewayclient.DeviceLimit{Unlimited: true},
 		},
 		{
 			name:         "numeric devices entitlement",
@@ -93,7 +93,7 @@ func TestProviderDeviceLimit(t *testing.T) {
 		{
 			name:         "removed custom device limit entitlement is ignored",
 			entitlements: []string{"OBOT_ENTERPRISE_CUSTOM_DEVICE_LIMIT"},
-			want:         gatewayclient.DeviceLimit{Maximum: gatewayclient.DefaultDeviceLimit},
+			want:         gatewayclient.DeviceLimit{Unlimited: true},
 		},
 		{
 			name:         "numeric entitlement replaces default",

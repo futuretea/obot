@@ -70,3 +70,6 @@ thoughts
 
 # Riptide artifacts (cloud-synced)
 .humanlayer/tasks/
+
+# auto-* run ledgers
+.auto-runs/

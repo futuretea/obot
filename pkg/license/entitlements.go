@@ -141,7 +141,7 @@ func (p *Provider) DeviceLimit(ctx context.Context) (gatewayclient.DeviceLimit, 
 	}, nil
 }
 
-func (p *Provider) resourceLimit(ctx context.Context, entitlementSuffix string, defaultMaximum int64) (int64, bool, error) {
+func (p *Provider) resourceLimit(ctx context.Context, entitlementSuffix string, _ int64) (int64, bool, error) {
 	if err := p.refresh(ctx, false); err != nil {
 		return 0, false, err
 	}
@@ -150,11 +150,9 @@ func (p *Provider) resourceLimit(ctx context.Context, entitlementSuffix string, 
 	defer p.lock.RUnlock()
 
 	var maximum int64
-	var isEnterpriseEdition bool
 	for entitlement := range p.entitlements {
 		code := string(entitlement)
 		if code == EnterpriseEntitlement {
-			isEnterpriseEdition = true
 			continue
 		}
 
@@ -184,12 +182,11 @@ func (p *Provider) resourceLimit(ctx context.Context, entitlementSuffix string, 
 		}
 	}
 
-	unlimited := isEnterpriseEdition && maximum == 0
-	if maximum == 0 && !unlimited {
-		maximum = defaultMaximum
+	if maximum == 0 {
+		return 0, true, nil
 	}
 
-	return maximum, unlimited, nil
+	return maximum, false, nil
 }
 
 // RequireEntitlements returns Payment Required if any required entitlements are unavailable.
