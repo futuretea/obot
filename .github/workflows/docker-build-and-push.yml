@@ -4,7 +4,7 @@ permissions:
   id-token: write
   contents: read
   packages: write
-  actions: read
+  actions: write
   security-events: write
 
 on:
@@ -19,94 +19,138 @@ on:
         required: true
         default: ghcr.io/futuretea/obot-providers:latest
 
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+  ENTERPRISE_IMAGE: ghcr.io/${{ github.repository }}-enterprise
+
 jobs:
   build:
-    runs-on: depot-ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux/amd64
+            pair: linux-amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            pair: linux-arm64
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # Fetch tags and full commit history for branch builds.
-          # This provides the VCS info required for `go build` to produce a binary that contains a
-          # main module pseudo-version with a core segment relative to the most recent release tag
-          # (e.g. vX.Y.(Z+1)-0.<ts>-<rev>).
-          # Without the full history, branch builds generate versions like v0.0.0-<ts>-<rev>,
-          # which can cause false positives in vulnerability scans.
-          fetch-depth: ${{ case(github.ref_type == 'tag', 1, 0) }}
+          # Full history on branch builds so `go build` can emit a module
+          # pseudo-version relative to the latest release tag.
+          fetch-depth: ${{ github.ref_type == 'tag' && 1 || 0 }}
 
-      - name: Setup Depot
-        uses: depot/setup-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker images
-        uses: depot/build-push-action@v1
-        id: build-and-push
+      - name: Build and push by digest
+        uses: docker/build-push-action@v6
+        id: build
         with:
-          project: bbqjs4tj1g
           context: .
-          push: true
-          pull: true
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
+          platforms: ${{ matrix.platform }}
           build-args: |
             BASE_IMAGE=ghcr.io/obot-platform/obot/base:latest
             PROVIDERS_IMAGE=${{ inputs.providers_image }}
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.pair }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manifest lists
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          refs=""
+          for digest in *; do
+            refs+="${IMAGE}@sha256:${digest} "
+          done
+          docker buildx imagetools create \
+            -t "${IMAGE}:${TAG}" \
+            -t "${IMAGE}:latest" \
+            ${refs}
+          docker buildx imagetools create \
+            -t "${ENTERPRISE_IMAGE}:${TAG}" \
+            -t "${ENTERPRISE_IMAGE}:latest" \
+            ${refs}
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.8.1
         with:
           cosign-release: "v2.4.3"
-      - name: Check install!
-        run: cosign version
-
-      - name: Sign Images
-        env:
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS: >-
-            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
-        run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}
 
       - name: Setup crane
         uses: imjasonh/setup-crane@v0.5
 
-      - name: Copy images to latest tag
-        if: ${{ inputs.tag != 'latest' && !contains(inputs.tag, '-') }}
+      - name: Sign Images
+        env:
+          TAG: ${{ inputs.tag }}
         run: |
-          crane tag ghcr.io/${{ github.repository }}:${{ inputs.tag }} latest
-          crane tag ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }} latest
+          cosign sign --yes \
+            "${IMAGE}@$(crane digest "${IMAGE}:${TAG}")" \
+            "${ENTERPRISE_IMAGE}@$(crane digest "${ENTERPRISE_IMAGE}:${TAG}")"
 
   image-scan:
-    runs-on: depot-ubuntu-22.04
-    needs: build
+    runs-on: ubuntu-latest
+    needs: merge
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Depot
-        uses: depot/setup-action@v1
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Trivy
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
