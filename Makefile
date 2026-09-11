@@ -51,6 +51,15 @@ otel-jaeger-down:
 otel-jaeger-logs:
 	docker compose -f tools/jaeger-compose.yaml logs -f
 
+keycloak-up:
+	docker compose -f tools/keycloak/docker-compose.yaml up -d
+
+keycloak-down:
+	docker compose -f tools/keycloak/docker-compose.yaml down
+
+keycloak-logs:
+	docker compose -f tools/keycloak/docker-compose.yaml logs -f
+
 telepresence-setup:
 	kubectl create deployment obot-upstream --image=alpine --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 	kubectl create service clusterip obot-upstream --tcp=8080:8080 --dry-run=client -o yaml | kubectl apply -f -
@@ -120,4 +129,4 @@ remove-docs-version:
 	rm -rf "./docs/versioned_docs/version-${version}"
 	jq 'del(.[] | select(. == "${version}"))' ./docs/versions.json > tmp.json && mv tmp.json ./docs/versions.json
 
-.PHONY: ui ui-user build all clean dev dev-open otel-jaeger-up otel-jaeger-down otel-jaeger-logs telepresence-setup lint lint-admin lint-api test-integration no-changes fmt tidy gen-docs-release deprecate-docs-release remove-docs-version
+.PHONY: ui ui-user build all clean dev dev-open otel-jaeger-up otel-jaeger-down otel-jaeger-logs keycloak-up keycloak-down keycloak-logs telepresence-setup lint lint-admin lint-api test-integration no-changes fmt tidy gen-docs-release deprecate-docs-release remove-docs-version

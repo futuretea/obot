@@ -5,21 +5,7 @@ permissions:
   packages: read
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/helm.yml
-      - chart/**
-      - tools/test-model-proxy-chart.sh
-  pull_request:
-    branches:
-      - main
-      - 'feat/*'
-    paths:
-      - .github/workflows/helm.yml
-      - chart/**
-      - tools/test-model-proxy-chart.sh
+  workflow_dispatch:
 
 jobs:
   lint:

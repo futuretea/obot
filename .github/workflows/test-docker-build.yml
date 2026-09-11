@@ -5,13 +5,7 @@ permissions:
   id-token: write
 
 on:
-  pull_request:
-    branches:
-      - main
-      - 'feat/*'
-    paths-ignore:
-      - docs/**
-      - chart/**
+  workflow_dispatch:
 
 jobs:
   build:

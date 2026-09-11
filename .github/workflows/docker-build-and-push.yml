@@ -9,15 +9,15 @@ permissions:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    tags:
-      - "v*"
-    paths-ignore:
-      - docs/**
-      - chart/**
-      - .github/workflows/**
+    inputs:
+      tag:
+        description: Image tag for ghcr.io/futuretea/obot
+        required: true
+        default: latest
+      providers_image:
+        description: Providers image baked into Obot
+        required: true
+        default: ghcr.io/futuretea/obot-providers:latest
 
 jobs:
   build:
@@ -45,13 +45,6 @@ jobs:
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Log in to Docker Hub
-        if: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build and push Docker images
         uses: depot/build-push-action@v1
         id: build-and-push
@@ -62,11 +55,11 @@ jobs:
           pull: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }}
-            ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') && format('docker.io/obot/{0}:{1}', github.event.repository.name, github.ref_name) || '' }}
+            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
+            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
           build-args: |
             BASE_IMAGE=ghcr.io/obot-platform/obot/base:latest
+            PROVIDERS_IMAGE=${{ inputs.providers_image }}
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.8.1
@@ -79,9 +72,8 @@ jobs:
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
           TAGS: >-
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}-enterprise:${{ github.ref_name }}
-            ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') && format('docker.io/obot/{0}:{1}', github.event.repository.name, github.ref_name) || '' }}
+            ghcr.io/${{ github.repository }}:${{ inputs.tag }}
+            ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }}
         run: |
           images=""
           for tag in ${TAGS}; do
@@ -94,22 +86,21 @@ jobs:
 
       - name: Check if tag is the newest release
         id: newest
-        if: ${{ github.ref_type == 'tag' && !contains(github.ref_name, '-') }}
+        if: ${{ inputs.tag != 'latest' && !contains(inputs.tag, '-') }}
         run: |
           # Only the highest stable tag should move latest, so a patch release on an
           # older minor line (e.g. v0.25.6 after v0.26.0) does not take it back.
           newest=$(git ls-remote --tags --refs origin 'v*' | sed 's|.*refs/tags/||' | grep -ve '-' | sort -V | tail -n 1)
           echo "Newest stable tag: ${newest}"
-          if [ "${newest}" = "${GITHUB_REF_NAME}" ]; then
+          if [ "${newest}" = "${{ inputs.tag }}" ]; then
             echo "is_newest=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Copy images to latest tag
         if: ${{ steps.newest.outputs.is_newest == 'true' }}
         run: |
-          crane tag "ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}" latest
-          crane tag "ghcr.io/${GITHUB_REPOSITORY}-enterprise:${GITHUB_REF_NAME}" latest
-          crane tag "docker.io/obot/${GITHUB_REPOSITORY#*/}:${GITHUB_REF_NAME}" latest
+          crane tag ghcr.io/${{ github.repository }}:${{ inputs.tag }} latest
+          crane tag ghcr.io/${{ github.repository }}-enterprise:${{ inputs.tag }} latest
 
   image-scan:
     runs-on: depot-ubuntu-22.04
@@ -132,7 +123,7 @@ jobs:
       - name: Run Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # 0.36.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          image-ref: ghcr.io/${{ github.repository }}:${{ inputs.tag }}
           skip-dirs: "**/venv"
           format: "sarif"
           output: "trivy-results.sarif"

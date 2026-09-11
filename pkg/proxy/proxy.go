@@ -20,6 +20,7 @@ import (
 	"github.com/obot-platform/obot/pkg/system"
 	"k8s.io/apiserver/pkg/authentication/authenticator"
 	"k8s.io/apiserver/pkg/authentication/user"
+	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -33,7 +34,8 @@ var (
 )
 
 type Manager struct {
-	dispatcher *dispatcher.Dispatcher
+	dispatcher    *dispatcher.Dispatcher
+	singleSession *singleSessionEnforcer
 }
 
 type Proxy struct {
@@ -59,9 +61,22 @@ type serializableState struct {
 	RequirePasswordChange bool       `json:"requirePasswordChange"`
 }
 
-func NewProxyManager(dispatcher *dispatcher.Dispatcher) *Manager {
+type ManagerOption func(*Manager)
+
+func WithSingleSession(client singleSessionClient, storage kclient.Client, enabled bool) ManagerOption {
+	return func(m *Manager) {
+		if enabled {
+			m.singleSession = newSingleSessionEnforcer(client, storage)
+		}
+	}
+}
+
+func NewProxyManager(dispatcher *dispatcher.Dispatcher, opts ...ManagerOption) *Manager {
 	m := &Manager{
 		dispatcher: dispatcher,
+	}
+	for _, opt := range opts {
+		opt(m)
 	}
 
 	return m
@@ -271,7 +286,7 @@ func (pm *Manager) ServeHTTP(user user.Info, w http.ResponseWriter, r *http.Requ
 
 	slog.Info("forwarding request to provider", "path", r.URL.Path, "provider", provider)
 
-	proxy.serveHTTP(w, r)
+	proxy.serveHTTPWithSingleSession(w, r, pm.singleSession)
 }
 
 func (pm *Manager) createProxy(ctx context.Context, provider string) (*Proxy, error) {

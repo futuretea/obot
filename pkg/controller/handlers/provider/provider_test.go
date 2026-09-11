@@ -85,6 +85,41 @@ groupIDPrefix: github/
 	}
 }
 
+func TestReadAuthProviderPostgresTablePrefixFromYAML(t *testing.T) {
+	dir := t.TempDir()
+	authProvidersDir := filepath.Join(dir, authProvidersRegistryDir)
+	if err := os.MkdirAll(authProvidersDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(dir, modelProvidersRegistryDir), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Same field name as third-party-projects/obot-providers/auth-providers/keycloak-auth-provider.yaml.
+	if err := os.WriteFile(filepath.Join(authProvidersDir, "keycloak-auth-provider.yaml"), []byte(`name: Keycloak
+command: keycloak-auth-provider/bin/obot-provider
+groupIDPrefix: keycloak/
+postgresTablePrefix: "keycloak_"
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	objs, err := readRegistry(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(objs) != 1 {
+		t.Fatalf("expected 1 provider object, got %d", len(objs))
+	}
+	provider, ok := objs[0].(*v1.AuthProvider)
+	if !ok {
+		t.Fatalf("expected AuthProvider, got %T", objs[0])
+	}
+	if provider.Spec.PostgresTablePrefix != "keycloak_" {
+		t.Fatalf("expected postgresTablePrefix keycloak_, got %q", provider.Spec.PostgresTablePrefix)
+	}
+}
+
 func TestAppendProvidersSkipsInvalidGroupIDPrefix(t *testing.T) {
 	providers := []providerFromFile[types.AuthProviderManifest]{
 		{

@@ -17,12 +17,12 @@ func TestProviderUserLimit(t *testing.T) {
 	}{
 		{
 			name: "default",
-			want: gatewayclient.UserLimit{Maximum: gatewayclient.DefaultUserLimit},
+			want: gatewayclient.UserLimit{Unlimited: true},
 		},
 		{
 			name:         "unrelated entitlement",
 			entitlements: []string{EnterpriseModelProvidersEntitlement},
-			want:         gatewayclient.UserLimit{Maximum: gatewayclient.DefaultUserLimit},
+			want:         gatewayclient.UserLimit{Unlimited: true},
 		},
 		{
 			name:         "enterprise edition grants unlimited users",
@@ -44,7 +44,7 @@ func TestProviderUserLimit(t *testing.T) {
 				"OBOT_ENTERPRISE_500_USER_LIMIT_EXTRA",
 				"OBOT_ENTERPRISE_0_USERS",
 			},
-			want: gatewayclient.UserLimit{Maximum: gatewayclient.DefaultUserLimit},
+			want: gatewayclient.UserLimit{Unlimited: true},
 		},
 		{
 			name:         "numeric users entitlement",
@@ -89,7 +89,7 @@ func TestProviderUserLimit(t *testing.T) {
 		{
 			name:         "removed custom user limit entitlement is ignored",
 			entitlements: []string{"OBOT_ENTERPRISE_CUSTOM_USER_LIMIT"},
-			want:         gatewayclient.UserLimit{Maximum: gatewayclient.DefaultUserLimit},
+			want:         gatewayclient.UserLimit{Unlimited: true},
 		},
 		{
 			name:         "numeric entitlement replaces default",
