@@ -2,8 +2,13 @@
 
 本文只给操作步骤。它留在仓库里，不推送，不发到仓库外。
 
-## 差异
+## 上游从 v0.20.1 到 v0.26.3 的变化
 
+这些变化来自上游，不是本分支另加的。
+
+- 旧的项目聊天接口没有了，包括 `/api/agents`、`/api/assistants`、`/api/projects`、`/api/shares` 和 `/api/tasks`。这一版没有把这些数据搬进新库。升级前导出还要保留的聊天、任务和分享；升级后它们不再从界面进入。
+- 新增虚拟 MCP（`/api/vmcps`）、MCP 隧道、本地登录、许可证接口、LLM 审计日志和设备执行记录。不用这些能力时，升级步骤不变。
+- 数据库连接串的键名没变，Helm 里从 config 挪到了 secret。应用启动时自动补表，不另跑迁移命令。
 - 镜像内容从 `obot-tools` 换成 `obot-providers`。0.20 的 Dockerfile 复制 `/obot-tools`；这一版复制 `/obot-providers`。
 - 数据库连接串仍是 Postgres，键名仍是 `OBOT_SERVER_DSN`。0.20 放在 chart 的 config 下，这一版放在 secret 下。升级时把原值挪过去，不要改成新库。
 - 应用启动时用 GORM 自动迁移现有库。不另跑手工迁移脚本。
