@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Enforcement Events</title>
+	<title>uni | Enforcement Events</title>
 </svelte:head>
 
 <Layout

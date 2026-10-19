@@ -69,7 +69,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Skill</title>
+	<title>uni | Skill</title>
 </svelte:head>
 
 <Layout

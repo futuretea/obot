@@ -137,7 +137,7 @@ describe('Platform Page', () => {
 			await expect.element(page.getByText('License Status', { exact: true })).toBeVisible();
 			await expect.element(page.getByText('Entitlements', { exact: true })).toBeVisible();
 			await expect
-				.element(page.getByRole('heading', { name: 'Upgrade to Obot Enterprise', exact: true }))
+				.element(page.getByRole('heading', { name: 'Upgrade to uni Enterprise', exact: true }))
 				.not.toBeInTheDocument();
 			await expect.element(page.getByLabelText('Name', { exact: true })).not.toBeInTheDocument();
 			await expect
@@ -152,7 +152,7 @@ describe('Platform Page', () => {
 				.element(page.getByRole('button', { name: 'License', exact: true }))
 				.toBeVisible();
 			await expect
-				.element(page.getByRole('heading', { name: 'Upgrade to Obot Enterprise', exact: true }))
+				.element(page.getByRole('heading', { name: 'Upgrade to uni Enterprise', exact: true }))
 				.toBeVisible();
 			await expect.element(page.getByRole('link', { name: /Contact Us/i })).toBeVisible();
 		});
@@ -168,11 +168,11 @@ describe('Platform Page', () => {
 			});
 
 			await expect
-				.element(page.getByRole('heading', { name: 'Upgrade to Obot Enterprise', exact: true }))
+				.element(page.getByRole('heading', { name: 'Upgrade to uni Enterprise', exact: true }))
 				.toBeVisible();
 			await expect.element(page.getByRole('link', { name: /Contact Us/i })).toBeVisible();
 			await expect
-				.element(page.getByRole('heading', { name: 'Upgrade to Obot Community', exact: true }))
+				.element(page.getByRole('heading', { name: 'Upgrade to uni Community', exact: true }))
 				.not.toBeInTheDocument();
 			await expect.element(page.getByLabelText('Name', { exact: true })).not.toBeInTheDocument();
 		});
@@ -190,7 +190,7 @@ describe('Platform Page', () => {
 			await expect.element(page.getByText('License Status', { exact: true })).toBeVisible();
 			await expect.element(page.getByText(/N\/A\s*\(Open-Source\)/)).toBeVisible();
 			await expect.element(page.getByText('Entitlements', { exact: true })).toBeVisible();
-			await expect.element(page.getByText('Obot Community', { exact: true })).toBeVisible();
+			await expect.element(page.getByText('uni Community', { exact: true })).toBeVisible();
 			await expect
 				.element(page.getByRole('button', { name: 'Delete License', exact: true }))
 				.not.toBeInTheDocument();
@@ -332,12 +332,12 @@ describe('Platform Page', () => {
 				}
 			});
 
-			await expect.element(page.getByText('Obot Cloud', { exact: true })).toBeVisible();
+			await expect.element(page.getByText('uni Cloud', { exact: true })).toBeVisible();
 			await expect.element(page.getByText('Some Feature', { exact: true })).toBeVisible();
 
 			const badges = await page.getByRole('listitem').elements();
 			const badgeText = badges.map((el) => el.textContent?.trim());
-			expect(badgeText.indexOf('Obot Cloud')).toBeLessThan(badgeText.indexOf('Some Feature'));
+			expect(badgeText.indexOf('uni Cloud')).toBeLessThan(badgeText.indexOf('Some Feature'));
 		});
 	});
 

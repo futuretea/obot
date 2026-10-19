@@ -25,7 +25,7 @@
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			Contact us to upgrade to Obot Enterprise</a
+			Contact us to upgrade to uni Enterprise</a
 		>
 	</div>
 </div>

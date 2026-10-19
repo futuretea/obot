@@ -165,7 +165,7 @@
 			return obotGroupDisplayName(subject.id);
 		}
 
-		if (subject.id === '*') return 'All Obot Users';
+		if (subject.id === '*') return 'All uni Users';
 		return '';
 	}
 </script>

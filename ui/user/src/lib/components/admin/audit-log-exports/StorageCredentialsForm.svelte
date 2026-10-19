@@ -443,7 +443,7 @@
 							<div class="flex items-center justify-between">
 								<div class="flex flex-col gap-1">
 									<label class="text-sm font-medium" for="auth-method"
-										>Use credential associated with Obot</label
+										>Use credential associated with uni</label
 									>
 								</div>
 								<Toggle
@@ -455,7 +455,7 @@
 							{#if useWorkloadIdentity}
 								<div class="rounded-md bg-blue-50 p-4 dark:bg-blue-950/50">
 									<p class="text-sm text-blue-700 dark:text-blue-300">
-										Using existing workload identity from Obot. No manual credentials required.
+										Using existing workload identity from uni. No manual credentials required.
 									</p>
 								</div>
 							{/if}

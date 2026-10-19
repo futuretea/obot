@@ -144,9 +144,9 @@
 	}
 
 	function formatEntitlementName(entitlement: string): string {
-		if (entitlement === COMMUNITY_ENTITLEMENT) return 'Obot Community';
-		if (entitlement === ENTERPRISE_ENTITLEMENT) return 'Obot Enterprise';
-		if (entitlement === CLOUD_ENTITLEMENT) return 'Obot Cloud';
+		if (entitlement === COMMUNITY_ENTITLEMENT) return 'uni Community';
+		if (entitlement === ENTERPRISE_ENTITLEMENT) return 'uni Enterprise';
+		if (entitlement === CLOUD_ENTITLEMENT) return 'uni Cloud';
 		const name = entitlement.replace(/^OBOT_(?:ENTERPRISE_)?/, '');
 		if (name === entitlement) return entitlement;
 
@@ -204,7 +204,7 @@
 						</div>
 						<div class="flex min-w-0 flex-col gap-1">
 							<h2 id="enterprise-cta-heading" class="text-lg font-semibold tracking-tight">
-								Upgrade to Obot Enterprise
+								Upgrade to uni Enterprise
 							</h2>
 							<p class="max-w-md text-sm font-light text-primary-content/85">
 								Need dedicated support and higher limits for your organization? Talk with our team

@@ -31,7 +31,7 @@ export function resolveSubjectPickerById(
 }
 
 export function obotGroupDisplayName(id: string): string {
-	return `Obot ${id.charAt(0).toUpperCase()}${id.slice(1)}`;
+	return `uni ${id.charAt(0).toUpperCase()}${id.slice(1)}`;
 }
 
 export interface SubjectTableRow {
@@ -139,7 +139,7 @@ export function convertSubjectsToTableData(
 
 				return {
 					id: subject.id,
-					displayName: subject.id === EVERYONE_SUBJECT_ID ? 'All Obot Users' : subject.id,
+					displayName: subject.id === EVERYONE_SUBJECT_ID ? 'All uni Users' : subject.id,
 					type: 'Selector'
 				};
 			})

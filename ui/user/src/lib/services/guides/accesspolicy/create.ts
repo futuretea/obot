@@ -83,7 +83,7 @@ export const steps: GuideStep[] = [
 												side: 'right',
 												title: 'Select A User/Group',
 												description:
-													"For now, we'll select All Obot Users. This will grant access to everyone."
+													"For now, we'll select All uni Users. This will grant access to everyone."
 											},
 											listener: {
 												id: MCP_ACCESS_POLICY_FIELD_IDS.allUsersOption,

@@ -78,7 +78,7 @@
 					{/each}
 					{#if authProviders.some((provider) => provider.requiresActivation)}
 						<p class="text-muted-content text-center text-sm font-light">
-							Obot requires activation. Open the setup link from your provisioning email to
+							uni requires activation. Open the setup link from your provisioning email to
 							continue.
 						</p>
 					{/if}

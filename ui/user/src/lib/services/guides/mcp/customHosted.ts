@@ -146,7 +146,7 @@ export const steps: GuideStep[] = [
 
 export default {
 	steps,
-	title: 'Host MCP Server w/ Obot',
+	title: 'Host MCP Server w/ uni',
 	description: 'Add a hosted MCP server to the catalog.',
 	id: 'mcp-create-hosted-guide'
 };

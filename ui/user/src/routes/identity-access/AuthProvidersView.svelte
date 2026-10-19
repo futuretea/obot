@@ -527,7 +527,7 @@
 						<p class="my-0.5 flex flex-col text-sm font-semibold">No Auth Providers Configured!</p>
 					</div>
 					<span class="text-sm font-light break-all">
-						To finish setting up Obot, you'll need to configure an Auth Provider. Select one below
+						To finish setting up uni, you'll need to configure an Auth Provider. Select one below
 						to get started!
 					</span>
 				</div>
@@ -607,7 +607,7 @@
 	{#if switchStep === 'signin'}
 		<p class="text-sm font-light">
 			Sign in with <b>{configuringAuthProvider?.name}</b> to confirm the connection works. The
-			account you use <b>becomes the owner of Obot</b> after the switch.
+			account you use <b>becomes the owner of uni</b> after the switch.
 		</p>
 		<div class="notification-info p-3 text-sm font-light">
 			{activeProvider?.name ?? 'The current provider'} keeps serving logins until you finish the switch.
@@ -617,7 +617,7 @@
 		<div class="bg-base-200 flex items-center gap-3 rounded-lg p-3">
 			<div class="flex min-w-0 flex-col">
 				<span class="truncate text-sm font-medium">{switchVerifiedEmail}</span>
-				<span class="text-muted-content text-xs font-light"> Will own Obot after the switch </span>
+				<span class="text-muted-content text-xs font-light"> Will own uni after the switch </span>
 			</div>
 			<span class="text-success ml-auto flex-none text-xs">Verified</span>
 		</div>
@@ -792,5 +792,5 @@
 	licenseKey={license.current.licenseKey}
 	endpoint={AdminService.createCommunityLicense}
 	onSubmit={handleCommunitySubmit}
-	signUpMessage="Register to get free access to all additional providers supported by Obot."
+	signUpMessage="Register to get free access to all additional providers supported by uni."
 />

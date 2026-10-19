@@ -65,7 +65,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Connect Device</title>
+	<title>uni | Connect Device</title>
 </svelte:head>
 
 <div

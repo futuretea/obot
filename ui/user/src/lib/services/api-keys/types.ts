@@ -25,7 +25,7 @@ export const API_KEY_CAPABILITIES = [
 		key: 'canAccessAPI',
 		label: 'API access',
 		shortLabel: 'API',
-		description: 'Grants access to the Obot API using your user role permissions.'
+		description: 'Grants access to the uni API using your user role permissions.'
 	},
 	{
 		key: 'canAccessLLMProxy',

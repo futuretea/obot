@@ -281,7 +281,7 @@
 		</div>
 	{:else}
 		<p class="text-muted-content text-sm font-light">
-			MCP server scheduling is only available when Obot is running on Kubernetes.
+			MCP server scheduling is only available when uni is running on Kubernetes.
 		</p>
 	{/if}
 </div>

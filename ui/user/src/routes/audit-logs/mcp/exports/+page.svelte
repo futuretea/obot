@@ -263,5 +263,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | MCP Audit Log Exports</title>
+	<title>uni | MCP Audit Log Exports</title>
 </svelte:head>

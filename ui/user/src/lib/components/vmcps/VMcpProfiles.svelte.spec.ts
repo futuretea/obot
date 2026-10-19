@@ -102,7 +102,7 @@ function toolSwitch(index = 0) {
 
 async function assignEveryone() {
 	await page.getByRole('combobox', { name: 'Add identities...' }).click();
-	await page.getByRole('button', { name: 'All Obot Users', exact: true }).click();
+	await page.getByRole('button', { name: 'All uni Users', exact: true }).click();
 }
 
 /** A vMCP whose own overrides switch one of the two GitHub tools off. */
@@ -772,14 +772,14 @@ describe('VMcpProfiles.svelte', () => {
 
 		await page.getByRole('button', { name: 'Create profile', exact: true }).click();
 		await page.getByRole('combobox', { name: 'Add identities...' }).click();
-		await page.getByRole('button', { name: 'All Obot Users', exact: true }).click();
+		await page.getByRole('button', { name: 'All uni Users', exact: true }).click();
 
-		await expect.element(page.getByText('All Obot Users', { exact: true })).toBeVisible();
-		await page.getByRole('button', { name: 'Remove All Obot Users' }).click();
+		await expect.element(page.getByText('All uni Users', { exact: true })).toBeVisible();
+		await page.getByRole('button', { name: 'Remove All uni Users' }).click();
 		await expect.element(page.getByText('No people or groups assigned.')).toBeVisible();
 	});
 
-	it('labels Obot groups on the profile card and in the editor', async () => {
+	it('labels uni groups on the profile card and in the editor', async () => {
 		const vmcp = createVMcp('vmcp-obot-group');
 		vmcp.profiles = [
 			{
@@ -790,9 +790,9 @@ describe('VMcpProfiles.svelte', () => {
 		];
 		render(VMcpProfiles, { vmcp, toolFlow: toolFlowStub() });
 
-		await expect.element(page.getByText('Obot Admin', { exact: true })).toBeVisible();
+		await expect.element(page.getByText('uni Admin', { exact: true })).toBeVisible();
 		await page.getByRole('button', { name: 'Edit default' }).click();
-		await expect.element(page.getByText('Obot Admin', { exact: true })).toBeVisible();
+		await expect.element(page.getByText('uni Admin', { exact: true })).toBeVisible();
 		await expect.element(page.getByText('admin', { exact: true })).not.toBeInTheDocument();
 	});
 

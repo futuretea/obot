@@ -603,7 +603,7 @@
 </Confirm>
 
 <svelte:head>
-	<title>Obot | {workflowDisplayName ?? workflowId}</title>
+	<title>uni | {workflowDisplayName ?? workflowId}</title>
 </svelte:head>
 
 <style lang="postcss">

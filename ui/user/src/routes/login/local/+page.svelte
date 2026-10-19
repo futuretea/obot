@@ -24,7 +24,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Sign In</title>
+	<title>uni | Sign In</title>
 </svelte:head>
 
 <div
@@ -37,7 +37,7 @@
 		class="dark:border-base-400 dark:bg-base-200 bg-base-100 flex w-full md:w-sm flex-col gap-4 rounded-xl border border-transparent p-6 shadow-sm"
 	>
 		<Logo class="h-12 self-center" />
-		<h1 class="text-center text-xl font-semibold">Sign in to Obot</h1>
+		<h1 class="text-center text-xl font-semibold">Sign in to uni</h1>
 
 		{#if error}
 			<div class="notification-error flex items-center gap-2">

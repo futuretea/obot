@@ -228,7 +228,7 @@
 		>
 			<span class="font-medium">Enforce tool calls on enrolled devices</span>
 			<span class="input-description">
-				Installs enforcement hooks alongside Obot Sentry. Every tool call is checked against the
+				Installs enforcement hooks alongside uni Sentry. Every tool call is checked against the
 				rules below before it runs. This feature is experimental and is not recommended for
 				production use — a misconfigured allowlist blocks real work on every enrolled device.
 			</span>
@@ -247,7 +247,7 @@
 		<div class="notification-alert flex items-start gap-2.5 p-2.5">
 			<TriangleAlert class="size-4 shrink-0" />
 			<span class="text-xs">
-				Enforcement hooks are installed by the Obot Sentry package. Re-download the install package
+				Enforcement hooks are installed by the uni Sentry package. Re-download the install package
 				above and reinstall it on your devices for this change to take effect.
 			</span>
 		</div>
@@ -291,8 +291,8 @@
 							})}
 					/>
 					<span class="flex flex-col gap-0.5">
-						<span>All Obot-hosted MCP servers</span>
-						<span class="input-description">Any MCP server hosted by this Obot instance.</span>
+						<span>All uni-hosted MCP servers</span>
+						<span class="input-description">Any MCP server hosted by this uni instance.</span>
 					</span>
 				</label>
 

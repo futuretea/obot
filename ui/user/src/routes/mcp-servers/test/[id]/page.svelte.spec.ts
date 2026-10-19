@@ -328,7 +328,7 @@ describe('MCP Tester page', () => {
 		const serverNameHeadings = page.getByRole('heading', { name: serverName, level: 1 });
 		await expect.element(serverNameHeadings.first()).toBeVisible();
 		await expect.element(serverNameHeadings.nth(1)).toBeVisible();
-		expect(document.title).toBe(`Obot | MCP Tester | ${serverName}`);
+		expect(document.title).toBe(`uni | MCP Tester | ${serverName}`);
 		await expect.element(testerSection('Tools')).toHaveClass(/page-tab-active/);
 		await expect
 			.element(page.getByRole('link', { name: `Back to ${serverName}` }))
@@ -495,7 +495,7 @@ describe('MCP Tester page', () => {
 		{
 			code: 'license_required',
 			status: 503,
-			message: 'The registered Obot license is invalid. Update the installation license.'
+			message: 'The registered uni license is invalid. Update the installation license.'
 		}
 	])(
 		'displays $code from the backend without offering immediate retry',
@@ -551,7 +551,7 @@ describe('MCP Tester page', () => {
 		await expect
 			.element(page.getByRole('heading', { name: 'Virtual test server', level: 1 }).first())
 			.toBeVisible();
-		expect(document.title).toBe('Obot | vMCP Tester | Virtual test server');
+		expect(document.title).toBe('uni | vMCP Tester | Virtual test server');
 		await expect.element(page.getByRole('heading', { name: 'Tools', exact: true })).toBeVisible();
 		await expect
 			.element(page.getByRole('link', { name: 'Back to Virtual test server' }))
@@ -573,7 +573,7 @@ describe('MCP Tester page', () => {
 			backTarget: '/vmcps/vmcp1-test'
 		});
 
-		expect(document.title).toBe('Obot | vMCP Tester | Virtual test server');
+		expect(document.title).toBe('uni | vMCP Tester | Virtual test server');
 		await expect
 			.element(page.getByRole('heading', { name: 'Virtual test server', level: 1 }).first())
 			.toBeVisible();

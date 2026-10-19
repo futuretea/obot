@@ -13,7 +13,7 @@
 	import CopyField from '../CopyField.svelte';
 	import ResponsiveDialog from '../ResponsiveDialog.svelte';
 	import IconButton from '../primitives/IconButton.svelte';
-	import Obot from './Obot.svelte';
+	import uni from './uni.svelte';
 	import { createGuideHighlighter, type GuideHighlighter } from './highlight';
 	import { GripVertical, X } from '@lucide/svelte';
 	import { noop } from 'es-toolkit';
@@ -819,7 +819,7 @@
 			</div>
 			<div class="flex items-center justify-end gap-2 p-3 border-t border-base-300 relative">
 				{#if guide.showObotInPanel}
-					<Obot animation={['enter', 'idle']} class="absolute bottom-0 left-2.5" />
+					<uni animation={['enter', 'idle']} class="absolute bottom-0 left-2.5" />
 				{/if}
 				<div class="flex gap-2">
 					{#if !guideCompleted}
@@ -872,7 +872,7 @@
 		}}
 		title="Guide Completed"
 	>
-		<Obot animation={['enter', 'idle']} class="mx-auto" size={96} />
+		<uni animation={['enter', 'idle']} class="mx-auto" size={96} />
 		<h4 class="font-semibold text-center text-lg mb-2">And You're Done!</h4>
 		<p class="font-base text-center">You've completed this guide.</p>
 		<p class="font-base text-center mb-6 px-8">

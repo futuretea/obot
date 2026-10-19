@@ -275,7 +275,7 @@
 					target="_blank"
 					rel="external noopener noreferrer"
 				>
-					<SquareTerminal class="size-4" /> Install Obot CLI
+					<SquareTerminal class="size-4" /> Install uni CLI
 				</a>
 
 				{#if profile.current.isBootstrapUser?.()}
@@ -299,14 +299,14 @@
 						}}
 					>
 						<span class="flex items-center gap-2">
-							<BotMessageSquare class="size-4" /> Launch Obot Chat
+							<BotMessageSquare class="size-4" /> Launch uni Chat
 							<span class="badge badge-warning badge-xs">Deprecated</span>
 						</span>
 					</button>
 				{:else}
 					<div class="dropdown-link cursor-default hover:bg-transparent dark:hover:bg-transparent">
 						<span class="flex items-center gap-2 opacity-50">
-							<BotMessageSquare class="size-4" /> Launch Obot Chat
+							<BotMessageSquare class="size-4" /> Launch uni Chat
 							<span class="badge badge-warning badge-xs">Deprecated</span>
 						</span>
 						<InfoTooltip

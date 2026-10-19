@@ -57,7 +57,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {creating ? createTitle : 'Hosted Agents'}</title>
+	<title>uni | {creating ? createTitle : 'Hosted Agents'}</title>
 </svelte:head>
 
 {#if creating}

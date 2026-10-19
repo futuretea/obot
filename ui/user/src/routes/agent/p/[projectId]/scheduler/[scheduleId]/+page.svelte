@@ -227,7 +227,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {task?.name || 'Schedule'}</title>
+	<title>uni | {task?.name || 'Schedule'}</title>
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 md:px-8" bind:this={taskContainer}>

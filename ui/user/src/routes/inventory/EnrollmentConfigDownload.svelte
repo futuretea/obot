@@ -364,7 +364,7 @@
 	<div class="flex flex-col gap-1.5">
 		<div class="flex flex-wrap items-center justify-between gap-2">
 			<div class="flex items-center gap-2.5">
-				<h3 class="text-lg font-semibold">Install Obot Sentry</h3>
+				<h3 class="text-lg font-semibold">Install uni Sentry</h3>
 				{#if versionChip}
 					<span class="badge badge-ghost badge-sm">{versionChip}</span>
 				{/if}
@@ -408,7 +408,7 @@
 		</div>
 
 		<p class="text-muted-content text-sm font-light">
-			Obot Sentry is a lightweight program that allows Obot to inventory and audit AI on enrolled
+			uni Sentry is a lightweight program that allows uni to inventory and audit AI on enrolled
 			devices. Follow the steps below to generate an installation package and deploy it to your
 			devices.
 		</p>
@@ -444,7 +444,7 @@
 		<Loading class="size-5 self-center" />
 	{:else if !latestAsset && !catalogError}
 		<div class="text-muted-content rounded-lg border border-dashed p-6 text-center text-sm">
-			No Obot Sentry release available yet. Check for updates to fetch the latest.
+			No uni Sentry release available yet. Check for updates to fetch the latest.
 		</div>
 	{:else}
 		{#if latestAsset && settingsOpen}
@@ -501,7 +501,7 @@
 					{@render setupStep(
 						'2',
 						'Select your installation method',
-						'How Obot Sentry is delivered to your devices'
+						'How uni Sentry is delivered to your devices'
 					)}
 					<div class="flex shrink-0 flex-wrap justify-end">
 						{#each platformGroups as group (group.platform)}

@@ -84,5 +84,5 @@
 </main>
 
 <svelte:head>
-	<title>Obot | OAuth Debugger Authorization</title>
+	<title>uni | OAuth Debugger Authorization</title>
 </svelte:head>

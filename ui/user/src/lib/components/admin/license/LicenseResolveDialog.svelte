@@ -109,7 +109,7 @@
 		<div class="flex flex-col gap-4">
 			<p class="font-light text-center">
 				{#if warnUserLimit || violations.userLimit}
-					Unlock unlimited users and get support with Obot Enterprise! Contact us at <a
+					Unlock unlimited users and get support with uni Enterprise! Contact us at <a
 						href="mailto:info@obot.ai"
 						class="text-link">info@obot.ai</a
 					> to upgrade.

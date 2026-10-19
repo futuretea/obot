@@ -118,7 +118,7 @@
 					<div class="flex flex-col gap-1">
 						<h3 class="text-lg font-semibold">Enrollment Keys</h3>
 						<p class="text-muted-content text-sm font-light">
-							Keys used by Obot Sentry to register a new device with Obot.
+							Keys used by uni Sentry to register a new device with uni.
 						</p>
 					</div>
 					{#if !readOnly}

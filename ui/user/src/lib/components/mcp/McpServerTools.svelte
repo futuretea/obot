@@ -227,7 +227,7 @@
 								{/if}
 								{#if tool.unsupported}
 									<span class="text-muted-content ml-3 shrink-0 text-sm">
-										⚠️ Not yet fully supported in Obot
+										⚠️ Not yet fully supported in uni
 									</span>
 								{/if}
 							</p>

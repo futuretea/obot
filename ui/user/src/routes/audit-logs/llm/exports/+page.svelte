@@ -243,5 +243,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | LLM Audit Log Exports</title>
+	<title>uni | LLM Audit Log Exports</title>
 </svelte:head>

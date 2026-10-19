@@ -107,7 +107,7 @@ describe('testerChatAvailability', () => {
 			name: 'an unlicensed installation',
 			version: { hasModelProvider: false, hasValidLicense: false },
 			message:
-				'The chat feature is managed by your administrator. Contact your Obot admin to enable access.'
+				'The chat feature is managed by your administrator. Contact your uni admin to enable access.'
 		},
 		{
 			name: 'a disabled model service',

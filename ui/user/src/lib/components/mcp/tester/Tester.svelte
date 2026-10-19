@@ -316,7 +316,7 @@
 									</h2>
 									<p class="max-w-md text-sm font-light">
 										Register to get free access to the MCP Inspector Chat, powered by
-										<b class="font-medium">Obot’s model service</b>.
+										<b class="font-medium">uni’s model service</b>.
 									</p>
 									<p class="max-w-md text-sm font-light">
 										Prefer not to register? You can still use this feature by

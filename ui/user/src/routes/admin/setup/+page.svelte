@@ -135,7 +135,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Setup</title>
+	<title>uni | Setup</title>
 </svelte:head>
 
 <div class="flex min-h-dvh flex-col items-center">

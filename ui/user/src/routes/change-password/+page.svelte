@@ -51,7 +51,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Set Your Password</title>
+	<title>uni | Set Your Password</title>
 </svelte:head>
 
 <div
@@ -64,7 +64,7 @@
 		<Logo class="h-12 self-center" />
 		<h1 class="text-center text-xl font-semibold">Set your password</h1>
 		<p class="text-muted-content text-center text-sm font-light">
-			Choose a new password before continuing to Obot.
+			Choose a new password before continuing to uni.
 		</p>
 
 		{#if error}

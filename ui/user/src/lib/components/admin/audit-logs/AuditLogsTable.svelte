@@ -93,7 +93,7 @@
 	}
 
 	function eventTypeLabel(eventType: (typeof data)[number]['eventType']) {
-		return eventType === 'mcp_call' ? 'Obot Gateway' : 'Local Agent Hook';
+		return eventType === 'mcp_call' ? 'uni Gateway' : 'Local Agent Hook';
 	}
 
 	function formatDuration(ms?: number) {

@@ -71,7 +71,7 @@
 		modelProxy:
 			'Configure whether or not the provided model proxy should be enabled to use for the vMCP Inspector.',
 		registryConnections:
-			'Create a managed image pull secret to let Obot pull private MCP server images.',
+			'Create a managed image pull secret to let uni pull private MCP server images.',
 		gitCredentials:
 			'Create a host-bound credential to use a personal access token across Git repositories.'
 	};
@@ -233,7 +233,7 @@
 
 {#snippet productAnalyticsSnippet()}
 	<p class="text-muted-content text-sm font-light">
-		Share product usage data to help improve Obot.
+		Share product usage data to help improve uni.
 		<a
 			class="text-link"
 			href="https://docs.obot.ai/configuration/product-analytics"

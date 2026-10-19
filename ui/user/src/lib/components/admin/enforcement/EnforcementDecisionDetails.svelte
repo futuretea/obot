@@ -143,7 +143,7 @@
 					<span class="badge badge-warning badge-sm">Could not be identified</span>
 				{/if}
 				{#if decision.obotHosted}
-					<span class="badge badge-ghost badge-sm">Obot-hosted</span>
+					<span class="badge badge-ghost badge-sm">uni-hosted</span>
 				{/if}
 				<span class="text-muted-content text-xs">
 					{formatLogTimestamp(decision.createdAt, userDeviceSettings.timeFormat)}

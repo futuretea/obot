@@ -226,5 +226,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | What would you like to work on?</title>
+	<title>uni | What would you like to work on?</title>
 </svelte:head>

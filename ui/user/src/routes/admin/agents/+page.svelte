@@ -164,5 +164,5 @@
 </Confirm>
 
 <svelte:head>
-	<title>Obot | Agents</title>
+	<title>uni | Agents</title>
 </svelte:head>

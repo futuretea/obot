@@ -431,7 +431,7 @@
 		<div class="sticky top-0 left-0 w-full bg-base-100 dark:bg-base-300 flex flex-col gap-2 pb-2">
 			<p class="text-muted-content text-sm font-light mt-4 md:mt-0">
 				Resources this {subjectLabel} can access through assigned policies, including those assigned to
-				All Obot Users
+				All uni Users
 				{#if viewing?.kind === 'user'}
 					and any groups they belong to
 				{/if}.

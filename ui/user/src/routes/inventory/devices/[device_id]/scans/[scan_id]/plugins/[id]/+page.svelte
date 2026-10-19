@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Plugin {plugin?.name ?? ''}</title>
+	<title>uni | Plugin {plugin?.name ?? ''}</title>
 </svelte:head>
 
 <Layout title={plugin?.name || 'Plugin'} showBackButton onBackButtonClick={() => goto(backHref)}>

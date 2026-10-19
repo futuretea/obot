@@ -73,7 +73,7 @@
 <div class="flex w-full items-center justify-center">
 	<Logo class="size-18" />
 </div>
-<h2 class="mb-6 text-center text-2xl font-semibold">Welcome to Obot!</h2>
+<h2 class="mb-6 text-center text-2xl font-semibold">Welcome to uni!</h2>
 
 <div class="w-fit self-center px-4">
 	{#if !version.current.authEnabled}
@@ -88,7 +88,7 @@
 		</p>
 	{/if}
 	<p>
-		By continuing, I agree to Obot's
+		By continuing, I agree to uni's
 		<a
 			href="https://obot.ai/eul"
 			rel="external noopener noreferrer"
@@ -108,7 +108,7 @@
 			<label for="share-product-usage" class="leading-tight">
 				Share product usage data
 				<br />
-				<span class="text-muted-content">Help improve Obot by sharing usage data.</span>
+				<span class="text-muted-content">Help improve uni by sharing usage data.</span>
 				<a
 					href="https://docs.obot.ai/configuration/product-analytics"
 					rel="external noopener noreferrer"

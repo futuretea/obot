@@ -10,7 +10,7 @@ export const load: LayoutLoad = async ({ fetch, url, parent }) => {
 	const { profile, version } = await parent();
 
 	if (version?.agentsEnabled === false) {
-		throw error(403, 'Obot Agent features are disabled.');
+		throw error(403, 'uni Agent features are disabled.');
 	}
 
 	// Check for an explicit project ID from query params or URL path.

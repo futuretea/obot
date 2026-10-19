@@ -194,7 +194,7 @@
 			<li>GitLab: read_repository + read_api</li>
 		</ul>
 		<p class="mt-2">
-			If no token is set, Obot falls back to the GITHUB_AUTH_TOKEN environment variable.
+			If no token is set, uni falls back to the GITHUB_AUTH_TOKEN environment variable.
 		</p>
 	</div>
 {/snippet}

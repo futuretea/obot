@@ -72,7 +72,7 @@
 				<ShieldAlert class="text-warning size-4 shrink-0" />
 				<p class="text-xs">
 					You're {hasUserLimitViolation ? 'at' : 'almost at'} the user limit.
-					{userLimitText} Upgrade to Obot Enterprise!
+					{userLimitText} Upgrade to uni Enterprise!
 				</p>
 			</div>
 			<div class="flex items-center gap-2">

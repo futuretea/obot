@@ -50,8 +50,8 @@
 	}
 
 	let filteredData = $derived.by(() => {
-		const everyoneGroup: OrgGroup = { id: '*', name: 'All Obot Users' };
-		const adminGroup: OrgGroup = { id: OBOT_ADMIN_PICKER_ID, name: 'Obot Admin' };
+		const everyoneGroup: OrgGroup = { id: '*', name: 'All uni Users' };
+		const adminGroup: OrgGroup = { id: OBOT_ADMIN_PICKER_ID, name: 'uni Admin' };
 		const query = searchNames.toLowerCase();
 		const shouldIncludeEveryone =
 			!searchNames.length || everyoneGroup.name.toLowerCase().includes(query);
@@ -195,7 +195,7 @@
 			>
 				<TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
 				<span>
-					Showing only groups Obot has already recorded &mdash; directory-wide group read permission
+					Showing only groups uni has already recorded &mdash; directory-wide group read permission
 					may not be granted.
 				</span>
 			</div>

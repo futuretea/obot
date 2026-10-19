@@ -201,7 +201,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Device Scan</title>
+	<title>uni | Device Scan</title>
 </svelte:head>
 
 <Layout

@@ -493,7 +493,7 @@ describe('Identity & Access Page', () => {
 				await expect
 					.element(
 						signup.getByText(
-							/Register to get free access to all additional providers supported by Obot/,
+							/Register to get free access to all additional providers supported by uni/,
 							{
 								exact: false
 							}
@@ -564,7 +564,7 @@ describe('Identity & Access Page', () => {
 			it('asks for a sign-in before offering to complete the switch', async () => {
 				await renderAsOwner([localConfigured, stagedGoogle]);
 
-				await expect.element(page.getByText(/becomes the owner of Obot/)).toBeVisible();
+				await expect.element(page.getByText(/becomes the owner of uni/)).toBeVisible();
 				await expect
 					.element(page.getByRole('button', { name: /^Sign in with/, exact: false }))
 					.toBeVisible();

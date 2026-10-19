@@ -26,7 +26,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Skill {skill?.name ?? ''}</title>
+	<title>uni | Skill {skill?.name ?? ''}</title>
 </svelte:head>
 
 <Layout

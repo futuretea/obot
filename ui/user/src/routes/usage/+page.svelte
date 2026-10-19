@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Usage</title>
+	<title>uni | Usage</title>
 </svelte:head>
 
 <TabLayout

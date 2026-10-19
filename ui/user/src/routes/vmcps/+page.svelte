@@ -36,7 +36,7 @@
 						value: 'vmcps',
 						content: vmcpsView,
 						tooltip:
-							'A virtual MCP (vMCP) exposes one or more MCP servers through one Obot Gateway endpoint; it provides a single point of entry to manage the connection, tools, and access. Create, connect, and manage them here.'
+							'A virtual MCP (vMCP) exposes one or more MCP servers through one uni Gateway endpoint; it provides a single point of entry to manage the connection, tools, and access. Create, connect, and manage them here.'
 					},
 					{
 						label: 'Deployments',
@@ -307,5 +307,5 @@
 />
 
 <svelte:head>
-	<title>Obot | {creating ? 'Create vMCP' : 'vMCPs'}</title>
+	<title>uni | {creating ? 'Create vMCP' : 'vMCPs'}</title>
 </svelte:head>

@@ -51,7 +51,7 @@
 		<div class="my-4 flex flex-col gap-4 text-center">
 			<p>
 				Impersonator grants elevated cross-user access so members of this group can connect to other
-				users' Obot Agents.
+				users' uni Agents.
 			</p>
 			{#if addingAuditor}
 				<p>

@@ -132,7 +132,7 @@ describe('owner activation page', () => {
 
 		render(ActivatePage);
 
-		await expect.element(page.getByText(/Obot requires activation/)).toBeVisible();
+		await expect.element(page.getByText(/uni requires activation/)).toBeVisible();
 		expect(activate).not.toHaveBeenCalled();
 		expect(goto).not.toHaveBeenCalled();
 	});

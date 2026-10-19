@@ -14,8 +14,8 @@
 <div class="flex flex-col gap-1">
 	<h3 class="text-base font-semibold">AWS Setup Guide</h3>
 	<p class="text-muted-content text-sm">
-		Configure AWS to trust Obot's service account, then paste the role ARN above and save the image
-		pull secret in Obot.
+		Configure AWS to trust uni's service account, then paste the role ARN above and save the image
+		pull secret in uni.
 	</p>
 </div>
 
@@ -37,7 +37,7 @@
 			{@render setupStep(
 				'2',
 				'Create the IAM role trust policy',
-				'Create an IAM role with this trust policy so Obot can assume it with web identity.'
+				'Create an IAM role with this trust policy so uni can assume it with web identity.'
 			)}
 			<div class="mt-4 pl-9">
 				{@render policyBlock('Trust Policy', trustPolicyJSON)}
@@ -58,8 +58,8 @@
 		<div class="pt-5">
 			{@render setupStep(
 				'4',
-				'Save the secret in Obot',
-				'Paste the role ARN into the form, then click Create or Save. Obot writes the Kubernetes image pull secret and returns you to the list view.'
+				'Save the secret in uni',
+				'Paste the role ARN into the form, then click Create or Save. uni writes the Kubernetes image pull secret and returns you to the list view.'
 			)}
 		</div>
 	</div>

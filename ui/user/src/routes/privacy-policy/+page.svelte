@@ -114,7 +114,7 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot - Privacy Policy</title>
+	<title>uni - Privacy Policy</title>
 </svelte:head>
 
 <div class="text-base-content relative flex h-dvh w-full flex-col">
@@ -201,12 +201,12 @@
 					regarding your Personal Data rights and choices.
 				</p>
 				<p>
-					If you, or the company you represent, have entered into the Acorn Obot.ai SaaS Agreement
+					If you, or the company you represent, have entered into the Acorn uni.ai SaaS Agreement
 					(https://obot.ai/terms-of-service), or a negotiated a custom agreement, to use the
 					Software-as-a-Service platform located at https://obot.ai (the “Services”), this Notice is
-					made part of, and integrated into, that document (each an “Acorn Obot.ai SaaS Agreement”).
+					made part of, and integrated into, that document (each an “Acorn uni.ai SaaS Agreement”).
 					By continuing to use our Sites or the Services, you agree to this Privacy Notice.
-					Capitalized terms not defined herein have the meaning set for in Acorn Obot.ai SaaS
+					Capitalized terms not defined herein have the meaning set for in Acorn uni.ai SaaS
 					Agreement.
 				</p>
 

@@ -395,7 +395,7 @@
 					>
 						<p class="shrink-0 font-semibold">Impersonator</p>
 						<p class="text-muted-content">
-							Will be able to connect to other users' Obot Agents. Requires Admin or Owner base
+							Will be able to connect to other users' uni Agents. Requires Admin or Owner base
 							role.
 						</p>
 					</span>
@@ -525,7 +525,7 @@
 	{#snippet note()}
 		<div class="flex flex-col gap-4">
 			<p class="text-left">
-				Impersonator allows connecting to other users' Obot Agents. This is elevated cross-user
+				Impersonator allows connecting to other users' uni Agents. This is elevated cross-user
 				access and should be granted sparingly.
 			</p>
 			{#if isAddingAuditorWithUserImpersonation}

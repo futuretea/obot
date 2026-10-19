@@ -149,7 +149,7 @@
 			<div class="flex flex-col">
 				<div class="w-28 shrink-0 font-semibold">Impersonator</div>
 				<p class="text-muted-content text-xs">
-					All group members will be able to connect to other users' Obot Agents. Must be combined
+					All group members will be able to connect to other users' uni Agents. Must be combined
 					with Admin or Owner.
 				</p>
 			</div>

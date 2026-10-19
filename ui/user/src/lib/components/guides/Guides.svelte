@@ -4,7 +4,7 @@
 	import { guide, profile, userDeviceSettings, version } from '$lib/stores';
 	import { adminConfigStore } from '$lib/stores/adminConfig.svelte';
 	import IconButton from '../primitives/IconButton.svelte';
-	import Obot from './Obot.svelte';
+	import uni from './uni.svelte';
 	import { createGuideHighlighter, type GuideHighlighter } from './highlight';
 	import { ChevronRight, Info, X } from '@lucide/svelte';
 	import { onMount } from 'svelte';
@@ -128,7 +128,7 @@
 				out:fly={{ y: 100, duration: 150 }}
 			>
 				{#if guide.showObotInGuide}
-					<Obot animation={['enter', 'idle']} class="absolute -top-15.5 left-0" />
+					<uni animation={['enter', 'idle']} class="absolute -top-15.5 left-0" />
 				{/if}
 				<IconButton
 					onclick={() => {

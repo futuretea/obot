@@ -103,7 +103,7 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot - Terms of Service</title>
+	<title>uni - Terms of Service</title>
 </svelte:head>
 
 <div class="relative flex h-dvh w-full flex-col text-black dark:text-white">

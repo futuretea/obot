@@ -7,14 +7,14 @@ import { describe, expect, it } from 'vitest';
 
 describe('resolveSubjectFromGroup', () => {
 	it('stores all users as a selector', () => {
-		expect(resolveSubjectFromGroup({ id: '*', name: 'All Obot Users' })).toEqual({
+		expect(resolveSubjectFromGroup({ id: '*', name: 'All uni Users' })).toEqual({
 			type: 'selector',
 			id: '*'
 		});
 	});
 
-	it('stores the Obot Admin picker row as an obot group', () => {
-		expect(resolveSubjectFromGroup({ id: 'obot-admin', name: 'Obot Admin' })).toEqual({
+	it('stores the uni Admin picker row as an obot group', () => {
+		expect(resolveSubjectFromGroup({ id: 'obot-admin', name: 'uni Admin' })).toEqual({
 			type: 'obotGroup',
 			id: 'admin'
 		});
@@ -27,7 +27,7 @@ describe('resolveSubjectFromGroup', () => {
 		});
 	});
 
-	it('uses a synthetic picker id for Obot Admin', () => {
+	it('uses a synthetic picker id for uni Admin', () => {
 		expect(resolveSubjectPickerById({ type: 'obotGroup', id: 'admin' })).toBe('obot-admin');
 		expect(resolveSubjectPickerById({ type: 'group', id: 'admin' })).toBe('admin');
 	});
@@ -43,7 +43,7 @@ describe('resolveSubjectFromGroup', () => {
 describe('convertSubjectsToTableData', () => {
 	it('labels an obot group without a directory lookup', () => {
 		expect(convertSubjectsToTableData([{ type: 'obotGroup', id: 'admin' }], [], [])).toEqual([
-			{ id: 'obot-admin', displayName: 'Obot Admin', type: 'Group' }
+			{ id: 'obot-admin', displayName: 'uni Admin', type: 'Group' }
 		]);
 	});
 

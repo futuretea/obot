@@ -18,4 +18,4 @@
 	const logoSrc = $derived(logos[variant]);
 </script>
 
-<img src={logoSrc} class={classes} alt="Obot {variant} logo icon" />
+<img src={logoSrc} class={classes} alt="uni {variant} logo icon" />

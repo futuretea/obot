@@ -44,13 +44,13 @@ describe('subjectsApplyTo', () => {
 		expect(subjectsApplyTo([{ type: 'group', id: 'sales' }], userTarget)).toEqual([]);
 	});
 
-	it("matches Obot role groups from the user's effective role", () => {
+	it("matches uni role groups from the user's effective role", () => {
 		expect(subjectsApplyTo([{ type: 'obotGroup', id: 'admin' }], userTarget)).toEqual(['via-role']);
 		expect(subjectsApplyTo([{ type: 'obotGroup', id: 'owner' }], userTarget)).toEqual([]);
 		expect(subjectsApplyTo([{ type: 'obotGroup', id: 'admin' }], groupTarget)).toEqual([]);
 	});
 
-	it('does not treat an Obot role group as an auth provider group, or the reverse', () => {
+	it('does not treat an uni role group as an auth provider group, or the reverse', () => {
 		expect(subjectsApplyTo([{ type: 'group', id: 'admin' }], userTarget)).toEqual([]);
 		expect(subjectsApplyTo([{ type: 'obotGroup', id: 'engineering' }], userTarget)).toEqual([]);
 	});

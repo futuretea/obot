@@ -315,7 +315,7 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | {apiKey?.name || 'Agent Identity'} | {apiKeyId}</title>
+	<title>uni | {apiKey?.name || 'Agent Identity'} | {apiKeyId}</title>
 </svelte:head>
 
 <style lang="postcss">

@@ -367,7 +367,7 @@
 					<SettingsIcon class="size-5 shrink-0" />
 					<p class="min-w-0 text-sm">
 						<b class="font-semibold">{consent.mcpServerName || 'This MCP server'}</b> needs required configuration
-						before Obot can finish authorizing this connection.
+						before uni can finish authorizing this connection.
 					</p>
 				</div>
 
@@ -425,8 +425,8 @@
 				{/if}
 
 				<p class="text-sm">
-					{consent.clientName} wants to authenticate with Obot for an MCP server connection. If you approve,
-					Obot will redirect you back to the OAuth client that started this request.
+					{consent.clientName} wants to authenticate with uni for an MCP server connection. If you approve,
+					uni will redirect you back to the OAuth client that started this request.
 				</p>
 
 				<div>

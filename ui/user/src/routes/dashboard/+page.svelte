@@ -125,7 +125,7 @@
 					(s) =>
 						!s.mcpID.startsWith('sms1') &&
 						!s.mcpServerDisplayName.startsWith('nba1') &&
-						!s.mcpServerDisplayName.startsWith('Obot ')
+						!s.mcpServerDisplayName.startsWith('uni ')
 				);
 				const adjustedStats = {
 					...stats,
@@ -781,5 +781,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | Dashboard</title>
+	<title>uni | Dashboard</title>
 </svelte:head>

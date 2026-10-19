@@ -36,7 +36,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {clientName}</title>
+	<title>uni | {clientName}</title>
 </svelte:head>
 
 <Layout

@@ -43,7 +43,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Platform</title>
+	<title>uni | Platform</title>
 </svelte:head>
 
 <TabLayout

@@ -69,7 +69,7 @@ describe('SetupSplashDialog product analytics consent', () => {
 
 			await expect.element(page.getByRole('dialog')).toBeVisible();
 			await expect
-				.element(page.getByRole('heading', { name: 'Welcome to Obot!', exact: true }))
+				.element(page.getByRole('heading', { name: 'Welcome to uni!', exact: true }))
 				.toBeVisible();
 			await expect
 				.element(page.getByRole('checkbox', { name: /Share product usage data/ }))

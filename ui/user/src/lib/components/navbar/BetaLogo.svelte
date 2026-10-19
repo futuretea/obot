@@ -38,6 +38,6 @@
 </script>
 
 <div class={twMerge('flex shrink-0', klass)}>
-	<img src={logoPair.light} class={twMerge(imgClass, 'dark:hidden')} alt="Obot logo" />
-	<img src={logoPair.dark} class={twMerge(imgClass, 'hidden dark:block')} alt="Obot logo" />
+	<img src={logoPair.light} class={twMerge(imgClass, 'dark:hidden')} alt="uni logo" />
+	<img src={logoPair.dark} class={twMerge(imgClass, 'hidden dark:block')} alt="uni logo" />
 </div>

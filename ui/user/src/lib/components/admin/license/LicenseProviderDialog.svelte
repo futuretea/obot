@@ -79,7 +79,7 @@
 				<p>
 					A valid license is required to use {provider.name}. Please contact support at
 					<a href="mailto:info@obot.ai" class="text-link">info@obot.ai</a> for more information or to
-					upgrade to Obot Enterprise.
+					upgrade to uni Enterprise.
 				</p>
 			{/if}
 		{/if}

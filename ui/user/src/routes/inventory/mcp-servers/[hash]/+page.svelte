@@ -66,7 +66,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | MCP Server</title>
+	<title>uni | MCP Server</title>
 </svelte:head>
 
 <Layout

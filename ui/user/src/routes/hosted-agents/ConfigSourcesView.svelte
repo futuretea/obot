@@ -131,7 +131,7 @@
 
 <div class="flex flex-col gap-4" in:fade={{ duration }}>
 	<p class="text-muted-content text-sm font-light">
-		A config source is a Git repository Obot syncs templates and harnesses from, so they are defined
+		A config source is a Git repository uni syncs templates and harnesses from, so they are defined
 		in version control rather than added by hand here.
 	</p>
 

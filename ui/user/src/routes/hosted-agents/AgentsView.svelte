@@ -545,7 +545,7 @@
 										<!-- status.url is the sandbox's in-cluster address, which a
 											     browser cannot reach. Its presence means the agent declares a
 											     port, so it doubles as the signal for whether there is
-											     anything to open; the link itself goes through Obot. -->
+											     anything to open; the link itself goes through uni. -->
 										{#if instance.status?.url}<a
 												class="btn btn-ghost btn-sm"
 												href="/agent-connect/{instance.id}"

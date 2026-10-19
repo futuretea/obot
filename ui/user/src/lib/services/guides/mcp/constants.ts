@@ -66,14 +66,14 @@ export const listenMcpFiltersTab = getMcpServersTabListener(MCP_SERVERS_TAB_FILT
 
 export const addCatalogEntryDescriptions = {
 	hosted:
-		'A hosted MCP server allows you to add a custom MCP server that is managed and hosted by Obot. By having Obot host your MCP server, you can take advantage of lifecycle management, configuration management, and access policy enforcement. Once deployed in Obot, the server is available as a remote MCP URL that your MCP clients can consume.',
+		'A hosted MCP server allows you to add a custom MCP server that is managed and hosted by uni. By having uni host your MCP server, you can take advantage of lifecycle management, configuration management, and access policy enforcement. Once deployed in uni, the server is available as a remote MCP URL that your MCP clients can consume.',
 	remote:
-		"A remote MCP server allows you to proxy any remote MCP server through Obot, enabling you to take advantage of Obot's access policies, audit logging, and static OAuth integration."
+		"A remote MCP server allows you to proxy any remote MCP server through uni, enabling you to take advantage of uni's access policies, audit logging, and static OAuth integration."
 };
 
 export const obotCatalogEntryDescriptions = {
 	hosted:
-		"A hosted MCP server provides a simple way to deploy and host an MCP server on the Obot platform, where Obot manages its operation and lifecycle. Let's continue through here.",
+		"A hosted MCP server provides a simple way to deploy and host an MCP server on the uni platform, where uni manages its operation and lifecycle. Let's continue through here.",
 	remote:
-		"A remote MCP server lets you proxy all traffic to a remote MCP server through Obot, enabling you to take advantage of Obot's access policies and audit logging. Let's continue through here."
+		"A remote MCP server lets you proxy all traffic to a remote MCP server through uni, enabling you to take advantage of uni's access policies and audit logging. Let's continue through here."
 };

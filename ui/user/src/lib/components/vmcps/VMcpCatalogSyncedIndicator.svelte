@@ -45,7 +45,7 @@
 {#snippet contents()}
 	<p class="font-semibold">Synced from catalog</p>
 	<p>
-		This vMCP is managed by a catalog source and is read-only in Obot. Make changes in the catalog
+		This vMCP is managed by a catalog source and is read-only in uni. Make changes in the catalog
 		source; they are applied on the next sync.
 	</p>
 	{#if vmcp.sourceURL}

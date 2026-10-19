@@ -61,5 +61,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | {title}</title>
+	<title>uni | {title}</title>
 </svelte:head>

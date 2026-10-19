@@ -1,6 +1,6 @@
 import type { GuideHighlight } from '$lib/services/guides';
 import { darkMode } from '$lib/stores';
-import Obot from './Obot.svelte';
+import uni from './uni.svelte';
 import { type Config, type Driver, driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 import { mount, tick, unmount } from 'svelte';
@@ -356,7 +356,7 @@ export function createGuideHighlighter(options: GuideHighlighterOptions = {}): G
 						popover.wrapper.appendChild(container);
 						highlightObotContainer = container;
 
-						highlightObot = mount(Obot, {
+						highlightObot = mount(uni, {
 							target: container,
 							props: {
 								animation: ['enter', 'arrow', 'arrow_idle'],

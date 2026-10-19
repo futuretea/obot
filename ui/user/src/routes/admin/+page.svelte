@@ -85,7 +85,7 @@
 						<p class="text-md px-4 text-left font-light">
 							You've established your first owner user, the bootstrap user currently being used will
 							be disabled. Upon completing this action, you'll be logged out and asked to log into
-							Obot again.
+							uni again.
 						</p>
 					</div>
 					<button
@@ -265,7 +265,7 @@
 				</div>
 
 				<i class="text-xs font-light">
-					You can find the bootstrap token in the server logs when starting Obot by searching for
+					You can find the bootstrap token in the server logs when starting uni by searching for
 					'Bootstrap Token', or configure it directly through environment variables at startup.
 				</i>
 
@@ -278,5 +278,5 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot | Admin</title>
+	<title>uni | Admin</title>
 </svelte:head>

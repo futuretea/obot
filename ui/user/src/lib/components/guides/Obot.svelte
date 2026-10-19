@@ -120,7 +120,7 @@
 	style:width="{size}px"
 	style:height="{size}px"
 	role="img"
-	aria-label="Obot {activeAnimation}"
+	aria-label="uni {activeAnimation}"
 ></div>
 
 <style>

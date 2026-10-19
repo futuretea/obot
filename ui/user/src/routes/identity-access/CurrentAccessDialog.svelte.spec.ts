@@ -77,7 +77,7 @@ describe('CurrentAccessDialog.svelte', () => {
 		});
 	});
 
-	it("lists resources granted by the user's Obot groups and auth provider groups", async () => {
+	it("lists resources granted by the user's uni groups and auth provider groups", async () => {
 		mockAccessPolicyLists();
 		vi.spyOn(AdminService, 'listModelAccessPolicies').mockResolvedValue([
 			modelPolicy(

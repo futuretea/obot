@@ -120,10 +120,10 @@
 
 	function getSubjectDisplayName(subject: AccessControlRuleSubject): string {
 		if (subject.type === 'selector' && subject.id === '*') {
-			return 'All Obot Users';
+			return 'All uni Users';
 		}
 		if (subject.type === 'obotGroup') {
-			return `Obot ${subject.id.charAt(0).toUpperCase()}${subject.id.slice(1)}`;
+			return `uni ${subject.id.charAt(0).toUpperCase()}${subject.id.slice(1)}`;
 		}
 		if (subject.type === 'group') {
 			return groupMap.get(subject.id)?.name ?? subject.id;
@@ -175,7 +175,7 @@
 				{:else if activeSubjects.length === 0}
 					Version {activeVersion.version} is currently only visible to you.
 				{:else if hasAllUsersSubject(activeSubjects)}
-					This workflow is visible to all Obot users.
+					This workflow is visible to all uni users.
 				{:else}
 					This workflow is visible only to the listed users and groups.
 				{/if}

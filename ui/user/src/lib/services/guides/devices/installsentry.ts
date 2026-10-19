@@ -30,7 +30,7 @@ function getEnforcementEventsAction(): GuideAction[] {
 		side: 'right' as const,
 		title: 'Enforcement Events',
 		description:
-			'When enforcement is enabled and tool calls are made, any actions Obot Sentry takes against them will be recorded and viewable here.'
+			'When enforcement is enabled and tool calls are made, any actions uni Sentry takes against them will be recorded and viewable here.'
 	};
 	const listener = {
 		id: MDM_DEVICES_CONFIGURATION_FIELD_IDS.enforcementEventsLink,
@@ -60,7 +60,7 @@ const highlightInventoryLink = {
 		id: MDM_DEVICES_CONFIGURATION_FIELD_IDS.devicesLink
 	},
 	title: 'Inventory',
-	description: 'This is where you can manage devices and install Obot Sentry.'
+	description: 'This is where you can manage devices and install uni Sentry.'
 };
 
 const listenInventoryLink = {
@@ -73,8 +73,8 @@ const listenInventoryLink = {
 export const steps: GuideStep[] = [
 	{
 		content: [
-			'In order to discover shadow AI and enforce policies for unmanaged MCP servers, you will need to install Obot Sentry on your devices.',
-			'**What is Obot Sentry?** Obot Sentry is a lightweight program designed to be used by MDMs for device scanning and agent hook configuration. You can learn more about it [here](https://github.com/obot-platform/obot-sentry).',
+			'In order to discover shadow AI and enforce policies for unmanaged MCP servers, you will need to install uni Sentry on your devices.',
+			'**What is uni Sentry?** uni Sentry is a lightweight program designed to be used by MDMs for device scanning and agent hook configuration. You can learn more about it [here](https://github.com/obot-platform/obot-sentry).',
 			"To get set up, let's head to the Inventory page under Operations."
 		],
 		action: [
@@ -94,7 +94,7 @@ export const steps: GuideStep[] = [
 		]
 	},
 	{
-		content: ['The "Configuration" tab contains all the information needed to set up Obot Sentry.'],
+		content: ['The "Configuration" tab contains all the information needed to set up uni Sentry.'],
 		action: [
 			{
 				routeContains: '/inventory',
@@ -124,7 +124,7 @@ export const steps: GuideStep[] = [
 					},
 					side: 'right' as const,
 					title: 'Open Configuration',
-					description: 'Select the Configuration tab to install Obot Sentry.'
+					description: 'Select the Configuration tab to install uni Sentry.'
 				},
 				listener: {
 					id: MDM_DEVICES_CONFIGURATION_FIELD_IDS.configurationTab,
@@ -144,7 +144,7 @@ export const steps: GuideStep[] = [
 				},
 				side: 'top',
 				title: 'Installation & Setup',
-				description: 'Follow the steps here to install and setup Obot Sentry.',
+				description: 'Follow the steps here to install and setup uni Sentry.',
 				noDescendantInteraction: true
 			},
 			listener: {
@@ -172,7 +172,7 @@ export const steps: GuideStep[] = [
 								side: 'top',
 								title: 'Installation Method',
 								description:
-									'Select the appropriate installation method for your devices here. Manual installation requires you to manually install the Obot Sentry agent on each device. Microsoft Intune installation allows you to deploy the agent to multiple devices across your organization.'
+									'Select the appropriate installation method for your devices here. Manual installation requires you to manually install the uni Sentry agent on each device. Microsoft Intune installation allows you to deploy the agent to multiple devices across your organization.'
 							},
 							listener: {
 								id: `${MDM_DEVICES_CONFIGURATION_FIELD_IDS.enrollmentConfigSetupStep}-2`,
@@ -204,10 +204,10 @@ export const steps: GuideStep[] = [
 	},
 	{
 		content: [
-			"For more detailed instructions, here's a video showing how to deploy Obot Sentry with Microsoft Intune.",
+			"For more detailed instructions, here's a video showing how to deploy uni Sentry with Microsoft Intune.",
 			{
 				videoUrl: 'https://youtu.be/NwuQlU5WpK0',
-				title: 'Installing Obot Sentry w/ Intune'
+				title: 'Installing uni Sentry w/ Intune'
 			}
 		],
 		action: {
@@ -261,12 +261,12 @@ export const steps: GuideStep[] = [
 	},
 	{
 		content: [
-			'Once Obot Sentry has been installed and configured on your devices, you can view the results across the Inventory tabs — Overview, Devices, Device Clients, Device MCP Servers, and Device Skills — and review enforcement actions under Operations.'
+			'Once uni Sentry has been installed and configured on your devices, you can view the results across the Inventory tabs — Overview, Devices, Device Clients, Device MCP Servers, and Device Skills — and review enforcement actions under Operations.'
 		],
 		action: getInventoryTabAction(
 			MDM_DEVICES_CONFIGURATION_FIELD_IDS.devicesTabOverview,
 			'Overview',
-			'View an overall summary of scans sent through Obot Sentry over a given time period.',
+			'View an overall summary of scans sent through uni Sentry over a given time period.',
 			getInventoryTabAction(
 				MDM_DEVICES_CONFIGURATION_FIELD_IDS.devicesTabDevices,
 				'Devices',
@@ -285,6 +285,6 @@ export const steps: GuideStep[] = [
 export default {
 	steps,
 	title: 'Discover Shadow AI & Enforce Policies for Unmanaged MCP Servers',
-	description: 'Install Obot Sentry on devices to inventory, audit, and enforce.',
+	description: 'Install uni Sentry on devices to inventory, audit, and enforce.',
 	id: 'devices-install-sentry-guide'
 };

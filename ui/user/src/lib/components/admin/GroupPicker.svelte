@@ -125,7 +125,7 @@
 		>
 			<TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
 			<span>
-				Showing only groups Obot has already recorded. Obot could not list your identity provider's
+				Showing only groups uni has already recorded. uni could not list your identity provider's
 				directory &mdash; directory-wide group read permission may not be granted.
 			</span>
 		</div>

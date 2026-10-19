@@ -628,5 +628,5 @@
 <VMcpIntroduction show={isFirstVMcp && !selectedVMcp && canEdit && viewType === 'graph'} />
 
 <svelte:head>
-	<title>Obot | {title}</title>
+	<title>uni | {title}</title>
 </svelte:head>

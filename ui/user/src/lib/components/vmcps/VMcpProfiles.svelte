@@ -97,8 +97,8 @@
 	let confirmDeleteProfile = $state<{ id: string; name: string }>();
 	let confirmDisableGrant = $state<{ id: string; name: string }>();
 
-	const EVERYONE_GROUP: OrgGroup = { id: '*', name: 'All Obot Users' };
-	const ADMIN_GROUP: OrgGroup = { id: OBOT_ADMIN_PICKER_ID, name: 'Obot Admin' };
+	const EVERYONE_GROUP: OrgGroup = { id: '*', name: 'All uni Users' };
+	const ADMIN_GROUP: OrgGroup = { id: OBOT_ADMIN_PICKER_ID, name: 'uni Admin' };
 	const GROUP_PAGE_SIZE = 50;
 
 	const nameError = $derived(
@@ -616,7 +616,7 @@
 	function subjectDisplay(subject: AccessControlRuleSubject) {
 		if (subject.type === 'obotGroup') {
 			return {
-				name: `Obot ${subject.id.charAt(0).toUpperCase()}${subject.id.slice(1)}`,
+				name: `uni ${subject.id.charAt(0).toUpperCase()}${subject.id.slice(1)}`,
 				group: true,
 				iconURL: undefined,
 				role: undefined

@@ -45,7 +45,7 @@
 	const setupCommand = $derived(`obot setup --url ${page.url.origin}`);
 </script>
 
-<Layout title="Obot CLI">
+<Layout title="uni CLI">
 	<div class="w-full max-w-7xl mx-auto h-full @container/cli my-6">
 		<section class="paper">
 			<div class="flex flex-col @2xl/cli:flex-row items-center justify-center gap-8">
@@ -54,13 +54,13 @@
 					<h2 class="text-2xl font-bold mb-2">One CLI. Your entire AI tooling.</h2>
 					{#if isAdmin}
 						<p class="font-light">
-							Obot is the open-source platform for hosting, governing, and using Model Context
+							uni is the open-source platform for hosting, governing, and using Model Context
 							Protocol servers & skills. Have users run the CLI locally, and bring your team’s AI
 							tooling under one roof.
 						</p>
 					{:else}
 						<p class="font-light">
-							Obot is the open-source platform for hosting, governing, and using Model Context
+							uni is the open-source platform for hosting, governing, and using Model Context
 							Protocol servers & skills. Run the CLI locally to start connecting your AI clients and
 							have access to your team's AI tooling in one place.
 						</p>
@@ -84,7 +84,7 @@
 				{/each}
 			</div>
 			<div class="p-8 @2xl/cli:pb-8 pb-0 flex flex-col gap-1" id="obot-cli-installation">
-				<h3 class="text-2xl font-bold">How to Install Obot CLI</h3>
+				<h3 class="text-2xl font-bold">How to Install uni CLI</h3>
 
 				{@render codesnippet(
 					'For MacOS, install through Homebrew:',
@@ -131,9 +131,9 @@
 				</h4>
 				<ul class="list-disc font-light flex flex-col gap-2 px-4">
 					<li>Detects Cursor and Claude Code on your machine</li>
-					<li>Authenticates and saves your default Obot URL locally</li>
+					<li>Authenticates and saves your default uni URL locally</li>
 					<li>
-						Installs Obot bootstrap skills so AI clients know how to work with your org’s MCP
+						Installs uni bootstrap skills so AI clients know how to work with your org’s MCP
 						catalog
 					</li>
 				</ul>
@@ -143,12 +143,12 @@
 		<div class="divider"></div>
 
 		<section class="mt-12 flex flex-col gap-4" id="obot-cli-commands">
-			<h3 class="text-2xl font-bold">Obot CLI Commands</h3>
+			<h3 class="text-2xl font-bold">uni CLI Commands</h3>
 
 			<div class="paper" id="obot-cli-command-setup">
 				{@render commandPreview('obot setup')}
 				<p>
-					Use <code class="inline-code">obot setup</code> to authenticate with Obot and install the Obot
+					Use <code class="inline-code">obot setup</code> to authenticate with uni and install the uni
 					skills into your AI clients.
 				</p>
 			</div>
@@ -165,12 +165,12 @@
 				<ul class="list-disc font-light flex flex-col gap-2 @lg/cli:px-8 px-4 text-sm">
 					<li>
 						<p class="mb-2">
-							Search Obot for installable MCP servers from your AI client using the following skill:
+							Search uni for installable MCP servers from your AI client using the following skill:
 						</p>
 						<div class="mb-2">
 							{@render slashCommandPreview(
 								'/obot-search-mcp-servers',
-								'Search Obot for installable MCP servers. (user)'
+								'Search uni for installable MCP servers. (user)'
 							)}
 						</div>
 					</li>
@@ -194,12 +194,12 @@
 						<div class="mb-2">
 							{@render slashCommandPreview(
 								'/obot-search-skills',
-								'Search Obot for installable skills. (user)'
+								'Search uni for installable skills. (user)'
 							)}
 						</div>
 						{@render slashCommandPreview(
 							'/obot-install-skill',
-							'Install a skill from Obot. (user)'
+							'Install a skill from uni. (user)'
 						)}
 					</li>
 				</ul>
@@ -277,7 +277,7 @@
 {/snippet}
 
 <svelte:head>
-	<title>Obot CLI | Install</title>
+	<title>uni CLI | Install</title>
 </svelte:head>
 
 <style lang="postcss">

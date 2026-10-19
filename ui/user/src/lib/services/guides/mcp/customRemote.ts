@@ -80,7 +80,7 @@ export const steps: GuideStep[] = [
 	{
 		content: [
 			'**What is a remote MCP server?**',
-			'A remote MCP server is great for allowing users to connect to MCP servers that are already elsewhere. When they deploy from Obot, the MCP server will go through the gateway.'
+			'A remote MCP server is great for allowing users to connect to MCP servers that are already elsewhere. When they deploy from uni, the MCP server will go through the gateway.'
 		]
 	},
 	getNavigateToMCPCatalogStep(),
@@ -120,7 +120,7 @@ export const steps: GuideStep[] = [
 
 export default {
 	steps,
-	title: 'Reroute a Remote MCP Through Obot',
+	title: 'Reroute a Remote MCP Through uni',
 	description: 'Add auditing & governance to an existing MCP server.',
 	id: 'mcp-create-remote-guide'
 };

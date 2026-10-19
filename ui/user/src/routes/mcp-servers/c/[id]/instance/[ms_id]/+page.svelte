@@ -72,5 +72,5 @@
 </Layout>
 
 <svelte:head>
-	<title>Obot | {catalogEntry?.manifest?.name ?? 'MCP Server'}</title>
+	<title>uni | {catalogEntry?.manifest?.name ?? 'MCP Server'}</title>
 </svelte:head>

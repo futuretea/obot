@@ -34,7 +34,7 @@
 			<div>
 				<p class="mb-1 text-sm font-semibold">Hosted Server</p>
 				<span class="text-muted-content block text-xs leading-4">
-					This option is appropriate for setting up a MCP server hosted under the Obot platform. It
+					This option is appropriate for setting up a MCP server hosted under the uni platform. It
 					can be configured for individualized access or shared under multiple users.
 				</span>
 			</div>
@@ -52,7 +52,7 @@
 				<span class="text-muted-content block text-xs leading-4">
 					This option is appropriate for allowing users to connect to MCP servers that are already
 					elsewhere. When a user selects this server, their connection to the remote MCP server will
-					go through the Obot gateway.
+					go through the uni gateway.
 				</span>
 			</div>
 		</button>

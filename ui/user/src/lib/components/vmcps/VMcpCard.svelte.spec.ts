@@ -464,7 +464,7 @@ describe('VMcpCard.svelte', () => {
 		await expect.element(page.getByRole('button', { name: 'Synced from catalog' })).toBeVisible();
 	});
 
-	it('does not mark a vMCP created in Obot as catalog-synced', async () => {
+	it('does not mark a vMCP created in uni as catalog-synced', async () => {
 		await renderCard({ groups: [Group.ADMIN] });
 
 		await expect

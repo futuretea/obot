@@ -68,8 +68,8 @@
 						<span class="badge badge-warning badge-sm">Experimental</span>
 					</span>
 					<span class="input-description">
-						Blocks tool calls that aren't on the allowlist. Starts with Obot-hosted MCP servers and
-						built-in agent tools allowed. Requires installing the Obot Sentry package on your
+						Blocks tool calls that aren't on the allowlist. Starts with uni-hosted MCP servers and
+						built-in agent tools allowed. Requires installing the uni Sentry package on your
 						devices. This feature is experimental and is not recommended for production use — a
 						misconfigured allowlist blocks real work on every enrolled device.
 					</span>

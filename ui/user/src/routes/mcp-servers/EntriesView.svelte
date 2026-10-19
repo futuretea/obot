@@ -359,7 +359,7 @@
 								<GitBranch class="size-4" />
 								<span class="font-light">
 									{#if d.source.startsWith(OBOT_PLATFORM_REPO)}
-										Obot Catalog
+										uni Catalog
 									{:else}
 										{d.source?.split('/').pop()}
 									{/if}

@@ -11,7 +11,7 @@ export function sharingLabel(subjects?: PublishedArtifactSubject[]): string {
 		return 'Owner Only';
 	}
 	if (hasAllUsersSubject(subjects)) {
-		return 'All Obot Users';
+		return 'All uni Users';
 	}
 
 	const users = subjects.filter((subject) => subject.type === 'user').length;

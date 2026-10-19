@@ -8,7 +8,7 @@ export const load: PageLoad = async ({ fetch, parent }) => {
 	const { profile, version } = await parent();
 
 	if (version?.agentsEnabled === false) {
-		throw error(403, 'Obot Agent features are disabled.');
+		throw error(403, 'uni Agent features are disabled.');
 	}
 
 	let agents: ProjectV2Agent[] = [];

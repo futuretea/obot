@@ -139,7 +139,7 @@
 	</div>
 	<div>
 		<p class="text-xs font-light">
-			You will have an opportunity later to configure Obot with other authentication providers such
+			You will have an opportunity later to configure uni with other authentication providers such
 			as Gmail, GitHub, Okta, Entra, etc.
 		</p>
 	</div>

@@ -202,7 +202,7 @@ export function getSecretBindingEngineError(
 	manifest?: SecretBindingManifest | null
 ): string | undefined {
 	if (!manifestHasSecretBindings(manifest)) return undefined;
-	return 'This MCP server uses Kubernetes Secret bindings and can only be launched when Obot is using the Kubernetes engine.';
+	return 'This MCP server uses Kubernetes Secret bindings and can only be launched when uni is using the Kubernetes engine.';
 }
 
 export function requiresUserUpdate(server?: MCPCatalogServer) {
@@ -279,7 +279,7 @@ export function getSource(
 
 	return {
 		sourceType: 'system',
-		source: 'Obot Admin Console'
+		source: 'uni Admin Console'
 	};
 }
 

@@ -36,7 +36,7 @@ describe('VMcpCatalogSyncedIndicator.svelte', () => {
 		await expect.element(page.getByRole('link')).not.toBeInTheDocument();
 	});
 
-	it('renders nothing for a vMCP created in Obot', async () => {
+	it('renders nothing for a vMCP created in uni', async () => {
 		render(VMcpCatalogSyncedIndicator, { vmcp: createVMCP() });
 
 		await expect.element(indicator()).not.toBeInTheDocument();

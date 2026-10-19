@@ -7,6 +7,6 @@
 <div
 	class="size-5"
 	role="img"
-	aria-label="Obot logo icon"
+	aria-label="uni logo icon"
 	style="background-color: currentColor; mask: url({logoSrc}) center / contain no-repeat; -webkit-mask: url({logoSrc}) center / contain no-repeat;"
 ></div>

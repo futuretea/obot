@@ -75,9 +75,9 @@
 		<Cable class="text-muted-content size-24 opacity-25" />
 		<h2 class="text-muted-content text-lg font-semibold">No MCP tunnels</h2>
 		<p class="text-muted-content text-sm font-light">
-			MCP tunnels let Obot securely connect to private MCP servers that are not directly reachable
-			from Obot's network. You run a lightweight <code class="font-mono">obot tunnel</code>
-			process on the private network and it opens an authenticated outbound connection to Obot.
+			MCP tunnels let uni securely connect to private MCP servers that are not directly reachable
+			from uni's network. You run a lightweight <code class="font-mono">obot tunnel</code>
+			process on the private network and it opens an authenticated outbound connection to uni.
 		</p>
 		{#if !isReadonly}
 			<button class="btn btn-primary flex items-center gap-1 text-sm" onclick={createTunnel}>
@@ -89,9 +89,9 @@
 {:else}
 	<div class="flex flex-col gap-6">
 		<p class="text-muted-content text-sm">
-			MCP tunnels let Obot securely connect to private MCP servers that are not directly reachable
-			from Obot's network. You run a lightweight <code class="font-mono">obot tunnel</code>
-			process on the private network and it opens an authenticated outbound connection to Obot.
+			MCP tunnels let uni securely connect to private MCP servers that are not directly reachable
+			from uni's network. You run a lightweight <code class="font-mono">obot tunnel</code>
+			process on the private network and it opens an authenticated outbound connection to uni.
 		</p>
 		<Table
 			data={tableData}

@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {showCreateAgent ? 'Create Agent Identity' : 'Identity & Access'}</title>
+	<title>uni | {showCreateAgent ? 'Create Agent Identity' : 'Identity & Access'}</title>
 </svelte:head>
 
 <TabLayout

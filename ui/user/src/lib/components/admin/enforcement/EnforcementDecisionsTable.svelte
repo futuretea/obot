@@ -202,9 +202,9 @@
 					{#if decision.obotHosted}
 						<span
 							class="badge badge-ghost badge-sm shrink-0"
-							use:tooltip={{ text: 'Hosted by this Obot instance' }}
+							use:tooltip={{ text: 'Hosted by this uni instance' }}
 						>
-							Obot
+							uni
 						</span>
 					{/if}
 				</div>

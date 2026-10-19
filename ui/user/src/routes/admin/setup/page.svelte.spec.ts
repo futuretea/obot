@@ -110,7 +110,7 @@ describe('Setup page', () => {
 		await renderSetupPage();
 
 		await expect
-			.element(page.getByRole('heading', { name: 'Welcome to Obot!', exact: true }))
+			.element(page.getByRole('heading', { name: 'Welcome to uni!', exact: true }))
 			.toBeVisible();
 		await expect.element(page.getByLabelText('Email', { exact: true })).not.toBeInTheDocument();
 
@@ -121,7 +121,7 @@ describe('Setup page', () => {
 			.toBeVisible();
 		await expect.element(page.getByLabelText('Email', { exact: true })).toBeVisible();
 		await expect
-			.element(page.getByRole('heading', { name: 'Welcome to Obot!', exact: true }))
+			.element(page.getByRole('heading', { name: 'Welcome to uni!', exact: true }))
 			.not.toBeInTheDocument();
 	});
 
@@ -133,7 +133,7 @@ describe('Setup page', () => {
 			.element(page.getByRole('heading', { name: 'Set Up Owner Account', exact: true }))
 			.toBeVisible();
 		await expect
-			.element(page.getByRole('heading', { name: 'Welcome to Obot!', exact: true }))
+			.element(page.getByRole('heading', { name: 'Welcome to uni!', exact: true }))
 			.not.toBeInTheDocument();
 	});
 

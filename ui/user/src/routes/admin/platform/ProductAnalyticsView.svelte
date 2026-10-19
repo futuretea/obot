@@ -63,7 +63,7 @@
 				<span>
 					<span class="block text-sm font-medium">Enabled</span>
 					<span class="block text-xs font-light text-muted-content">
-						Send product usage data to help improve Obot.
+						Send product usage data to help improve uni.
 					</span>
 				</span>
 			</label>

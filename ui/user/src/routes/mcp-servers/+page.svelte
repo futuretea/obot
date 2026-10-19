@@ -144,7 +144,7 @@
 						value: 'sources',
 						content: sources,
 						tooltip:
-							'Manage URLs containing a repository of MCP servers that are supplied to the Obot gateway.'
+							'Manage URLs containing a repository of MCP servers that are supplied to the uni gateway.'
 					},
 					{
 						label: 'Deployments',
@@ -164,7 +164,7 @@
 						value: 'tunnels',
 						content: tunnels,
 						tooltip:
-							'Set up tunnels to let the Obot gateway reach remote HTTP or HTTPS MCP servers that are not directly accessible from the Obot gateway.'
+							'Set up tunnels to let the uni gateway reach remote HTTP or HTTPS MCP servers that are not directly accessible from the uni gateway.'
 					}
 				]
 			: []),
@@ -276,7 +276,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {layoutTitle}</title>
+	<title>uni | {layoutTitle}</title>
 </svelte:head>
 
 {#if creating}

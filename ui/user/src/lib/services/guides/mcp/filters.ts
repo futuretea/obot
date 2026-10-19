@@ -38,7 +38,7 @@ export const steps: GuideStep[] = [
 						},
 						title: 'Create Custom Filter',
 						description:
-							"Obot also supports out-of-the-box PII filtering, but for the sake of this guide, let's create a custom filter. Let's continue through here.",
+							"uni also supports out-of-the-box PII filtering, but for the sake of this guide, let's create a custom filter. Let's continue through here.",
 						side: 'left'
 					},
 					listener: {

@@ -63,7 +63,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Activate Owner Account</title>
+	<title>uni | Activate Owner Account</title>
 </svelte:head>
 
 <div
@@ -73,7 +73,7 @@
 		class="dark:border-base-400 dark:bg-base-200 bg-base-100 flex w-sm flex-col items-center gap-4 rounded-xl border border-transparent p-6 shadow-sm"
 	>
 		<Logo class="h-12" />
-		<h1 class="text-center text-xl font-semibold">Activate your Obot account</h1>
+		<h1 class="text-center text-xl font-semibold">Activate your uni account</h1>
 		{#if error}
 			<div class="notification-error flex w-full items-center gap-2" role="alert">
 				<CircleAlert class="text-error size-5 shrink-0" />
@@ -84,7 +84,7 @@
 			</p>
 		{:else if requiresActivation}
 			<p class="text-muted-content text-center text-sm font-light">
-				Obot requires activation. Open the setup link from your provisioning email to continue.
+				uni requires activation. Open the setup link from your provisioning email to continue.
 			</p>
 		{:else}
 			<Loading class="size-6" />

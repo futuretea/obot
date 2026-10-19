@@ -609,7 +609,7 @@
 
 			<p class="text-muted-content text-sm font-light">
 				Local users belong to this provider. If you later switch to a different auth provider,
-				signing in through it can create a new Obot user, and these users and their work will not
+				signing in through it can create a new uni user, and these users and their work will not
 				transfer.
 			</p>
 

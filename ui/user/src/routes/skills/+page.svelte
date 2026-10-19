@@ -302,7 +302,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | {layoutTitle}</title>
+	<title>uni | {layoutTitle}</title>
 </svelte:head>
 
 {#if creating}

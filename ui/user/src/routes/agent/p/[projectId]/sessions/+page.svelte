@@ -86,5 +86,5 @@
 </div>
 
 <svelte:head>
-	<title>Obot | Sessions</title>
+	<title>uni | Sessions</title>
 </svelte:head>

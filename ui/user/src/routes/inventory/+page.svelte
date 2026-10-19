@@ -27,14 +27,14 @@
 						value: 'overview',
 						content: overview,
 						tooltip:
-							'View an overall summary of scans sent through Obot Sentry over a given time period.'
+							'View an overall summary of scans sent through uni Sentry over a given time period.'
 					},
 					{
 						label: 'Configuration',
 						value: 'configuration',
 						content: configuration,
 						tooltip:
-							"Discover shadow AI and enforce policies for unmanaged MCP servers. Set up or manage Obot Sentry on your organization's devices."
+							"Discover shadow AI and enforce policies for unmanaged MCP servers. Set up or manage uni Sentry on your organization's devices."
 					}
 				]
 			: []),
@@ -71,7 +71,7 @@
 </script>
 
 <svelte:head>
-	<title>Obot | Inventory</title>
+	<title>uni | Inventory</title>
 </svelte:head>
 
 <TabLayout title="Inventory" {defaultView} classes={{ childrenContainer: 'max-w-none' }} {views} />

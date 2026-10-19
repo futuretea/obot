@@ -132,7 +132,7 @@ export function testerChatAvailability(
 			available: false,
 			unavailableMessage:
 				version.hasValidLicense !== true
-					? 'The chat feature is managed by your administrator. Contact your Obot admin to enable access.'
+					? 'The chat feature is managed by your administrator. Contact your uni admin to enable access.'
 					: 'The MCP Tester model service is disabled or unavailable. Contact an administrator.'
 		};
 	}
