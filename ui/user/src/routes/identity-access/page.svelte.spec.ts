@@ -605,7 +605,7 @@ describe('Identity & Access Page', () => {
 					.not.toBeInTheDocument();
 
 				await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-				await expect.element(page.getByText(/becomes the owner of Obot/)).toBeVisible();
+				await expect.element(page.getByText(/becomes the owner of uni/)).toBeVisible();
 				await expect
 					.element(page.getByRole('button', { name: 'Configuration', exact: true }))
 					.not.toBeInTheDocument();
@@ -673,7 +673,7 @@ describe('Identity & Access Page', () => {
 
 				await renderAsOwner([googleActive, stagedLocal]);
 
-				await expect.element(page.getByText(/becomes the owner of Obot/)).toBeVisible();
+				await expect.element(page.getByText(/becomes the owner of uni/)).toBeVisible();
 				await expect
 					.element(page.getByRole('button', { name: /^Sign in with/, exact: false }))
 					.toBeVisible();
@@ -685,7 +685,7 @@ describe('Identity & Access Page', () => {
 				await expect
 					.element(providerCard('Google').getByText('Staged', { exact: true }))
 					.toBeVisible();
-				await expect.element(page.getByText(/becomes the owner of Obot/)).toBeVisible();
+				await expect.element(page.getByText(/becomes the owner of uni/)).toBeVisible();
 			});
 
 			it('does not offer an administrator the switch', async () => {
@@ -696,7 +696,7 @@ describe('Identity & Access Page', () => {
 						providerCard('Google').getByRole('button', { name: 'Resume switch', exact: true })
 					)
 					.toBeDisabled();
-				await expect.element(page.getByText(/becomes the owner of Obot/)).not.toBeInTheDocument();
+				await expect.element(page.getByText(/becomes the owner of uni/)).not.toBeInTheDocument();
 			});
 
 			it('warns that users will not transfer before completing the switch', async () => {

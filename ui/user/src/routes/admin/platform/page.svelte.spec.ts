@@ -101,7 +101,7 @@ describe('Platform Page', () => {
 				.element(page.getByRole('heading', { name: 'Product Analytics', exact: true }))
 				.toBeVisible();
 			await expect
-				.element(page.getByText(/Share product usage data to help improve Obot\./))
+				.element(page.getByText(/Share product usage data to help improve uni\./))
 				.toBeVisible();
 			await expect
 				.element(page.getByRole('button', { name: 'Product Analytics', exact: true }))
@@ -272,7 +272,7 @@ describe('Platform Page', () => {
 			});
 
 			await expect
-				.element(page.getByText(/Contact us to upgrade to Obot Enterprise/i))
+				.element(page.getByText(/Contact us to upgrade to uni Enterprise/i))
 				.toBeVisible();
 			await expect.element(page.getByText('90 / 100', { exact: true })).toBeVisible();
 		});
@@ -295,7 +295,7 @@ describe('Platform Page', () => {
 			});
 
 			await expect
-				.element(page.getByText(/Contact us to upgrade to Obot Enterprise/i))
+				.element(page.getByText(/Contact us to upgrade to uni Enterprise/i))
 				.toBeVisible();
 			await expect.element(page.getByText('100 / 100', { exact: true })).toBeVisible();
 		});

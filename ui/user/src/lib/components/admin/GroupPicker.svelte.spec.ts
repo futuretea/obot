@@ -193,21 +193,21 @@ describe('GroupPicker', () => {
 		mockGroups({ total: 2, degraded: true });
 		render(GroupPicker, { onSelect: vi.fn() });
 
-		await expect.element(page.getByText(/groups Obot has already recorded/i)).toBeInTheDocument();
+		await expect.element(page.getByText(/groups uni has already recorded/i)).toBeInTheDocument();
 	});
 
 	it('drops the cached-directory warning when the next page fails to load', async () => {
 		mockGroups({ total: 100, degraded: true, failOnCursor: true });
 		render(GroupPicker, { onSelect: vi.fn(), pageSize: 50 });
 
-		await expect.element(page.getByText(/groups Obot has already recorded/i)).toBeInTheDocument();
+		await expect.element(page.getByText(/groups uni has already recorded/i)).toBeInTheDocument();
 		await page.getByRole('button', { name: /Next/ }).click();
 
 		await expect.element(page.getByText(/Failed to load groups/i)).toBeInTheDocument();
 		// The warning describes where the listed groups came from, and the failure listed none, so
 		// showing it next to "Failed to load groups" would claim cached groups are on screen.
 		await expect
-			.element(page.getByText(/groups Obot has already recorded/i))
+			.element(page.getByText(/groups uni has already recorded/i))
 			.not.toBeInTheDocument();
 	});
 
@@ -217,7 +217,7 @@ describe('GroupPicker', () => {
 
 		await expect.element(page.getByText('group-0000')).toBeInTheDocument();
 		await expect
-			.element(page.getByText(/groups Obot has already recorded/i))
+			.element(page.getByText(/groups uni has already recorded/i))
 			.not.toBeInTheDocument();
 	});
 

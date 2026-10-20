@@ -248,7 +248,7 @@ describe('LocalAuthConfigure.svelte', () => {
 		await expect
 			.element(
 				dialog.getByText(
-					/can create a new Obot user, and these users and their work will not\s+transfer/
+					/can create a new uni user, and these users and their work will not\s+transfer/
 				)
 			)
 			.toBeVisible();

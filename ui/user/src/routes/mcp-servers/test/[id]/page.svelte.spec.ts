@@ -406,7 +406,7 @@ describe('MCP Tester page', () => {
 		await expect
 			.element(
 				page.getByText(
-					/Register to get free access to the MCP Inspector Chat, powered by Obot’s model service/
+					/Register to get free access to the MCP Inspector Chat, powered by uni’s model service/
 				)
 			)
 			.toBeVisible();

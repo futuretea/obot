@@ -125,7 +125,7 @@
 					(s) =>
 						!s.mcpID.startsWith('sms1') &&
 						!s.mcpServerDisplayName.startsWith('nba1') &&
-						!s.mcpServerDisplayName.startsWith('uni ')
+						!s.mcpServerDisplayName.startsWith('Obot ')
 				);
 				const adjustedStats = {
 					...stats,
