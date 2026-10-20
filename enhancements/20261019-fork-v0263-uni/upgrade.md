@@ -4,11 +4,16 @@
 
 ## 上游从 v0.20.1 到 v0.26.3 的变化
 
-这些变化来自上游，不是本分支另加的。
+下面按上游版本列出。带“升级时处理”的项会改变现有用法，其余是新能力，不用就不用改配置。
 
-- 旧的项目聊天接口没有了，包括 `/api/agents`、`/api/assistants`、`/api/projects`、`/api/shares` 和 `/api/tasks`。这一版没有把这些数据搬进新库。升级前导出还要保留的聊天、任务和分享；升级后它们不再从界面进入。
-- 新增虚拟 MCP（`/api/vmcps`）、MCP 隧道、本地登录、许可证接口、LLM 审计日志和设备执行记录。不用这些能力时，升级步骤不变。
-- 数据库连接串的键名没变，Helm 里从 config 挪到了 secret。应用启动时自动补表，不另跑迁移命令。
+- v0.21：网络策略可以用 Helm 部署；增加存储用的服务账号。
+- v0.22：升级时处理：旧聊天从界面和接口移除，包括 `/api/agents`、`/api/assistants`、`/api/projects`、`/api/shares`、`/api/tasks`。没有把这些数据搬进新版本。同步新增命令行安装、技能页、镜像拉取密钥、外部密钥、OAuth 调试、本地扫描和多用户服务的自定义请求头。
+- v0.23：升级时处理：旧的认证 token 被弃用，API token 的范围有变化；模型与认证 provider 改为在容器里运行。同步新增 MCP OAuth 同意页、企业许可证、多用户目录模板、OpenAI 与 Anthropic 直通，以及拦截内网地址的选项。
+- v0.24：新增内置本地登录、Git 凭据、LLM 审计日志和导出、AWS Bedrock、Azure、通用模型供应商、设备登记与 MDM 下载、本地工具调用审计。组合 MCP 不再单独起容器。数据库连接可以按连接数和生命周期分开配置。
+- v0.25：升级时处理：原来的 API key 改为 Agent Auth Scope。同步新增用户数和设备数限制、社区版登记、MCP WebSocket 隧道、工具调用拦截。
+- v0.26：升级时处理：现有 MCP 目录和服务会迁移成虚拟 MCP；一批旧 MCP 接口和授权路径被删除。同步新增虚拟 MCP 的 Git 同步、MCP 测试器、模型代理、产品使用统计开关，以及认证 provider 的安全切换。
+
+数据库仍是原来的 Postgres。`OBOT_SERVER_DSN` 这个键名不变，Helm 里从 config 挪到 secret。应用启动时自动补表，不另跑迁移命令。
 - 镜像内容从 `obot-tools` 换成 `obot-providers`。0.20 的 Dockerfile 复制 `/obot-tools`；这一版复制 `/obot-providers`。
 - 数据库连接串仍是 Postgres，键名仍是 `OBOT_SERVER_DSN`。0.20 放在 chart 的 config 下，这一版放在 secret 下。升级时把原值挪过去，不要改成新库。
 - 应用启动时用 GORM 自动迁移现有库。不另跑手工迁移脚本。
