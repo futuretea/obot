@@ -13,7 +13,9 @@
 - v0.25：升级时处理：原来的 API key 改为 Agent Auth Scope。同步新增用户数和设备数限制、社区版登记、MCP WebSocket 隧道、工具调用拦截。
 - v0.26：升级时处理：现有 MCP 目录和服务会迁移成虚拟 MCP；一批旧 MCP 接口和授权路径被删除。新的 Agent 不是旧 Agent 的升级：它会起一个 nanobot 容器，用自己的状态库，并通过 MCP 提供服务；旧 Agent 存在应用进程里，带工具、知识和线程。新功能默认关闭，只有库里已经有 NanobotAgent 时才自动打开。0.20 的旧 Agent 不算数；要在升级后使用，设置 `OBOT_ENABLE_AGENTS=true`。同步新增虚拟 MCP 的 Git 同步、MCP 测试器、模型代理、产品使用统计开关，以及认证 provider 的安全切换。
 
-数据库仍是原来的 Postgres。`OBOT_SERVER_DSN` 这个键名不变，Helm 里从 config 挪到 secret。应用启动时自动补表，不另跑迁移命令。
+数据库仍是原来的 Postgres。`OBOT_SERVER_DSN` 这个键名不变，Helm 里从 config 挪到 secret。应用启动时在一个事务里自动迁移，失败会回滚这一次事务；不要把迁移过的库直接交回 0.20。
+
+启动迁移会删除这些表和其中的数据：`run`、`thread`、`run_states`、`runstate`、`sessions`、`session_cookies`、`obot_mcp_tokens`。旧结构的 `mcp_oauth_tokens` 也会被删掉重建。旧 Agent 和 CronJob 存在同一库的对象表里，启动不会删除这些记录，但 0.26 不再读取它们，所以它们不会继续运行。升级前先备份整个库。
 - 镜像内容从 `obot-tools` 换成 `obot-providers`。0.20 的 Dockerfile 复制 `/obot-tools`；这一版复制 `/obot-providers`。
 - 数据库连接串仍是 Postgres，键名仍是 `OBOT_SERVER_DSN`。0.20 放在 chart 的 config 下，这一版放在 secret 下。升级时把原值挪过去，不要改成新库。
 - 应用启动时用 GORM 自动迁移现有库。不另跑手工迁移脚本。
