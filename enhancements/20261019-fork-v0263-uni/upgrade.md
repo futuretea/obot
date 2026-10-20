@@ -11,7 +11,7 @@
 - v0.23：升级时处理：旧的认证 token 被弃用，API token 的范围有变化；模型与认证 provider 改为在容器里运行。同步新增 MCP OAuth 同意页、企业许可证、多用户目录模板、OpenAI 与 Anthropic 直通，以及拦截内网地址的选项。
 - v0.24：新增内置本地登录、Git 凭据、LLM 审计日志和导出、AWS Bedrock、Azure、通用模型供应商、设备登记与 MDM 下载、本地工具调用审计。组合 MCP 不再单独起容器。数据库连接可以按连接数和生命周期分开配置。
 - v0.25：升级时处理：原来的 API key 改为 Agent Auth Scope。同步新增用户数和设备数限制、社区版登记、MCP WebSocket 隧道、工具调用拦截。
-- v0.26：升级时处理：现有 MCP 目录和服务会迁移成虚拟 MCP；一批旧 MCP 接口和授权路径被删除。新的 Agent 不是旧 Agent 的升级：它会起一个 nanobot 容器，用自己的状态库，并通过 MCP 提供服务；旧 Agent 存在应用进程里，带工具、知识和线程。新功能默认关闭，只有库里已经有 NanobotAgent 时才自动打开。0.20 的旧 Agent 不算数；要在升级后使用，设置 `OBOT_ENABLE_AGENTS=true`。同步新增虚拟 MCP 的 Git 同步、MCP 测试器、模型代理、产品使用统计开关，以及认证 provider 的安全切换。
+- v0.26：升级时处理：启动时自动把已有 MCP 目录、独立 MCP Server 和用户连接转成虚拟 MCP，配置和凭据会带过去；转换后删除旧的 MCP Server 记录。新的 Agent 不是旧 Agent 的升级：它会起一个 nanobot 容器，用自己的状态库，并通过 MCP 提供服务；旧 Agent 存在应用进程里，带工具、知识和线程。新功能默认关闭，只有库里已经有 NanobotAgent 时才自动打开。0.20 的旧 Agent 不算数；要在升级后使用，设置 `OBOT_ENABLE_AGENTS=true`。同步新增虚拟 MCP 的 Git 同步、MCP 测试器、模型代理、产品使用统计开关，以及认证 provider 的安全切换。
 
 数据库仍是原来的 Postgres。`OBOT_SERVER_DSN` 这个键名不变，Helm 里从 config 挪到 secret。应用启动时在一个事务里自动迁移，失败会回滚这一次事务；不要把迁移过的库直接交回 0.20。
 
