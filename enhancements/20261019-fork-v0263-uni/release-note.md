@@ -19,7 +19,7 @@
 - v0.23 起旧认证 token 弃用，API token 范围有变化；模型与认证组件改在容器里运行。
 - v0.24 起可以在应用内做本地登录，并查看、导出 LLM 审计；模型供应商增加 AWS Bedrock、Azure 和通用接口。
 - v0.25 起原来的 API key 改为 Agent Auth Scope，并增加用户数、设备数限制和 MCP 隧道。
-- v0.26 起现有 MCP 目录和服务会变成虚拟 MCP，一批旧 MCP 接口不再可用。新的 Agent 功能默认关闭；0.20 的旧 Agent 不会让它自动打开，需要时设置 `OBOT_ENABLE_AGENTS=true`。
+- v0.26 起现有 MCP 目录和服务会变成虚拟 MCP，一批旧 MCP 接口不再可用。新的 Agent 会起一个独立的 nanobot 容器，并通过 MCP 提供服务；它不承接 0.20 的旧 Agent。该功能默认关闭，需要时设置 `OBOT_ENABLE_AGENTS=true`。
 
 ## 地址和配置不变
 
