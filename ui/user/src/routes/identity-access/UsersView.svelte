@@ -395,8 +395,7 @@
 					>
 						<p class="shrink-0 font-semibold">Impersonator</p>
 						<p class="text-muted-content">
-							Will be able to connect to other users' uni Agents. Requires Admin or Owner base
-							role.
+							Will be able to connect to other users' uni Agents. Requires Admin or Owner base role.
 						</p>
 					</span>
 				</label>

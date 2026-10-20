@@ -65,9 +65,7 @@
 				{#snippet emptyStateContent()}
 					<div class="flex flex-col items-center gap-4 px-5 pb-5 md:pb-0">
 						<div class="flex flex-col items-center gap-1">
-							<h1 class="w-full text-center text-xl font-semibold md:text-3xl">
-								你想从哪里开始？
-							</h1>
+							<h1 class="w-full text-center text-xl font-semibold md:text-3xl">你想从哪里开始？</h1>
 							<p class="text-muted-content md:text-md text-center text-sm font-light">
 								选择一个入口，或直接开始对话。
 							</p>

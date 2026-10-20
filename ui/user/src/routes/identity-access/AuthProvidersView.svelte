@@ -527,8 +527,8 @@
 						<p class="my-0.5 flex flex-col text-sm font-semibold">No Auth Providers Configured!</p>
 					</div>
 					<span class="text-sm font-light break-all">
-						To finish setting up uni, you'll need to configure an Auth Provider. Select one below
-						to get started!
+						To finish setting up uni, you'll need to configure an Auth Provider. Select one below to
+						get started!
 					</span>
 				</div>
 			{/if}

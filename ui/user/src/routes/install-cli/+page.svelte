@@ -133,8 +133,7 @@
 					<li>Detects Cursor and Claude Code on your machine</li>
 					<li>Authenticates and saves your default uni URL locally</li>
 					<li>
-						Installs uni bootstrap skills so AI clients know how to work with your org’s MCP
-						catalog
+						Installs uni bootstrap skills so AI clients know how to work with your org’s MCP catalog
 					</li>
 				</ul>
 			</div>
@@ -197,10 +196,7 @@
 								'Search uni for installable skills. (user)'
 							)}
 						</div>
-						{@render slashCommandPreview(
-							'/obot-install-skill',
-							'Install a skill from uni. (user)'
-						)}
+						{@render slashCommandPreview('/obot-install-skill', 'Install a skill from uni. (user)')}
 					</li>
 				</ul>
 			</div>

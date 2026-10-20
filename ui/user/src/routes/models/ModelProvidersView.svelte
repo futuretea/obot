@@ -148,8 +148,8 @@
 					<p class="my-0.5 flex flex-col text-sm font-semibold">No Model Providers Configured!</p>
 				</div>
 				<span class="text-sm font-light break-all">
-					To use uni chat features, you'll need to set up a Model Provider. Select and configure
-					one below to get started!
+					To use uni chat features, you'll need to set up a Model Provider. Select and configure one
+					below to get started!
 				</span>
 			</div>
 		{/if}

@@ -78,8 +78,7 @@
 					{/each}
 					{#if authProviders.some((provider) => provider.requiresActivation)}
 						<p class="text-muted-content text-center text-sm font-light">
-							uni requires activation. Open the setup link from your provisioning email to
-							continue.
+							uni requires activation. Open the setup link from your provisioning email to continue.
 						</p>
 					{/if}
 					{#if authProviders.length === 0}
