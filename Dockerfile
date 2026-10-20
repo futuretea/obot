@@ -1,4 +1,4 @@
-ARG PROVIDERS_IMAGE=ghcr.io/obot-platform/providers:latest
+ARG PROVIDERS_IMAGE=ghcr.io/futuretea/obot-providers:latest
 ARG ENTERPRISE_PROVIDERS_IMAGE=ghcr.io/obot-platform/enterprise-providers:latest
 ARG ENCRYPTION_BINS_IMAGE=ghcr.io/obot-platform/providers/encryption-bins:latest
 ARG BASE_IMAGE=cgr.dev/chainguard/wolfi-base
