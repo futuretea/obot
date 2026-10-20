@@ -75,12 +75,11 @@ image:
 config:
   OBOT_SERVER_MCPBASE_IMAGE: "harbor.futuretea.me/obot/stdio-wrapper:v0.24.2-ca"
   OBOT_SERVER_NANOBOT_AGENT_IMAGE: "harbor.futuretea.me/obot/nanobot-agent:v0.0.91-ca"
-extraEnv:
   OBOT_SERVER_DEFAULT_MCPCATALOG_PATH: ""
   OBOT_SERVER_DEFAULT_SYSTEM_MCPCATALOG_PATH: ""
 ```
 
-Use `extraEnv` for empty catalog path overrides. Empty `config` values are omitted from the generated Secret.
+Explicit empty catalog paths under `config` are preserved in the generated ConfigMap and disable the image's default catalog sources. Omit these keys to keep the image defaults.
 
 ## Generic Wrapper
 

@@ -12,8 +12,8 @@ data:
     {{- fail (printf "config.%s must be set under .Values.secret (not .Values.config)" $key) -}}
     {{- end }}
   {{- $value := index $cfg $key }}
-  {{/* Preserve an explicit empty proxy URL: omitting it enables the application default. */}}
-  {{- if or (toString $value) (eq $key "OBOT_SERVER_MODEL_PROXY_URL") }}
+  {{/* Explicit empty URLs disable defaults supplied by the application or image. */}}
+  {{- if or (toString $value) (has $key (list "OBOT_SERVER_MODEL_PROXY_URL" "OBOT_SERVER_DEFAULT_MCPCATALOG_PATH" "OBOT_SERVER_DEFAULT_SYSTEM_MCPCATALOG_PATH")) }}
   {{ $key }}: {{ toString $value | quote }}
   {{- end }}
   {{- end }}
