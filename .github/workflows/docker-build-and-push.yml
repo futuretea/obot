@@ -124,7 +124,7 @@ jobs:
           # Only the highest stable tag should move latest, so a patch release on an
           # older minor line (e.g. v0.25.6 after v0.26.0) does not take it back.
           if [[ "${TAG}" != latest && "${TAG}" != *-* ]]; then
-            newest=$(git ls-remote --tags --refs origin 'v*' | sed 's|.*refs/tags/||' | grep -ve '-' | sort -V | tail -n 1)
+            newest=$(git ls-remote --tags --refs "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" 'v*' | sed 's|.*refs/tags/||' | grep -ve '-' | sort -V | tail -n 1)
             echo "Newest stable tag: ${newest}"
             if [ "${newest}" = "${TAG}" ]; then
               docker buildx imagetools create -t "${IMAGE}:latest" ${latest_refs}
