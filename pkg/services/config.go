@@ -99,7 +99,7 @@ type (
 
 type Config struct {
 	GitMaxRepoSizeMB                               int      `usage:"Maximum git repository size in MB" default:"100" name:"git-max-repo-size-mb"`
-	ModelProxyURL                                  string   `usage:"MCP Tester model proxy base URL; empty disables the model proxy" default:"https://model-service.obot.ai"`
+	ModelProxyURL                                  string   `usage:"MCP Tester model proxy base URL; empty disables the model proxy" default:""`
 	HTTPListenPort                                 int      `usage:"HTTP port to listen on" default:"8080" name:"http-listen-port"`
 	AllowedOrigin                                  string   `usage:"Allowed origin for CORS"`
 	ProviderRegistries                             []string `usage:"Local filesystem paths to provider registries (directories) to load providers from"`
@@ -115,7 +115,7 @@ type Config struct {
 	MCPOAuthClientExpiration       string                `usage:"The expiration time in dynamically registered MCP OAuth clients, must be a valid duration string and may include days, hours, or minutes" default:"30d"`
 	MCPOAuthClientNativeExceptions []string              `usage:"Additional Client ID Metadata Document URLs that default to the native application type when application_type is omitted"`
 	ForceDynamicClient             bool                  `usage:"Force Dynamic Client Registration for MCP OAuth instead of Client ID Metadata Documents"`
-	ProductAnalyticsMode           producttelemetry.Mode `usage:"Product analytics mode: consent, on, or off" default:"consent" env:"OBOT_SERVER_PRODUCT_ANALYTICS_MODE"`
+	ProductAnalyticsMode           producttelemetry.Mode `usage:"Product analytics mode: consent, on, or off" default:"off" env:"OBOT_SERVER_PRODUCT_ANALYTICS_MODE"`
 
 	DevMode              bool   `usage:"Enable development mode" default:"false" name:"dev-mode" env:"OBOT_DEV_MODE"`
 	DevUIPort            int    `usage:"The port on localhost running the dev instance of the UI" default:"5174"`
@@ -132,7 +132,7 @@ type Config struct {
 	DefaultHostedAgentsCatalogURL        string `usage:"The default hosted agent catalog repository URL (must be HTTPS)" default:"https://github.com/obot-platform/hosted-agents-catalog" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_URL"`
 	DefaultHostedAgentsCatalogRef        string `usage:"The ref (branch/tag) for the default hosted agent catalog repository" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_REF"`
 	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:"https://models.dev/api.json"`
-	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks"`
+	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks" default:"true"`
 	HideK8sDetails                       bool   `usage:"Hide Kubernetes configuration details such as the Server Scheduling page from the UI" default:"false"`
 	EnableRegistryAuth                   bool   `usage:"Enable authentication for the MCP registry API" default:"false" env:"OBOT_SERVER_ENABLE_REGISTRY_AUTH"`
 	EnableMessagePolicies                bool   `usage:"Enable message policies for LLM proxy content enforcement" default:"false"`

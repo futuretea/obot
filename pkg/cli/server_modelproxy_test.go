@@ -17,7 +17,7 @@ func TestModelProxyURLConfiguration(t *testing.T) {
 	}{
 		{
 			name: "unset default",
-			want: "https://model-service.obot.ai",
+			want: "",
 		},
 		{
 			name: "empty disables",
