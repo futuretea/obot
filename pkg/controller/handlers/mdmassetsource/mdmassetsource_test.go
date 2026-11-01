@@ -108,7 +108,7 @@ func TestSyncFailurePreservesLatestAndSchedulesRetry(t *testing.T) {
 	assert.Equal(t, failed.Status.SyncError, throttled.Status.SyncError)
 }
 
-func TestSyncEmptySourceClearsStatusWithoutRecordingRefresh(t *testing.T) {
+func TestSyncEmptyDefaultSourcePreservesExistingStatus(t *testing.T) {
 	ctx := t.Context()
 	source := newTestMDMAssetSource("")
 	source.Annotations = map[string]string{v1.MDMAssetSourceSyncAnnotation: "true"}
@@ -124,16 +124,7 @@ func TestSyncEmptySourceClearsStatusWithoutRecordingRefresh(t *testing.T) {
 
 	var updated v1.MDMAssetSource
 	require.NoError(t, c.Get(ctx, router.Key(source.Namespace, source.Name), &updated))
-	assert.True(t, updated.Status.LastSyncTime.IsZero())
-	assert.Empty(t, updated.Status.SyncError)
-	assert.Empty(t, updated.Status.LatestDigest)
-	_, refreshRequested := updated.Annotations[v1.MDMAssetSourceSyncAnnotation]
-	assert.False(t, refreshRequested)
-
-	resourceVersion := updated.ResourceVersion
-	runSync(ctx, t, h, c, &updated)
-	require.NoError(t, c.Get(ctx, router.Key(source.Namespace, source.Name), &updated))
-	assert.Equal(t, resourceVersion, updated.ResourceVersion, "an already-empty status must not cause another reconciliation")
+	assert.Equal(t, "previous-latest", updated.Status.LatestDigest)
 }
 
 func TestSyncPrunesUnreferencedAssetsAfterSync(t *testing.T) {

@@ -49,6 +49,9 @@ func New(defaultSource, serverURL string, gatewayClient *gatewayclient.Client) *
 // persisted by the router after the handler returns.
 func (h *Handler) Sync(req router.Request, resp router.Response) error {
 	source := req.Object.(*v1.MDMAssetSource)
+	if source.Name == system.DefaultMDMAssetSource && h.defaultSource == "" {
+		return nil
+	}
 	if source.Spec.Source != h.defaultSource {
 		source.Spec.Source = h.defaultSource
 		if source.Annotations == nil {
