@@ -6,7 +6,6 @@
 	import { compileAppPreferences } from '$lib/stores/appPreferences.svelte';
 	import BrandingConfigurationSidebar from './BrandingConfigurationSidebar.svelte';
 	import BrandingView from './BrandingView.svelte';
-	import LicenseView from './LicenseView.svelte';
 	import McpConfigView from './McpConfigView.svelte';
 	import SettingsView from './SettingsView.svelte';
 	import { untrack } from 'svelte';
@@ -24,7 +23,6 @@
 	let showRegistryConnections = $derived(version.current.engine === 'kubernetes');
 
 	let views = $derived([
-		{ label: 'License', value: 'license', content: license },
 		{ label: 'Settings', value: 'settings', content: settings },
 		...(version.current.engine === 'kubernetes' && !version.current.hideK8sDetails
 			? [{ label: 'MCP Config', value: 'mcp-config', content: mcpConfig }]
@@ -48,7 +46,7 @@
 
 <TabLayout
 	title="Platform"
-	defaultView="license"
+	defaultView="settings"
 	classes={{ container: 'pb-0', childrenContainer: 'max-w-none' }}
 	rightSidebar={viewSidebar}
 	{views}
@@ -58,10 +56,6 @@
 	{#if view === 'branding'}
 		<BrandingConfigurationSidebar initialAppPreferences={brandingPreferences} />
 	{/if}
-{/snippet}
-
-{#snippet license()}
-	<LicenseView license={data.license} />
 {/snippet}
 
 {#snippet branding()}

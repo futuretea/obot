@@ -157,7 +157,7 @@ describe('MCPTesterSession', () => {
 	it('defaults missing and invalid tab values to tools', () => {
 		expect(normalizeTesterSection(undefined)).toBe('tools');
 		expect(normalizeTesterSection('invalid')).toBe('tools');
-		expect(normalizeTesterSection('chat')).toBe('chat');
+		expect(normalizeTesterSection('chat')).toBe('tools');
 		expect(normalizeTesterSection('logs')).toBe('logs');
 		expect(normalizeTesterSection('resources')).toBe('resources');
 	});

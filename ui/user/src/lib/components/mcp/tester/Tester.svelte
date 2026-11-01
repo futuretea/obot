@@ -1,19 +1,11 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import Confirm from '$lib/components/Confirm.svelte';
-	import CommunitySignUpForm from '$lib/components/admin/license/CommunitySignUpForm.svelte';
-	import CommunitySignupPanel from '$lib/components/admin/license/CommunitySignupPanel.svelte';
-	import Chat from '$lib/components/mcp/tester/Chat.svelte';
 	import LogsInspector from '$lib/components/mcp/tester/LogsInspector.svelte';
 	import PromptsInspector from '$lib/components/mcp/tester/PromptsInspector.svelte';
 	import ResourcesInspector from '$lib/components/mcp/tester/ResourcesInspector.svelte';
 	import ToolsInspector from '$lib/components/mcp/tester/ToolsInspector.svelte';
-	import { COMMUNITY_ENTITLEMENT, ENTERPRISE_ENTITLEMENT } from '$lib/constants';
 	import Loading from '$lib/icons/Loading.svelte';
-	import { reloadPage } from '$lib/navigation';
-	import { AdminService, type MCPCatalogServer } from '$lib/services';
-	import { MCPTesterChat } from '$lib/services/mcp/tester-chat.svelte';
+	import type { MCPCatalogServer } from '$lib/services';
 	import {
 		MCPTesterSession,
 		normalizeTesterSection,
@@ -21,9 +13,9 @@
 		type TesterSection,
 		type TesterStatus
 	} from '$lib/services/mcp/tester.svelte';
-	import { license, profile, version } from '$lib/stores';
+	import { version } from '$lib/stores';
 	import { setUrlParamAndUpdateUrl } from '$lib/url';
-	import { KeyRound, MessageSquarePlus, RotateCw, TriangleAlert } from '@lucide/svelte';
+	import { KeyRound, RotateCw, TriangleAlert } from '@lucide/svelte';
 	import { onDestroy, untrack, type Snippet } from 'svelte';
 	import { twMerge } from 'tailwind-merge';
 
@@ -48,8 +40,6 @@
 	let {
 		server,
 		serverName,
-		chatAvailable,
-		chatUnavailableMessage,
 		active = true,
 		loading = false,
 		icon,
@@ -64,8 +54,6 @@
 	}: Props = $props();
 
 	let session = $state<MCPTesterSession>();
-	let chat = $state<MCPTesterChat>();
-	let confirmNewChat = $state(false);
 	let activeSection = $derived(normalizeTesterSection(page.url.searchParams.get('tab')));
 	let statusLabel = $derived(
 		server?.deploymentStatus || (server?.configured ? 'Configured' : 'Setup required')
@@ -75,41 +63,11 @@
 		{ id: 'tools', label: 'Tools' },
 		{ id: 'prompts', label: 'Prompts' },
 		{ id: 'resources', label: 'Resources' },
-		{ id: 'chat', label: 'Chat' },
 		{ id: 'logs', label: 'MCP Log' }
 	];
 
 	const CARD_CLASS =
 		'dark:bg-base-200 dark:border-base-400 bg-base-100 flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-transparent p-4 shadow-sm';
-
-	const hasCommunityOrEnterprise = $derived.by(() => {
-		if (version.current.enterprise || license.current.enterprise) return true;
-		const entitlements = [
-			...(license.current.entitlements ?? []),
-			...(version.current.licenseEntitlements ?? [])
-		];
-		return (
-			entitlements.includes(COMMUNITY_ENTITLEMENT) || entitlements.includes(ENTERPRISE_ENTITLEMENT)
-		);
-	});
-	const isAdminReadonly = $derived(profile.current.isAdminReadonly?.());
-
-	function showStagedChat(): void {
-		setUrlParamAndUpdateUrl(page.url, 'tab', 'chat');
-	}
-
-	function requestNewChat(): void {
-		if (chat?.hasDiscardableState) {
-			confirmNewChat = true;
-			return;
-		}
-		chat?.newChat();
-	}
-
-	function startNewChat(): void {
-		confirmNewChat = false;
-		chat?.newChat();
-	}
 
 	export function reconnect(): void {
 		void session?.initialize(true);
@@ -123,22 +81,18 @@
 			return;
 		}
 
-		const previousChat = untrack(() => chat);
 		const previousSession = untrack(() => session);
-		previousChat?.close();
 		previousSession?.close();
 		mountedConnectionKey = nextKey;
 
 		if (!nextKey) {
 			session = undefined;
-			chat = undefined;
 			return;
 		}
 
 		const target = untrack(() => server);
 		if (!target) {
 			session = undefined;
-			chat = undefined;
 			return;
 		}
 
@@ -151,7 +105,6 @@
 			fetch
 		);
 		session = mountedSession;
-		chat = new MCPTesterChat(mountedSession, target.id, fetch);
 		void mountedSession.initialize();
 	});
 
@@ -162,7 +115,6 @@
 	});
 
 	onDestroy(() => {
-		chat?.close();
 		session?.close();
 	});
 </script>
@@ -193,11 +145,6 @@
 				<p class="shrink-0 text-xs text-muted-content">Status: {statusLabel}</p>
 			</div>
 			<div class="flex shrink-0 items-center gap-2">
-				{#if activeSection === 'chat' && chatAvailable && chat}
-					<button type="button" class="btn btn-secondary btn-sm" onclick={requestNewChat}>
-						<MessageSquarePlus class="size-4" aria-hidden="true" /> New Chat
-					</button>
-				{/if}
 				{#if headerActions}
 					{@render headerActions()}
 				{/if}
@@ -220,9 +167,6 @@
 					aria-current={activeSection === section.id ? 'page' : undefined}
 				>
 					{section.label}
-					{#if section.id === 'chat' && chat?.approvalNeeded}
-						<span class="badge badge-warning badge-sm ml-2">Approval needed</span>
-					{/if}
 				</button>
 			{/each}
 		</nav>
@@ -293,77 +237,15 @@
 				</div>
 			</section>
 		{:else if session.status === 'ready'}
-			<section
-				class={activeSection === 'chat' && !chatAvailable && !hasCommunityOrEnterprise
-					? 'flex grow justify-center items-center'
-					: CARD_CLASS}
-			>
-				{#if activeSection === 'chat'}
-					{#if chatAvailable && chat}
-						<Chat {chat} {session} />
-					{:else if !hasCommunityOrEnterprise && profile.current.isAdmin?.()}
-						<CommunitySignupPanel
-							class="mt-4 md:w-md w-full"
-							labelledBy="mcp-tester-community-signup-heading"
-						>
-							<div class="flex flex-col gap-4 p-4 sm:p-6">
-								<div class="flex flex-col items-center justify-center gap-2">
-									<h2
-										id="mcp-tester-community-signup-heading"
-										class="shrink-0 text-lg font-semibold"
-									>
-										Unlock MCP Inspector Chat
-									</h2>
-									<p class="max-w-md text-sm font-light">
-										Register to get free access to the MCP Inspector Chat, powered by
-										<b class="font-medium">uni’s model service</b>.
-									</p>
-									<p class="max-w-md text-sm font-light">
-										Prefer not to register? You can still use this feature by
-										<a class="text-link" href={resolve('/models?view=model-providers')}>
-											configuring your own model provider
-										</a>.
-									</p>
-								</div>
-								<div
-									class="rounded-xl border border-base-300/80 bg-base-100/80 p-4 shadow-sm backdrop-blur-sm"
-								>
-									<CommunitySignUpForm
-										endpoint={AdminService.createCommunityLicense}
-										onSubmit={reloadPage}
-										showHeader={false}
-										idPrefix="mcp-tester-community"
-										disabled={isAdminReadonly}
-									/>
-								</div>
-							</div>
-						</CommunitySignupPanel>
-					{:else}
-						<h2 class="shrink-0 text-lg font-semibold">Chat</h2>
-						<div class="bg-base-200 dark:bg-base-300 mt-4 rounded-lg p-4" role="status">
-							<h3 class="font-medium">Chat unavailable</h3>
-							<p class="mt-1 text-sm text-muted-content">{chatUnavailableMessage}</p>
-						</div>
-					{/if}
-				{:else if activeSection === 'tools'}
+			<section class={CARD_CLASS}>
+				{#if activeSection === 'tools'}
 					<ToolsInspector {session} />
 				{:else if activeSection === 'prompts'}
-					<PromptsInspector {session} onstaged={showStagedChat} />
+					<PromptsInspector {session} />
 				{:else if activeSection === 'resources'}
-					<ResourcesInspector {session} onstaged={showStagedChat} />
+					<ResourcesInspector {session} />
 				{/if}
 			</section>
 		{/if}
 	{/if}
 </div>
-
-<Confirm
-	show={confirmNewChat}
-	title="Start a new chat?"
-	msg="Clear this ephemeral conversation?"
-	note="Messages, staged context, approvals, and the frozen tool snapshot cannot be recovered."
-	type="info"
-	submitText="Start New Chat"
-	onsuccess={startNewChat}
-	oncancel={() => (confirmNewChat = false)}
-/>

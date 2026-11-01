@@ -78,7 +78,6 @@ export interface StageResult {
 
 export function normalizeTesterSection(value: string | null | undefined): TesterSection {
 	switch (value) {
-		case 'chat':
 		case 'prompts':
 		case 'resources':
 		case 'logs':

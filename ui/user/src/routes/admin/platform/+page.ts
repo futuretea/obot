@@ -8,7 +8,6 @@ import {
 	type ImagePullSecret,
 	type ImagePullSecretCapability,
 	type K8sSettings,
-	type License,
 	type ModelProxySettings,
 	type ModelProxyUsage,
 	type ProductTelemetryConsent
@@ -16,7 +15,7 @@ import {
 import { defaultAppNotification } from '$lib/stores/appNotification.svelte';
 import type { PageLoad } from './$types';
 
-const views = new Set(['license', 'branding', 'settings', 'mcp-config']);
+const views = new Set(['branding', 'settings', 'mcp-config']);
 
 let hasHydratedAppNotification = false;
 
@@ -32,9 +31,8 @@ export const load: PageLoad = async ({ depends, fetch, parent, url }) => {
 	const canManageProductAnalytics =
 		productTelemetryConsentAvailable === true && profile.groups.includes(Group.ADMIN);
 	const requestedView = url.searchParams.get('view');
-	const view = requestedView && views.has(requestedView) ? requestedView : 'license';
+	const view = requestedView && views.has(requestedView) ? requestedView : 'settings';
 
-	let license: License | undefined;
 	let appNotification: AppNotification = defaultAppNotification;
 	let k8sSettings: K8sSettings | undefined;
 	let capability: ImagePullSecretCapability = { available: false };
@@ -45,13 +43,6 @@ export const load: PageLoad = async ({ depends, fetch, parent, url }) => {
 	let productTelemetryConsent: ProductTelemetryConsent | undefined = initialProductTelemetryConsent;
 
 	switch (view) {
-		case 'license':
-			try {
-				license = await UserService.getLicense({ fetch });
-			} catch (err) {
-				handleRouteError(err, '/admin/platform?view=license', profile);
-			}
-			break;
 		case 'settings':
 			depends('model-proxy:usage');
 			await Promise.all([
@@ -138,7 +129,6 @@ export const load: PageLoad = async ({ depends, fetch, parent, url }) => {
 	}
 
 	return {
-		license,
 		appPreferences,
 		appNotification,
 		k8sSettings,

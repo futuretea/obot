@@ -7,7 +7,7 @@
 
 	interface Props {
 		session: MCPTesterSession;
-		onstaged: () => void;
+		onstaged?: () => void;
 	}
 
 	let { session, onstaged }: Props = $props();
@@ -67,7 +67,7 @@
 			inspector.stageError = staged.message;
 			return;
 		}
-		onstaged();
+		onstaged?.();
 	}
 
 	$effect(() => {
@@ -179,7 +179,7 @@
 										<McpContent content={message.content} />
 									</div>
 								{/each}
-								{#if !promptSupported}
+								{#if !promptSupported && onstaged}
 									<p class="text-sm text-error" role="alert">
 										This resolved prompt contains unsupported non-text content and cannot be staged.
 									</p>
@@ -194,7 +194,7 @@
 						{#if inspector.stageError}<p class="text-sm text-error" role="alert">
 								{inspector.stageError}
 							</p>{/if}
-						{#if inspector.result?.status === 'success' && inspector.result.value && promptSupported}
+						{#if inspector.result?.status === 'success' && inspector.result.value && promptSupported && onstaged}
 							<button class="btn btn-secondary" onclick={useInChat}>
 								<MessageSquarePlus class="size-4" aria-hidden="true" /> Use in Chat
 							</button>

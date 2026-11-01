@@ -48,8 +48,7 @@
 		Power,
 		LockOpen,
 		HatGlasses,
-		Terminal,
-		SquareTerminal
+		Terminal
 	} from '@lucide/svelte';
 	import { twMerge } from 'tailwind-merge';
 
@@ -269,14 +268,6 @@
 				>
 					<Terminal class="size-4" /> Client Preference
 				</button>
-				<a
-					class="dropdown-link"
-					href={resolve('/install-cli')}
-					target="_blank"
-					rel="external noopener noreferrer"
-				>
-					<SquareTerminal class="size-4" /> Install uni CLI
-				</a>
 
 				{#if profile.current.isBootstrapUser?.()}
 					<button class="dropdown-link" onclick={handleBootstrapLogout}>

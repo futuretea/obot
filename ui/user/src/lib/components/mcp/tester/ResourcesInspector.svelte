@@ -12,7 +12,7 @@
 
 	interface Props {
 		session: MCPTesterSession;
-		onstaged: () => void;
+		onstaged?: () => void;
 	}
 
 	let { session, onstaged }: Props = $props();
@@ -78,7 +78,7 @@
 			inspector.stageError = staged.message;
 			return;
 		}
-		onstaged();
+		onstaged?.();
 	}
 
 	$effect(() => {
@@ -163,7 +163,7 @@
 										<McpContent content={renderedContent(content)} />
 									</div>
 								{/each}
-								{#if !resourceStageable}
+								{#if !resourceStageable && onstaged}
 									<p class="text-sm text-muted-content">
 										Binary or unsupported content remains inspectable but cannot be staged for Chat.
 									</p>
@@ -181,7 +181,7 @@
 						{#if inspector.stageError}<p class="text-sm text-error" role="alert">
 								{inspector.stageError}
 							</p>{/if}
-						{#if inspector.result?.status === 'success' && inspector.result.value && resourceStageable}
+						{#if inspector.result?.status === 'success' && inspector.result.value && resourceStageable && onstaged}
 							<button class="btn btn-secondary" onclick={useInChat}>
 								<MessageSquarePlus class="size-4" aria-hidden="true" /> Use in Chat
 							</button>
