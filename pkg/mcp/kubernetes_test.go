@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -32,6 +33,29 @@ type roundTripFunc func(*http.Request) (*http.Response, error)
 type fakeWithWatch struct {
 	kclient.Client // controller-runtime fake for Get/List/Create etc.
 	watcher        *watch.FakeWatcher
+}
+
+// getFailingClient fails the first remaining Get calls with err while the
+// context is alive (remaining < 0 fails every call), counting all Get calls.
+type getFailingClient struct {
+	kclient.WithWatch
+	remaining int
+	err       error
+	calls     atomic.Int32
+}
+
+func (c *getFailingClient) Get(ctx context.Context, key kclient.ObjectKey, obj kclient.Object, opts ...kclient.GetOption) error {
+	c.calls.Add(1)
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	if c.remaining != 0 {
+		if c.remaining > 0 {
+			c.remaining--
+		}
+		return c.err
+	}
+	return c.WithWatch.Get(ctx, key, obj, opts...)
 }
 
 func TestComputeK8sSettingsHashUsesServerSpecificResources(t *testing.T) {
@@ -1700,5 +1724,113 @@ func assertNoAuditLogEnv(t *testing.T, env map[string][]byte) {
 		if strings.HasPrefix(key, "NANOBOT_RUN_AUDIT_LOG_") {
 			t.Fatalf("unexpected audit log env %q present", key)
 		}
+	}
+}
+
+func readinessTestScheme(t *testing.T) *runtime.Scheme {
+	t.Helper()
+	scheme := runtime.NewScheme()
+	if err := appsv1.AddToScheme(scheme); err != nil {
+		t.Fatalf("appsv1.AddToScheme() error = %v", err)
+	}
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatalf("corev1.AddToScheme() error = %v", err)
+	}
+	return scheme
+}
+
+func readinessTestBackend(scheme *runtime.Scheme, objs ...kclient.Object) *getFailingClient {
+	return &getFailingClient{
+		WithWatch: &fakeWithWatch{
+			Client:  fake.NewClientBuilder().WithScheme(scheme).WithObjects(objs...).Build(),
+			watcher: watch.NewFake(),
+		},
+	}
+}
+
+func TestUpdatedMCPPodNameRateLimitErrorsDoNotSpin(t *testing.T) {
+	client := readinessTestBackend(readinessTestScheme(t))
+	client.remaining = -1
+	client.err = errors.New("rate: Wait(n=1) would exceed context deadline")
+	k := &kubernetesBackend{client: client, mcpNamespace: "obot-mcp"}
+
+	server := testK8sServerConfig()
+	server.StartupTimeout = 400 * time.Millisecond
+	_, err := k.updatedMCPPodName(t.Context(), "http://mcp.example.com", "test-server", server, "")
+	if !errors.Is(err, ErrHealthCheckTimeout) {
+		t.Fatalf("updatedMCPPodName() error = %v, want %v", err, ErrHealthCheckTimeout)
+	}
+	if calls := client.calls.Load(); calls > 10 {
+		t.Fatalf("updatedMCPPodName() made %d unbounded retries, want bounded retries", calls)
+	}
+}
+
+func TestUpdatedMCPPodNameConvergesAfterTransientFailures(t *testing.T) {
+	scheme := readinessTestScheme(t)
+	deployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{Name: "test-server", Namespace: "obot-mcp", Generation: 1},
+		Status: appsv1.DeploymentStatus{
+			ObservedGeneration: 1, Replicas: 1, UpdatedReplicas: 1, ReadyReplicas: 1, AvailableReplicas: 1,
+		},
+	}
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "test-server-abc", Namespace: "obot-mcp",
+			Labels: map[string]string{"app": "test-server"}, CreationTimestamp: metav1.Now(),
+		},
+		Status: corev1.PodStatus{Phase: corev1.PodRunning},
+	}
+	client := readinessTestBackend(scheme, deployment, pod)
+	client.remaining = 2
+	client.err = errors.New("rate: Wait(n=1) would exceed context deadline")
+	k := &kubernetesBackend{client: client, mcpNamespace: "obot-mcp"}
+
+	server := testK8sServerConfig()
+	server.StartupTimeout = 5 * time.Second
+	podName, err := k.updatedMCPPodName(t.Context(), "http://mcp.example.com", "test-server", server, "test-server-abc")
+	if err != nil {
+		t.Fatalf("updatedMCPPodName() error = %v, want convergence after transient failures", err)
+	}
+	if podName != "test-server-abc" {
+		t.Fatalf("updatedMCPPodName() podName = %q, want %q", podName, "test-server-abc")
+	}
+}
+
+func TestUpdatedMCPPodNameCancelDuringRetry(t *testing.T) {
+	client := readinessTestBackend(readinessTestScheme(t))
+	client.remaining = -1
+	client.err = errors.New("rate: Wait(n=1) would exceed context deadline")
+	k := &kubernetesBackend{client: client, mcpNamespace: "obot-mcp"}
+
+	ctx, cancel := context.WithCancel(t.Context())
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		cancel()
+	}()
+
+	server := testK8sServerConfig()
+	server.StartupTimeout = 5 * time.Second
+	start := time.Now()
+	_, err := k.updatedMCPPodName(ctx, "http://mcp.example.com", "test-server", server, "")
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("updatedMCPPodName() error = %v, want %v", err, context.Canceled)
+	}
+	if elapsed := time.Since(start); elapsed > 2*time.Second {
+		t.Fatalf("updatedMCPPodName() took %v to honor cancellation, want prompt return", elapsed)
+	}
+}
+
+func TestUpdatedMCPPodNameNotFoundRetriesAreBounded(t *testing.T) {
+	client := readinessTestBackend(readinessTestScheme(t))
+	k := &kubernetesBackend{client: client, mcpNamespace: "obot-mcp"}
+
+	server := testK8sServerConfig()
+	server.StartupTimeout = 400 * time.Millisecond
+	_, err := k.updatedMCPPodName(t.Context(), "http://mcp.example.com", "test-server", server, "")
+	if !errors.Is(err, ErrHealthCheckTimeout) {
+		t.Fatalf("updatedMCPPodName() error = %v, want %v", err, ErrHealthCheckTimeout)
+	}
+	if calls := client.calls.Load(); calls > 10 {
+		t.Fatalf("updatedMCPPodName() made %d unbounded retries on NotFound, want bounded retries", calls)
 	}
 }

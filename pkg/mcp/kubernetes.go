@@ -897,6 +897,9 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 	)
 
 	const watchTimeout = 5 * time.Second
+	// watchErrorRetryInterval paces retries of non-terminal watch-level errors so
+	// immediately-returned errors cannot spin unbounded within the startup budget.
+	const watchErrorRetryInterval = 250 * time.Millisecond
 	start := time.Now()
 	for ; totalWatchDur < server.StartupTimeout; totalWatchDur, watchAttempt = time.Since(start), watchAttempt+1 {
 		_, err := wait.For(ctx, k.client, &appsv1.Deployment{Name: id, Namespace: k.mcpNamespace},
@@ -957,6 +960,17 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 
 		lastErr = err
 		slog.Debug("retrying MCP deployment watch after error", "id", id, "attempt", watchAttempt+1, "error", err)
+
+		// Pace retries: immediately-returned client errors (e.g. client-side rate
+		// limiting or a missing deployment) must not spin at CPU speed.
+		select {
+		case <-ctx.Done():
+			if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+				return "", fmt.Errorf("%w: timeout waiting for deployment readiness", ErrHealthCheckTimeout)
+			}
+			return "", ctx.Err()
+		case <-time.After(watchErrorRetryInterval):
+		}
 	}
 	if totalWatchDur >= server.StartupTimeout {
 		return "", fmt.Errorf("%w after %d watch retries: %v", ErrHealthCheckTimeout, watchAttempt, lastErr)
