@@ -13,13 +13,13 @@ export const DEFAULT_LOGOS = {
 		dark: {
 			chat: '/user/images/obot-chat-logo-blue-white-text.svg',
 			enterprise: '/user/images/obot-enterprise-logo-blue-white-text.svg',
-			community: '/user/images/obot-community-logo-blue-white-text.svg',
+			community: '/user/images/uni-logo-white-text.svg',
 			default: '/user/images/obot-logo-blue-white-text.svg'
 		},
 		light: {
 			chat: '/user/images/obot-chat-logo-blue-black-text.svg',
 			enterprise: '/user/images/obot-enterprise-logo-blue-black-text.svg',
-			community: '/user/images/obot-community-logo-blue-black-text.svg',
+			community: '/user/images/uni-logo-black-text.svg',
 			default: '/user/images/obot-logo-blue-black-text.svg'
 		}
 	}
