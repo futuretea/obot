@@ -26,28 +26,6 @@
 	const WAIT_FOR_TIMEOUT_MS = 5 * 60 * 1000;
 	const WAIT_FOR_INTERVAL_MS = 500;
 
-	function youtubeEmbedUrl(url: string): string | undefined {
-		try {
-			const parsed = new URL(url);
-			const host = parsed.hostname.replace(/^www\./, '');
-			let id: string | undefined;
-
-			if (host === 'youtu.be') {
-				id = parsed.pathname.slice(1).split('/')[0];
-			} else if (host === 'youtube.com' || host === 'm.youtube.com') {
-				if (parsed.pathname === '/watch') {
-					id = parsed.searchParams.get('v') ?? undefined;
-				} else {
-					const match = parsed.pathname.match(/^\/(embed|shorts|live)\/([^/?#]+)/);
-					id = match?.[2];
-				}
-			}
-
-			return id ? `https://www.youtube.com/embed/${id}` : undefined;
-		} catch {
-			return undefined;
-		}
-	}
 	let highlighter: GuideHighlighter | undefined = undefined;
 	let actionGeneration = 0;
 	let guideSessionGeneration = 0;
@@ -905,19 +883,5 @@
 		<p class="text-sm">{content.text}</p>
 	{:else if 'imageUrl' in content}
 		<img src={content.imageUrl} alt={content.alt} class="w-full h-auto rounded-md" loading="lazy" />
-	{:else if 'videoUrl' in content}
-		{@const embedUrl = youtubeEmbedUrl(content.videoUrl)}
-		{#if embedUrl}
-			<div class="aspect-video w-full overflow-hidden rounded-md">
-				<iframe
-					src={embedUrl}
-					title={content.title}
-					class="h-full w-full border-0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-					allowfullscreen
-					loading="lazy"
-				></iframe>
-			</div>
-		{/if}
 	{/if}
 {/snippet}
