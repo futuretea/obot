@@ -46,6 +46,9 @@ func New(defaultSourceURL string, urlValidation mcp.RemoteMCPURLValidationConfig
 // Sync refreshes ModelInfo records when forced or stale.
 func (h *Handler) Sync(req router.Request, resp router.Response) error {
 	source := req.Object.(*v1.ModelInfoSource)
+	if source.Name == system.DefaultModelInfoSource && h.defaultSourceURL == "" {
+		return nil
+	}
 
 	forceSync := source.Annotations[v1.ModelInfoSourceSyncAnnotation] == "true"
 	if !forceSync && !source.Status.LastSyncTime.IsZero() {
@@ -86,13 +89,6 @@ func (h *Handler) SetUpDefaultModelInfoSource(ctx context.Context, c kclient.Cli
 		Namespace: system.DefaultNamespace,
 	}
 	if h.defaultSourceURL == "" {
-		if err := c.Delete(ctx, source); apierrors.IsNotFound(err) {
-			return nil
-		} else if err != nil {
-			return fmt.Errorf("failed to delete disabled model info source: %w", err)
-		}
-		slog.Info("Deleted default model info source (disabled by empty URL)")
-
 		return nil
 	}
 

@@ -131,7 +131,7 @@ type Config struct {
 	DefaultSkillRepoRef                  string `usage:"The ref (branch/tag) for the default skill repository" default:"" env:"OBOT_DEFAULT_SKILL_REPO_REF"`
 	DefaultHostedAgentsCatalogURL        string `usage:"The default hosted agent catalog repository URL (must be HTTPS)" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_URL"`
 	DefaultHostedAgentsCatalogRef        string `usage:"The ref (branch/tag) for the default hosted agent catalog repository" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_REF"`
-	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:"https://models.dev/api.json"`
+	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:""`
 	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks" default:"true"`
 	HideK8sDetails                       bool   `usage:"Hide Kubernetes configuration details such as the Server Scheduling page from the UI" default:"false"`
 	EnableRegistryAuth                   bool   `usage:"Enable authentication for the MCP registry API" default:"false" env:"OBOT_SERVER_ENABLE_REGISTRY_AUTH"`
