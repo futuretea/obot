@@ -803,7 +803,7 @@ func (h *Handler) SetUpDefaultMCPCatalog(ctx context.Context, c kclient.Client) 
 	if err := c.Get(ctx, router.Key(system.DefaultNamespace, system.DefaultCatalog), &existing); err == nil {
 		if i := slices.IndexFunc(existing.Spec.SourceURLs, func(url string) bool {
 			return url == "https://github.com/obot-platform/mcp-catalog"
-		}); i >= 0 {
+		}); i >= 0 && h.defaultCatalogPath != "" {
 			existing.Spec.SourceURLs[i] = h.defaultCatalogPath
 			// Resync now so entries do not keep reporting the old source until the hourly sync.
 			if existing.Annotations == nil {
@@ -846,7 +846,7 @@ func (h *Handler) SetUpDefaultSystemMCPCatalog(ctx context.Context, c kclient.Cl
 	if err := c.Get(ctx, router.Key(system.DefaultNamespace, system.DefaultCatalog), &existing); err == nil {
 		if i := slices.IndexFunc(existing.Spec.SourceURLs, func(url string) bool {
 			return url == "https://github.com/obot-platform/system-mcp-catalog"
-		}); i >= 0 {
+		}); i >= 0 && h.defaultSystemCatalogPath != "" {
 			existing.Spec.SourceURLs[i] = h.defaultSystemCatalogPath
 			// Resync now so entries do not keep reporting the old source until the hourly sync.
 			if existing.Annotations == nil {
