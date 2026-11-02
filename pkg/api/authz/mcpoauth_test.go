@@ -142,9 +142,9 @@ func TestMCPGroupDeniesNonMCPAPIRoutes(t *testing.T) {
 			path:   "/api/skills",
 		},
 		{
-			name:   "metrics route is denied",
+			name:   "pprof route is denied",
 			method: http.MethodGet,
-			path:   "/debug/metrics",
+			path:   "/debug/pprof/heap",
 		},
 	}
 

@@ -283,6 +283,7 @@ var (
 			"GET /api/app-oauth/get-token",
 
 			"GET /api/healthz",
+			"GET /debug/metrics",
 
 			"GET /api/app-preferences",
 

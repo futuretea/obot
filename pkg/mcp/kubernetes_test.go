@@ -25,6 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
 	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/component-base/metrics/legacyregistry"
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
@@ -1930,4 +1931,28 @@ func TestEnsureServerDeploymentStableConfigSkipsDirectReadinessCheck(t *testing.
 			}
 		})
 	}
+}
+
+func TestRecordDeploymentCheckIsExposedThroughLegacyRegistry(t *testing.T) {
+	recordDeploymentCheck("test-server", deploymentCheckPathCached, time.Now(), nil)
+
+	families, err := legacyregistry.DefaultGatherer.Gather()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, family := range families {
+		if family.GetName() != "obot_mcp_kubernetes_deployment_check_duration_seconds" {
+			continue
+		}
+		for _, m := range family.GetMetric() {
+			labels := map[string]string{}
+			for _, label := range m.GetLabel() {
+				labels[label.GetName()] = label.GetValue()
+			}
+			if labels["path"] == deploymentCheckPathCached && labels["result"] == "success" && m.GetHistogram().GetSampleCount() > 0 {
+				return
+			}
+		}
+	}
+	t.Fatal("deployment check duration for the cached path was not exposed through legacyregistry")
 }

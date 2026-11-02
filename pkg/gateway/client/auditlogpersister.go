@@ -44,6 +44,7 @@ func (c *Client) LogMCPAuditEntry(entry types.MCPAuditLog) {
 	defer c.auditLock.Unlock()
 
 	c.auditBuffer = append(c.auditBuffer, entry)
+	mcpAuditBufferedEntries.Set(float64(len(c.auditBuffer)))
 	if len(c.auditBuffer) >= cap(c.auditBuffer)/2 {
 		select {
 		case c.kickAuditPersist <- struct{}{}:
@@ -103,14 +104,22 @@ func (c *Client) persistMCPAuditLogs() error {
 
 	buf := c.auditBuffer
 	c.auditBuffer = make([]types.MCPAuditLog, 0, cap(c.auditBuffer))
+	mcpAuditBufferedEntries.Set(0)
 	c.auditLock.Unlock()
+
+	mcpAuditPersistInFlightEntries.Set(float64(len(buf)))
+	defer mcpAuditPersistInFlightEntries.Set(0)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err := c.insertMCPAuditLogs(ctx, buf); err != nil {
+	start := time.Now()
+	err := c.insertMCPAuditLogs(ctx, buf)
+	recordMCPAuditPersist(len(buf), start, err)
+	if err != nil {
 		c.auditLock.Lock()
 		c.auditBuffer = append(buf, c.auditBuffer...)
+		mcpAuditBufferedEntries.Set(float64(len(c.auditBuffer)))
 		c.auditLock.Unlock()
 		return err
 	}

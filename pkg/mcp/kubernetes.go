@@ -150,7 +150,7 @@ func (k *kubernetesBackend) deployServerObjects(ctx context.Context, server Serv
 	return nil
 }
 
-func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server ServerConfig) (ServerConfig, error) {
+func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server ServerConfig) (_ ServerConfig, err error) {
 	for i, component := range server.Components {
 		component.URL = k.transformObotHostname(component.URL)
 		server.Components[i] = component
@@ -170,6 +170,11 @@ func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server S
 	serverConfigHash := serverID(server) + utils.Digest(server.Files)
 	cachedDeployment := k.getDeploymentCache(server.MCPServerName)
 
+	checkStart, checkPath := time.Now(), deploymentCheckPathCached
+	defer func() {
+		recordDeploymentCheck(server.MCPServerName, checkPath, checkStart, err)
+	}()
+
 	shouldDeploy := cachedDeployment == nil || cachedDeployment.hash != serverConfigHash
 	var stablePodName string
 	if !shouldDeploy {
@@ -184,6 +189,7 @@ func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server S
 	}
 
 	if shouldDeploy {
+		checkPath = deploymentCheckPathDeploy
 		slog.Info("Triggering redeploy for MCP server", "mcpServerName", server.MCPServerName)
 		objs, err := k.k8sObjects(ctx, server)
 		if err != nil {
@@ -198,12 +204,15 @@ func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server S
 	u := fmt.Sprintf("http://%s.%s.svc.%s", server.MCPServerName, k.mcpNamespace, k.mcpClusterDomain)
 	podName := stablePodName
 	if podName == "" {
+		if !shouldDeploy {
+			checkPath = deploymentCheckPathReadiness
+		}
+
 		var previousPodName string
 		if cachedDeployment != nil {
 			previousPodName = cachedDeployment.podName
 		}
 
-		var err error
 		podName, err = k.updatedMCPPodName(ctx, u, server.MCPServerName, server, previousPodName)
 		if err != nil {
 			return ServerConfig{}, err
