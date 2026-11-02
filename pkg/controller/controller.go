@@ -158,6 +158,13 @@ func (c *Controller) PreStart(ctx context.Context) error {
 		return fmt.Errorf("failed to migrate catalog entry static configuration: %w", err)
 	}
 
+	// Runs after the static configuration migration, which matches migrated
+	// connections to components by their original catalog entry reference.
+	// Components that cannot be backfilled keep working from their snapshots.
+	if err := catalogmigration.BackfillComponentEntries(ctx, c.services.StorageClient); err != nil {
+		slog.Error("Failed to backfill catalog entries for migrated vMCP components", "error", err)
+	}
+
 	return nil
 }
 
