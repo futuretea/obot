@@ -11,6 +11,7 @@ import (
 	"github.com/obot-platform/obot/apiclient/types"
 	"github.com/obot-platform/obot/pkg/api"
 	"github.com/obot-platform/obot/pkg/controller/handlers/catalogmigration"
+	"github.com/obot-platform/obot/pkg/mcp"
 	v1 "github.com/obot-platform/obot/pkg/storage/apis/obot.obot.ai/v1"
 	"github.com/obot-platform/obot/pkg/system"
 	"github.com/obot-platform/obot/pkg/utils"
@@ -80,9 +81,13 @@ func TestVMCPRefreshFromBackfilledEntry(t *testing.T) {
 		t.Fatalf("backfilled entry %q must be an editable catalog entry", entry.Name)
 	}
 
-	entry.Spec.Manifest.ContainerizedConfig.Args[1] = "${kube}"
-	if err := storage.Update(t.Context(), &entry); err != nil {
-		t.Fatal(err)
+	edited := *entry.Spec.Manifest.DeepCopy()
+	edited.ContainerizedConfig.Args[1] = "${kube}"
+	edited.Config[0].Required = true
+	catalogHandler := &MCPCatalogHandler{mcpBackend: "docker", sessionManager: &mcp.SessionManager{}}
+	updateReq, _ := catalogEntryRequest(t, storage, newEnforcementTestGatewayClient(t), http.MethodPut, "/api/mcp-catalogs/"+system.DefaultCatalog+"/entries/"+entry.Name, edited, map[string]string{"catalog_id": system.DefaultCatalog, "entry_id": entry.Name})
+	if err := catalogHandler.UpdateEntry(updateReq); err != nil {
+		t.Fatalf("save edited backfilled entry: %v", err)
 	}
 	if err := handler.TriggerUpdate(ctx); err != nil {
 		t.Fatal(err)
@@ -94,6 +99,13 @@ func TestVMCPRefreshFromBackfilledEntry(t *testing.T) {
 	component := updated.Spec.Manifest.Components[0]
 	if component.CatalogEntry.Manifest.ContainerizedConfig.Args[1] != "${kube}" {
 		t.Fatal("edited entry argument was not adopted")
+	}
+	if config := component.CatalogEntry.Manifest.Config; len(config) != 1 || config[0].Key != "kube" || !config[0].Required {
+		t.Fatalf("snapshot configuration = %+v, want required key kube", config)
+	}
+	fixed := map[string]string{vmcpconfig.ConfigurationKey(component.ID, "kube"): "synthetic kubeconfig"}
+	if missing := vmcpconfig.MissingRequiredConfiguration(component, fixed, false); len(missing) != 0 {
+		t.Fatalf("fixed kube value is not found: missing %v", missing)
 	}
 	if updated.Spec.LegacySlug != original.Spec.LegacySlug || component.ID != slug || component.MCPServerCatalogEntryID != entry.Name || component.ForceSingleUser {
 		t.Fatal("refresh changed the connection or component identity")

@@ -437,7 +437,7 @@ func (h *MCPCatalogHandler) UpdateEntry(req api.Context) error {
 	if err := req.Read(&manifest); err != nil {
 		return types.NewErrBadRequest("failed to read entry manifest: %v", err)
 	}
-	mcpcatalog.NormalizeManifest(&manifest)
+	normalizeUpdatedManifest(&entry, &manifest)
 
 	if err := validateCatalogEntryManifestWithResourceMaximums(req, manifest, false, h.sessionManager); err != nil {
 		return types.NewErrBadRequest("failed to validate entry manifest: %v", err)
@@ -465,7 +465,7 @@ func (h *MCPCatalogHandler) UpdateEntry(req api.Context) error {
 	if err != nil {
 		return err
 	}
-	staticConfiguration, err := mcp.ExtractStaticConfiguration(manifest.Config, normalizedStaticConfiguration(entry.Spec.Manifest.Config, previous), true)
+	staticConfiguration, err := mcp.ExtractStaticConfiguration(manifest.Config, normalizedStaticConfiguration(&entry, previous), true)
 	if err != nil {
 		return types.NewErrBadRequest("failed to validate entry manifest: %v", err)
 	}
@@ -484,11 +484,13 @@ func (h *MCPCatalogHandler) UpdateEntry(req api.Context) error {
 }
 
 // normalizedStaticConfiguration keys the values stored for an entry's configuration by the keys
-// that normalization gives it. Entries created before the API normalized manifests can hold keys
-// that normalization changes, and an update normalizes the keys it submits.
-func normalizedStaticConfiguration(config []types.MCPConfig, values map[string]string) map[string]string {
+// an update gives that configuration. Entries created before the API normalized manifests can hold
+// keys that normalization changes; backfilled entries keep their existing keys (see
+// normalizeUpdatedManifest).
+func normalizedStaticConfiguration(entry *v1.MCPServerCatalogEntry, values map[string]string) map[string]string {
+	config := entry.Spec.Manifest.Config
 	normalized := types.MCPServerCatalogEntryManifest{Config: slices.Clone(config)}
-	mcpcatalog.NormalizeManifest(&normalized)
+	normalizeUpdatedManifest(entry, &normalized)
 
 	result := make(map[string]string, len(values))
 	for i, field := range config {
@@ -497,6 +499,31 @@ func normalizedStaticConfiguration(config []types.MCPConfig, values map[string]s
 		}
 	}
 	return result
+}
+
+// normalizeUpdatedManifest normalizes a manifest submitted to update an entry. Entries backfilled
+// for migrated vMCP components keep the configuration keys they already have, because the vMCP
+// configuration policies and stored credentials of those components reference the keys as they
+// are. Keys new to the entry, including a key removed by an earlier update and added back, are
+// normalized. Remove this exception once a key migration renames those policies and credentials
+// along with the entry.
+func normalizeUpdatedManifest(entry *v1.MCPServerCatalogEntry, manifest *types.MCPServerCatalogEntryManifest) {
+	submitted := make([]string, len(manifest.Config))
+	for i, field := range manifest.Config {
+		submitted[i] = field.Key
+	}
+	mcpcatalog.NormalizeManifest(manifest)
+
+	if entry.Annotations[v1.BackfillVMCPAnnotation] == "" {
+		return
+	}
+	for i, key := range submitted {
+		if key != "" && slices.ContainsFunc(entry.Spec.Manifest.Config, func(field types.MCPConfig) bool {
+			return field.Key == key
+		}) {
+			manifest.Config[i].Key = key
+		}
+	}
 }
 
 // RevealEntry returns the static configuration values of a catalog entry, keyed by configuration key.

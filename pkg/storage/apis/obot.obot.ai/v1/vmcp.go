@@ -13,6 +13,10 @@ const (
 	VMCPSnapshotDigestAnnotation = "obot.ai/vmcp-snapshot-digest"
 	// OAuthCredentialRevisionAnnotation persists after reconciliation so every consumer observes writes.
 	OAuthCredentialRevisionAnnotation = "obot.ai/oauth-credential-revision"
+	// BackfillVMCPAnnotation and BackfillComponentAnnotation record the vMCP
+	// component a backfilled catalog entry was created from.
+	BackfillVMCPAnnotation      = "obot.ai/backfilled-from-vmcp"
+	BackfillComponentAnnotation = "obot.ai/backfilled-from-vmcp-component"
 )
 
 var (

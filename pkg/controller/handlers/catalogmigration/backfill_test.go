@@ -92,7 +92,7 @@ func TestBackfillComponentEntry(t *testing.T) {
 	require.Equal(t, "default", entry.Spec.MCPCatalogName)
 	require.Empty(t, entry.Spec.PowerUserWorkspaceID)
 	require.Empty(t, entry.Spec.SourceURL)
-	require.Equal(t, map[string]string{BackfillVMCPAnnotation: before.Name, BackfillComponentAnnotation: server.Name}, entry.Annotations)
+	require.Equal(t, map[string]string{v1.BackfillVMCPAnnotation: before.Name, v1.BackfillComponentAnnotation: server.Name}, entry.Annotations)
 	snapshot := before.Spec.Manifest.Components[0].CatalogEntry
 	require.Equal(t, snapshot.Manifest, entry.Spec.Manifest)
 	require.Equal(t, snapshot.UnsupportedTools, entry.Spec.UnsupportedTools)
@@ -199,7 +199,7 @@ func TestBackfillComponentEntryResumesOrSkipsExistingEntry(t *testing.T) {
 			existing := &v1.MCPServerCatalogEntry{
 				Name:        backfilledEntryName("default", target),
 				Namespace:   "default",
-				Annotations: map[string]string{BackfillVMCPAnnotation: target.Name, BackfillComponentAnnotation: tt.component},
+				Annotations: map[string]string{v1.BackfillVMCPAnnotation: target.Name, v1.BackfillComponentAnnotation: tt.component},
 				Spec:        v1.MCPServerCatalogEntrySpec{MCPCatalogName: "default", Editable: true, Manifest: types.MCPServerCatalogEntryManifest{Name: "Existing"}},
 			}
 			require.NoError(t, client.Create(t.Context(), existing))
@@ -273,7 +273,7 @@ func TestBackfillComponentEntrySkipsIneligibleComponents(t *testing.T) {
 			var entries v1.MCPServerCatalogEntryList
 			require.NoError(t, client.List(t.Context(), &entries))
 			for _, entry := range entries.Items {
-				require.Empty(t, entry.Annotations[BackfillVMCPAnnotation])
+				require.Empty(t, entry.Annotations[v1.BackfillVMCPAnnotation])
 			}
 		})
 	}
@@ -284,7 +284,7 @@ func TestBackfillComponentEntryContinuesAfterFailure(t *testing.T) {
 	fail := false
 	client := migrationClientBuilder().WithObjects(testCatalog(), failing, working).WithInterceptorFuncs(interceptor.Funcs{
 		Create: func(ctx context.Context, client kclient.WithWatch, obj kclient.Object, opts ...kclient.CreateOption) error {
-			if fail && obj.GetAnnotations()[BackfillComponentAnnotation] == failing.Name {
+			if fail && obj.GetAnnotations()[v1.BackfillComponentAnnotation] == failing.Name {
 				return errors.New("create failed")
 			}
 			return client.Create(ctx, obj, opts...)

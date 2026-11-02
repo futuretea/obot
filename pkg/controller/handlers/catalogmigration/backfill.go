@@ -17,13 +17,6 @@ import (
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-const (
-	// BackfillVMCPAnnotation and BackfillComponentAnnotation record the vMCP
-	// component a backfilled catalog entry was created from.
-	BackfillVMCPAnnotation      = "obot.ai/backfilled-from-vmcp"
-	BackfillComponentAnnotation = "obot.ai/backfilled-from-vmcp-component"
-)
-
 type backfillResult struct {
 	entry  string
 	reason string
@@ -112,8 +105,8 @@ func backfillComponentEntry(ctx context.Context, client kclient.Client, target *
 	entry := v1.MCPServerCatalogEntry{
 		Namespace: target.Namespace,
 		Annotations: map[string]string{
-			BackfillVMCPAnnotation:      target.Name,
-			BackfillComponentAnnotation: component.ID,
+			v1.BackfillVMCPAnnotation:      target.Name,
+			v1.BackfillComponentAnnotation: component.ID,
 		},
 		Spec: v1.MCPServerCatalogEntrySpec{
 			Editable:         true,
@@ -142,7 +135,7 @@ func backfillComponentEntry(ctx context.Context, client kclient.Client, target *
 	var existing v1.MCPServerCatalogEntry
 	if err := client.Get(ctx, kclient.ObjectKeyFromObject(&entry), &existing); err == nil {
 		// A previous startup created the entry but did not update the vMCP.
-		if existing.Annotations[BackfillVMCPAnnotation] != target.Name || existing.Annotations[BackfillComponentAnnotation] != component.ID || !existing.DeletionTimestamp.IsZero() {
+		if existing.Annotations[v1.BackfillVMCPAnnotation] != target.Name || existing.Annotations[v1.BackfillComponentAnnotation] != component.ID || !existing.DeletionTimestamp.IsZero() {
 			return backfillResult{reason: fmt.Sprintf("catalog entry %q already exists for another source", entry.Name)}, nil
 		}
 	} else if !apierrors.IsNotFound(err) {
