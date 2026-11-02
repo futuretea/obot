@@ -254,6 +254,8 @@ config:
   OBOT_SERVER_MCPAUDIT_LOG_PERSIST_INTERVAL_SECONDS: ""
   # config.OBOT_SERVER_MCPAUDIT_LOGS_PERSIST_BATCH_SIZE -- The batch size to use when persisting MCP audit logs to the database. Defaults to 1000
   OBOT_SERVER_MCPAUDIT_LOGS_PERSIST_BATCH_SIZE: ""
+  # config.OBOT_SERVER_DISABLE_MCPAUDIT_LOG -- Stop recording new MCP audit logs. Existing audit logs are kept. Defaults to false.
+  OBOT_SERVER_DISABLE_MCPAUDIT_LOG: ""
 
   # config.OBOT_SERVER_DISABLE_UPDATE_CHECK -- Disable the Obot server update check. Defaults to false.
   OBOT_SERVER_DISABLE_UPDATE_CHECK: ""

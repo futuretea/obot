@@ -138,6 +138,7 @@ type Config struct {
 	EnableMessagePolicies                bool   `usage:"Enable message policies for LLM proxy content enforcement" default:"false"`
 	LLMAuditLogRetentionDays             int    `usage:"Number of days to retain LLM audit logs (0 to disable cleanup)." default:"90"`
 	DisableLLMAuditLog                   bool   `usage:"Disable LLM gateway audit logging" default:"false"`
+	DisableMCPAuditLog                   bool   `usage:"Disable recording new MCP audit logs; existing audit logs are kept" default:"false"`
 	DeviceScanRetentionDays              int    `usage:"Number of days to retain submitted device scans (0 to disable cleanup)." default:"90"`
 	EnableAgents                         *bool  `usage:"Enable Obot Agent features. When unset, agents are disabled for new deployments but grandfathered in for deployments that already have agents. Explicitly set to true to force-enable, or false to force-disable, regardless of grandfathering." env:"OBOT_ENABLE_AGENTS"`
 	EnableHostedAgents                   bool   `usage:"Enable Hosted Agents features" default:"false"`
@@ -689,6 +690,9 @@ func New(ctx context.Context, config Config) (*Services, error) {
 		config.DeviceScanRetentionDays,
 		!config.DisableLLMAuditLog,
 	)
+	if config.DisableMCPAuditLog {
+		gatewayClient.DisableMCPAuditLog()
+	}
 
 	if err := migrateGPTScriptCredentials(ctx, gatewayClient, gatewayDB, config.DSN); err != nil {
 		return nil, fmt.Errorf("failed to migrate GPTScript credentials: %w", err)

@@ -77,3 +77,29 @@ func TestAttributeMCPAuditLogAPIKeyReturnsTransientLookupError(t *testing.T) {
 		t.Fatalf("transient lookup error produced attribution: ID %v, name %q", input.APIKeyID, input.APIKeyName)
 	}
 }
+
+func TestCollectMCPAuditEntrySkipsPersistenceWhenMCPAuditDisabled(t *testing.T) {
+	gatewayClient := newLocalAgentAuditLogTestGatewayClient(t)
+	gatewayClient.DisableMCPAuditLog()
+
+	NewAuditLogHandler(gatewayClient).CollectMCPProxyAuditEntry(auditlogs.MCPAuditLog{
+		Metadata:       map[string]string{"mcpID": "mcp-1"},
+		CreatedAt:      time.Now().UTC(),
+		APIKey:         auditlogs.RedactAPIKey("ok1-7-42-abcdefghijklmnopqrstuvwxyz"),
+		CallType:       "tools/call",
+		CallIdentifier: "search",
+		RequestBody:    json.RawMessage(`{}`),
+		ResponseBody:   json.RawMessage(`{}`),
+		ResponseStatus: 200,
+	}, true, "exchange-1")
+
+	// The test client flushes every 10ms; wait well past several flush cycles.
+	time.Sleep(200 * time.Millisecond)
+	_, total, err := gatewayClient.GetMCPAuditLogs(t.Context(), gatewayclient.MCPAuditLogOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if total != 0 {
+		t.Fatalf("persisted MCP audit logs = %d, want 0 while MCP audit logging is disabled", total)
+	}
+}

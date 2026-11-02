@@ -8,7 +8,21 @@ import (
 	"github.com/obot-platform/obot/pkg/gateway/types"
 )
 
+// DisableMCPAuditLog stops recording new MCP audit log entries. Entries already
+// buffered are still persisted. It must be called before the client is used.
+func (c *Client) DisableMCPAuditLog() {
+	c.mcpAuditDisabled = true
+}
+
+func (c *Client) MCPAuditLogEnabled() bool {
+	return c != nil && !c.mcpAuditDisabled
+}
+
 func (c *Client) LogMCPAuditEntry(entry types.MCPAuditLog) {
+	if !c.MCPAuditLogEnabled() {
+		return
+	}
+
 	// Encrypt the audit entry before adding to buffer
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
