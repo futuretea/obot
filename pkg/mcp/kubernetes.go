@@ -171,12 +171,15 @@ func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server S
 	cachedDeployment := k.getDeploymentCache(server.MCPServerName)
 
 	shouldDeploy := cachedDeployment == nil || cachedDeployment.hash != serverConfigHash
+	var stablePodName string
 	if !shouldDeploy {
 		var deployment appsv1.Deployment
 		if err := k.cachedClient.Get(ctx, kclient.ObjectKey{Name: server.MCPServerName, Namespace: k.mcpNamespace}, &deployment); apierrors.IsNotFound(err) {
 			shouldDeploy = true
 		} else if err != nil {
 			return ServerConfig{}, fmt.Errorf("failed to get deployment %s: %w", server.MCPServerName, err)
+		} else {
+			stablePodName = k.cachedStablePodName(ctx, &deployment, server.MCPServerName, cachedDeployment.podName)
 		}
 	}
 
@@ -193,14 +196,18 @@ func (k *kubernetesBackend) ensureServerDeployment(ctx context.Context, server S
 	}
 
 	u := fmt.Sprintf("http://%s.%s.svc.%s", server.MCPServerName, k.mcpNamespace, k.mcpClusterDomain)
-	var previousPodName string
-	if cachedDeployment != nil {
-		previousPodName = cachedDeployment.podName
-	}
+	podName := stablePodName
+	if podName == "" {
+		var previousPodName string
+		if cachedDeployment != nil {
+			previousPodName = cachedDeployment.podName
+		}
 
-	podName, err := k.updatedMCPPodName(ctx, u, server.MCPServerName, server, previousPodName)
-	if err != nil {
-		return ServerConfig{}, err
+		var err error
+		podName, err = k.updatedMCPPodName(ctx, u, server.MCPServerName, server, previousPodName)
+		if err != nil {
+			return ServerConfig{}, err
+		}
 	}
 
 	k.setDeploymentCache(server.MCPServerName, kubernetesDeploymentCacheEntry{
@@ -886,6 +893,50 @@ func analyzePodStatusWithClient(ctx context.Context, pod *corev1.Pod, server Ser
 	return true, fmt.Errorf("pod in phase %s, waiting for containers to be ready", pod.Status.Phase)
 }
 
+func deploymentReady(dep *appsv1.Deployment) bool {
+	return dep.Generation == dep.Status.ObservedGeneration && dep.Status.Replicas == 1 && dep.Status.UpdatedReplicas == 1 && dep.Status.ReadyReplicas == 1 && dep.Status.AvailableReplicas == 1
+}
+
+func newestRunningPodName(pods []corev1.Pod) string {
+	var (
+		podName           string
+		newestCreatedTime metav1.Time
+	)
+	for _, p := range pods {
+		if p.DeletionTimestamp.IsZero() && p.CreationTimestamp.After(newestCreatedTime.Time) && p.Status.Phase == corev1.PodRunning {
+			podName = p.Name
+			newestCreatedTime = p.CreationTimestamp
+		}
+	}
+	return podName
+}
+
+// cachedStablePodName returns previousPodName when the informer cache shows the deployment is
+// ready and its newest running pod is unchanged, so the hot path can skip the direct readiness
+// check. It returns "" whenever the cache cannot prove that, and the caller falls back to the
+// direct readiness check.
+func (k *kubernetesBackend) cachedStablePodName(ctx context.Context, dep *appsv1.Deployment, id, previousPodName string) string {
+	if previousPodName == "" || !deploymentReady(dep) {
+		return ""
+	}
+
+	var pods corev1.PodList
+	if err := k.cachedClient.List(ctx, &pods, &kclient.ListOptions{
+		Namespace: k.mcpNamespace,
+		LabelSelector: labels.SelectorFromSet(map[string]string{
+			"app": id,
+		}),
+	}); err != nil {
+		slog.Debug("failed to list cached MCP pods, falling back to readiness check", "id", id, "error", err)
+		return ""
+	}
+
+	if newestRunningPodName(pods.Items) != previousPodName {
+		return ""
+	}
+	return previousPodName
+}
+
 func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id string, server ServerConfig, previousPodName string) (string, error) {
 	// Wait for the deployment to be ready, checking pod status on each update to fail fast on permanent errors.
 	var (
@@ -904,7 +955,7 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 	for ; totalWatchDur < server.StartupTimeout; totalWatchDur, watchAttempt = time.Since(start), watchAttempt+1 {
 		_, err := wait.For(ctx, k.client, &appsv1.Deployment{Name: id, Namespace: k.mcpNamespace},
 			func(dep *appsv1.Deployment) (bool, error) {
-				if dep.Generation == dep.Status.ObservedGeneration && dep.Status.Replicas == 1 && dep.Status.UpdatedReplicas == 1 && dep.Status.ReadyReplicas == 1 && dep.Status.AvailableReplicas == 1 {
+				if deploymentReady(dep) {
 					return true, nil
 				}
 
@@ -977,10 +1028,7 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 	}
 
 	// Deployment is ready. Get the pod name that is currently running.
-	var (
-		pods    corev1.PodList
-		podName string
-	)
+	var pods corev1.PodList
 	if err = k.client.List(ctx, &pods, &kclient.ListOptions{
 		Namespace: k.mcpNamespace,
 		LabelSelector: labels.SelectorFromSet(map[string]string{
@@ -990,14 +1038,7 @@ func (k *kubernetesBackend) updatedMCPPodName(ctx context.Context, url, id strin
 		return "", fmt.Errorf("failed to list MCP pods: %w", err)
 	}
 
-	var newestCreatedTime metav1.Time
-	for _, p := range pods.Items {
-		if p.DeletionTimestamp.IsZero() && p.CreationTimestamp.After(newestCreatedTime.Time) && p.Status.Phase == corev1.PodRunning {
-			podName = p.Name
-			newestCreatedTime = p.CreationTimestamp
-		}
-	}
-
+	podName := newestRunningPodName(pods.Items)
 	if podName == "" {
 		return "", fmt.Errorf("%w: deployment ready but no running pods found", ErrHealthCheckTimeout)
 	}

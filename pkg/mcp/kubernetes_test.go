@@ -16,6 +16,7 @@ import (
 	"github.com/obot-platform/obot/apiclient/types"
 	v1 "github.com/obot-platform/obot/pkg/storage/apis/obot.obot.ai/v1"
 	"github.com/obot-platform/obot/pkg/system"
+	"github.com/obot-platform/obot/pkg/utils"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -1832,5 +1833,101 @@ func TestUpdatedMCPPodNameNotFoundRetriesAreBounded(t *testing.T) {
 	}
 	if calls := client.calls.Load(); calls > 10 {
 		t.Fatalf("updatedMCPPodName() made %d unbounded retries on NotFound, want bounded retries", calls)
+	}
+}
+
+func TestEnsureServerDeploymentStableConfigSkipsDirectReadinessCheck(t *testing.T) {
+	scheme := readinessTestScheme(t)
+	readyDeployment := func() *appsv1.Deployment {
+		return &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{Name: "test-server", Namespace: "obot-mcp", Generation: 1},
+			Status: appsv1.DeploymentStatus{
+				ObservedGeneration: 1, Replicas: 1, UpdatedReplicas: 1, ReadyReplicas: 1, AvailableReplicas: 1,
+			},
+		}
+	}
+	runningPod := func(name string) *corev1.Pod {
+		return &corev1.Pod{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name, Namespace: "obot-mcp",
+				Labels: map[string]string{"app": "test-server"}, CreationTimestamp: metav1.Now(),
+			},
+			Status: corev1.PodStatus{Phase: corev1.PodRunning},
+		}
+	}
+	notReady := readyDeployment()
+	notReady.Status.ReadyReplicas = 0
+
+	tests := []struct {
+		name            string
+		cachedObjs      []kclient.Object
+		previousPodName string
+		wantDirect      bool
+	}{
+		{
+			name:            "ready deployment with unchanged pod uses cache only",
+			cachedObjs:      []kclient.Object{readyDeployment(), runningPod("test-server-abc")},
+			previousPodName: "test-server-abc",
+		},
+		{
+			name:            "changed pod falls back to direct readiness check",
+			cachedObjs:      []kclient.Object{readyDeployment(), runningPod("test-server-new")},
+			previousPodName: "test-server-abc",
+			wantDirect:      true,
+		},
+		{
+			name:            "not ready deployment falls back to direct readiness check",
+			cachedObjs:      []kclient.Object{notReady, runningPod("test-server-abc")},
+			previousPodName: "test-server-abc",
+			wantDirect:      true,
+		},
+		{
+			name:            "missing running pod falls back to direct readiness check",
+			cachedObjs:      []kclient.Object{readyDeployment()},
+			previousPodName: "test-server-abc",
+			wantDirect:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			direct := readinessTestBackend(scheme)
+			direct.remaining = -1
+			direct.err = errors.New("direct apiserver call")
+			k := &kubernetesBackend{
+				client:          direct,
+				cachedClient:    fake.NewClientBuilder().WithScheme(scheme).WithObjects(tt.cachedObjs...).Build(),
+				mcpNamespace:    "obot-mcp",
+				deploymentCache: map[string]*kubernetesDeploymentCacheEntry{},
+			}
+
+			server := testK8sServerConfig()
+			server.StartupTimeout = 300 * time.Millisecond
+			k.setDeploymentCache(server.MCPServerName, kubernetesDeploymentCacheEntry{
+				hash:    serverID(server) + utils.Digest(server.Files),
+				podName: tt.previousPodName,
+			})
+
+			result, err := k.ensureServerDeployment(t.Context(), server)
+			directCalls := direct.calls.Load()
+			if !tt.wantDirect {
+				if err != nil {
+					t.Fatalf("ensureServerDeployment() error = %v", err)
+				}
+				if directCalls != 0 {
+					t.Fatalf("ensureServerDeployment() made %d direct apiserver calls, want 0", directCalls)
+				}
+				if result.Scope != tt.previousPodName {
+					t.Fatalf("ensureServerDeployment() scope = %q, want %q", result.Scope, tt.previousPodName)
+				}
+				return
+			}
+			if directCalls == 0 {
+				t.Fatal("ensureServerDeployment() made no direct apiserver calls, want readiness fallback")
+			}
+			if !errors.Is(err, ErrHealthCheckTimeout) {
+				t.Fatalf("ensureServerDeployment() error = %v, want %v", err, ErrHealthCheckTimeout)
+			}
+		})
 	}
 }
