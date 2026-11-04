@@ -88,7 +88,7 @@ func (c ClaudeCode) InstallBootstrap(ctx context.Context, home string) (InstallR
 		AgentID:     c.ID(),
 		DisplayName: c.DisplayName(),
 		Installed:   installed,
-		Message:     "Installed Obot bootstrap skills for Claude Code",
+		Message:     "Installed uni bootstrap skills for Claude Code",
 	}, nil
 }
 

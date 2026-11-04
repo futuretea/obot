@@ -13,34 +13,34 @@ func TestRenderAgentSkillsForClaudeCode(t *testing.T) {
 		t.Fatalf("expected 4 rendered assets, got %d", len(rendered))
 	}
 
-	install := renderedByName(t, rendered, "obot-install-skill")
-	assertContains(t, string(install.Content), "obot skills install --non-interactive --destination ~/.claude/skills <skill>")
+	install := renderedByName(t, rendered, "uni-install-skill")
+	assertContains(t, string(install.Content), "uni skills install --non-interactive --destination ~/.claude/skills <skill>")
 	assertNotContains(t, string(install.Content), "--json")
 
-	search := renderedByName(t, rendered, "obot-search-skills")
-	assertContains(t, string(search.Content), "obot skills search --non-interactive \"<query>\"")
-	assertContains(t, string(search.Content), "obot skills search --non-interactive\n")
+	search := renderedByName(t, rendered, "uni-search-skills")
+	assertContains(t, string(search.Content), "uni skills search --non-interactive \"<query>\"")
+	assertContains(t, string(search.Content), "uni skills search --non-interactive\n")
 
-	mcpSearch := renderedByName(t, rendered, "obot-search-mcp-servers")
-	assertContains(t, string(mcpSearch.Content), "Search the configured Obot server for available MCP servers.")
-	assertContains(t, string(mcpSearch.Content), "obot mcp search --non-interactive \"<query>\"")
-	assertContains(t, string(mcpSearch.Content), "obot mcp search --non-interactive\n")
+	mcpSearch := renderedByName(t, rendered, "uni-search-mcp-servers")
+	assertContains(t, string(mcpSearch.Content), "Search the configured uni server for available MCP servers.")
+	assertContains(t, string(mcpSearch.Content), "uni mcp search --non-interactive \"<query>\"")
+	assertContains(t, string(mcpSearch.Content), "uni mcp search --non-interactive\n")
 	assertContains(t, string(mcpSearch.Content), "configuration required")
 
-	bootstrap := renderedByName(t, rendered, "obot")
+	bootstrap := renderedByName(t, rendered, "uni")
 	assertContains(t, string(bootstrap.Content), "rendered for `claude-code`")
-	assertContains(t, string(bootstrap.Content), "obot mcp search")
+	assertContains(t, string(bootstrap.Content), "uni mcp search")
 }
 
 func TestRenderAgentSkillsForSharedAgents(t *testing.T) {
 	rendered := renderAgentSkillsForTest(t, SharedAgentsTemplateData())
 
-	install := renderedByName(t, rendered, "obot-install-skill")
-	assertContains(t, string(install.Content), "obot skills install --non-interactive --destination ~/.agents/skills <skill>")
+	install := renderedByName(t, rendered, "uni-install-skill")
+	assertContains(t, string(install.Content), "uni skills install --non-interactive --destination ~/.agents/skills <skill>")
 
-	bootstrap := renderedByName(t, rendered, "obot")
+	bootstrap := renderedByName(t, rendered, "uni")
 	assertContains(t, string(bootstrap.Content), "rendered for `agents`")
-	assertContains(t, string(bootstrap.Content), "obot mcp search")
+	assertContains(t, string(bootstrap.Content), "uni mcp search")
 }
 
 func TestRenderedAssetsHaveDeterministicRelativePaths(t *testing.T) {
@@ -55,10 +55,10 @@ func TestRenderedAssetsHaveDeterministicRelativePaths(t *testing.T) {
 	}
 
 	want := []string{
-		"obot-install-skill/SKILL.md",
-		"obot-search-mcp-servers/SKILL.md",
-		"obot-search-skills/SKILL.md",
-		"obot/SKILL.md",
+		"uni-install-skill/SKILL.md",
+		"uni-search-mcp-servers/SKILL.md",
+		"uni-search-skills/SKILL.md",
+		"uni/SKILL.md",
 	}
 	if strings.Join(got, "\n") != strings.Join(want, "\n") {
 		t.Fatalf("unexpected paths:\n%s", strings.Join(got, "\n"))

@@ -62,7 +62,7 @@ var (
 
 // Config contains the Keygen settings needed to validate an Obot license.
 type Config struct {
-	LicenseKey string `usage:"Keygen license key for this Obot installation"`
+	LicenseKey string `usage:"Keygen license key for this Obot installation" env:"OBOT_SERVER_LICENSE_KEY"`
 }
 
 type Provider struct {

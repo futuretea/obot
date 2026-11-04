@@ -29,7 +29,7 @@ type MCPGenerateVMCPCatalog struct {
 	Mode      string `usage:"Where to write the catalog: stdout, file, or dir" default:"stdout"`
 	Overwrite bool   `usage:"Replace existing files in file and dir modes"`
 
-	root *Obot
+	root *Uni
 }
 
 func (m *MCPGenerateVMCPCatalog) Customize(cmd *cobra.Command) {
@@ -38,7 +38,7 @@ func (m *MCPGenerateVMCPCatalog) Customize(cmd *cobra.Command) {
 	cmd.Short = "Generate catalog definitions for orphaned vMCPs from a catalog source"
 	cmd.Long = `Generate catalog definitions for orphaned vMCPs from the given catalog source URL. An orphaned vMCP was migrated from a composite catalog entry synced from that source, and no catalog source defines it yet.
 
-Publish the definitions in that same catalog source in place of the composite definitions. On its next sync, Obot takes over each vMCP and keeps its existing connections, configuration, and credentials.
+Publish the definitions in that same catalog source in place of the composite definitions. On its next sync, uni takes over each vMCP and keeps its existing connections, configuration, and credentials.
 
 Modes:
   stdout  Print every vMCP as one list (the default).
@@ -48,10 +48,10 @@ Modes:
 Output defaults to YAML; use --format json for JSON. In dir mode, file names use the selected format as their extension.
 
 Existing files are never replaced unless --overwrite is set.`
-	cmd.Example = `  obot mcp generate-vmcp-catalog https://github.com/example/catalog
-  obot mcp generate-vmcp-catalog https://github.com/example/catalog --mode file vmcps.yaml
-  obot mcp generate-vmcp-catalog https://github.com/example/catalog --format json --mode file vmcps.json
-  obot mcp generate-vmcp-catalog https://github.com/example/catalog --mode dir ./vmcps`
+	cmd.Example = `  uni mcp generate-vmcp-catalog https://github.com/example/catalog
+  uni mcp generate-vmcp-catalog https://github.com/example/catalog --mode file vmcps.yaml
+  uni mcp generate-vmcp-catalog https://github.com/example/catalog --format json --mode file vmcps.json
+  uni mcp generate-vmcp-catalog https://github.com/example/catalog --mode dir ./vmcps`
 	cmd.Args = cobra.RangeArgs(1, 2)
 }
 
@@ -86,7 +86,7 @@ func (m *MCPGenerateVMCPCatalog) Run(cmd *cobra.Command, args []string) error {
 	}
 	token, err := client.GetToken(cmd.Context(), apiclient.TokenFetchOptions{Scopes: scopes})
 	if err != nil {
-		return fmt.Errorf("authenticate with Obot: %w", err)
+		return fmt.Errorf("authenticate with uni: %w", err)
 	}
 
 	result, err := client.WithToken(token).ListOrphanedVMCPs(cmd.Context(), system.DefaultCatalog, sourceURL)

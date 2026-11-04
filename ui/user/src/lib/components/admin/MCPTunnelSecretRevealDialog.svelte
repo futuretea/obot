@@ -1,31 +1,8 @@
-<script lang="ts" module>
-	const SEMVER_PATTERN =
-		/^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
-	const DEVELOPMENT_VERSION_PATTERN = /^v?0\.0\.0-dev(?:[-.+]|$)/;
-
-	function dockerTagForVersion(rawVersion?: string): string {
-		const normalizedVersion = rawVersion?.trim();
-		if (
-			!normalizedVersion ||
-			!SEMVER_PATTERN.test(normalizedVersion) ||
-			DEVELOPMENT_VERSION_PATTERN.test(normalizedVersion) ||
-			normalizedVersion.endsWith('-dirty')
-		) {
-			return 'main';
-		}
-
-		return normalizedVersion.split('+', 1)[0];
-	}
-</script>
-
 <script lang="ts">
 	import ResponsiveDialog from '$lib/components/ResponsiveDialog.svelte';
 	import type { MCPTunnel } from '$lib/services';
-	import { version } from '$lib/stores';
 	import CopyField from '../CopyField.svelte';
-	import { Container, KeyRound, Terminal, TriangleAlert } from '@lucide/svelte';
-
-	type CommandTab = 'docker' | 'cli';
+	import { KeyRound, Terminal, TriangleAlert } from '@lucide/svelte';
 
 	interface Props {
 		action?: 'created' | 'rotated';
@@ -35,24 +12,15 @@
 
 	let { action = 'created', onClose, tunnel }: Props = $props();
 	let dialog = $state<ReturnType<typeof ResponsiveDialog>>();
-	let commandTab = $state<CommandTab>('docker');
-	let obotURL = $derived(
-		typeof window === 'undefined' ? '<OBOT_URL>/api' : `${window.location.origin}/api`
+	let uniURL = $derived(
+		typeof window === 'undefined' ? '<UNI_URL>/api' : `${window.location.origin}/api`
 	);
-	let cliCommand = $derived(
-		tunnel ? `obot tunnel --obot-base-url ${obotURL} --token ${tunnel.token}` : ''
+	let command = $derived(
+		tunnel ? `uni tunnel --uni-base-url ${uniURL} --token ${tunnel.token}` : ''
 	);
-	let dockerTag = $derived(dockerTagForVersion(version.current.obot));
-	let dockerCommand = $derived(
-		tunnel
-			? `docker run --rm ghcr.io/obot-platform/obot:${dockerTag} tunnel --obot-base-url ${obotURL} --token ${tunnel.token}`
-			: ''
-	);
-	let command = $derived(commandTab === 'docker' ? dockerCommand : cliCommand);
 
 	$effect(() => {
 		if (tunnel?.token) {
-			commandTab = 'docker';
 			dialog?.open();
 		}
 	});
@@ -91,43 +59,11 @@
 
 			<div class="flex flex-col gap-2">
 				<p class="text-sm font-medium">Connect this tunnel</p>
-				<div class="tabs tabs-box w-fit" role="tablist" aria-label="Tunnel command type">
-					<button
-						type="button"
-						role="tab"
-						aria-selected={commandTab === 'docker'}
-						aria-controls="tunnel-command-panel"
-						class="tab gap-2"
-						class:tab-active={commandTab === 'docker'}
-						onclick={() => (commandTab = 'docker')}
-					>
-						<Container class="size-4" />
-						Docker
-					</button>
-					<button
-						type="button"
-						role="tab"
-						aria-selected={commandTab === 'cli'}
-						aria-controls="tunnel-command-panel"
-						class="tab gap-2"
-						class:tab-active={commandTab === 'cli'}
-						onclick={() => (commandTab = 'cli')}
-					>
+				<CopyField value={command} id="mcp-tunnel-command" variant="code">
+					{#snippet preContent()}
 						<Terminal class="size-4" />
-						CLI
-					</button>
-				</div>
-				<div id="tunnel-command-panel" role="tabpanel">
-					<CopyField value={command} id="mcp-tunnel-command" variant="code">
-						{#snippet preContent()}
-							{#if commandTab === 'docker'}
-								<Container class="size-4" />
-							{:else}
-								<Terminal class="size-4" />
-							{/if}
-						{/snippet}
-					</CopyField>
-				</div>
+					{/snippet}
+				</CopyField>
 			</div>
 		</div>
 

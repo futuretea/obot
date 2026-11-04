@@ -5,21 +5,21 @@ description: Connect Obot to remote MCP servers on private networks through an o
 
 ## Overview
 
-MCP tunnels let the Obot gateway reach remote HTTP or HTTPS MCP servers that are not directly accessible from the Obot network. An `obot tunnel` process runs on a machine that can reach the private MCP server and opens an outbound, authenticated WebSocket connection to Obot.
+MCP tunnels let the Obot gateway reach remote HTTP or HTTPS MCP servers that are not directly accessible from the Obot network. A `uni tunnel` process runs on a machine that can reach the private MCP server and opens an outbound, authenticated WebSocket connection to uni.
 
 Traffic follows this path:
 
 1. The Obot gateway receives a request for a remote MCP server.
 2. The remote MCP catalog entry selects an MCP tunnel by its generated ID.
 3. Obot sends the HTTP request over that tunnel.
-4. The `obot tunnel` process forwards the request to the real MCP server URL and returns its response.
+4. The `uni tunnel` process forwards the request to the real MCP server URL and returns its response.
 
 The remote MCP server continues to use its ordinary URL, such as `http://mcp.internal.example:8080/mcp`. MCP tunnels proxy HTTP requests and streaming responses; they are not general-purpose TCP tunnels or VPNs.
 
 ## Prerequisites
 
 - An Admin or Owner must create and configure the tunnel.
-- A Docker container or the `obot` CLI must run on a long-lived machine that can reach both Obot and the remote MCP server.
+- The `uni` CLI must run on a long-lived machine that can reach both Obot and the remote MCP server.
 - The tunnel machine must be allowed to make outbound WebSocket connections to Obot. It does not need an inbound port.
 - A reverse proxy in front of Obot must allow WebSocket upgrades and long-lived connections on `/tunnel/connect`.
 - The remote catalog entry must use an exact URL or hostname. URL templates are not supported with tunnels.
@@ -31,7 +31,7 @@ The remote MCP server continues to use its ordinary URL, such as `http://mcp.int
 3. Enter a required **Display Name** and an optional **Description**.
 4. Add one or more **Allowed URLs** that describe the destinations this tunnel may reach.
 5. Select **Create Tunnel**.
-6. Copy the tunnel secret and either the generated Docker or CLI command before closing the dialog.
+6. Copy the tunnel secret and the generated uni command before closing the dialog.
 
 Obot generates the tunnel ID and a bearer secret containing 64 random bytes. The complete secret is shown only when the tunnel is created or rotated. All other responses return only a shortened preview.
 
@@ -68,32 +68,21 @@ Obot checks the allowlist when a tunneled remote catalog entry or server is save
 
 ## Connect the tunnel
 
-The Docker tab is selected by default after creating or rotating a tunnel. Run the displayed command on a machine with network access to the remote MCP server:
+Run the tunnel command on a machine with network access to the remote MCP server using an installed `uni` binary:
 
 ```bash
-docker run --rm ghcr.io/obot-platform/obot:v0.26.0 \
-  tunnel \
-  --obot-base-url https://obot.example.com/api \
+uni tunnel \
+  --uni-base-url https://obot.example.com/api \
   --token YOUR_TUNNEL_SECRET
 ```
 
-The UI reads the running Obot version from `/api/version` and uses it as the image tag when it is a valid release or prerelease semantic version. Semantic-version build metadata is omitted because it is not valid in a Docker tag. Development, dirty, missing, or invalid versions use the `main` image tag.
+The secret identifies the MCP tunnel, so there is no tunnel name argument. It converts the uni URL to the WebSocket endpoint automatically; for example, `https://obot.example.com/api` connects to `wss://obot.example.com/tunnel/connect` on the normal uni server port.
 
-Select the CLI tab to run an installed `obot` binary instead:
-
-```bash
-obot tunnel \
-  --obot-base-url https://obot.example.com/api \
-  --token YOUR_TUNNEL_SECRET
-```
-
-The secret identifies the MCP tunnel, so there is no tunnel name argument. Both forms invoke the same tunnel command. It converts the Obot URL to the WebSocket endpoint automatically; for example, `https://obot.example.com/api` connects to `wss://obot.example.com/tunnel/connect` on the normal Obot server port.
-
-You can also set the Obot base URL with `OBOT_BASE_URL`:
+You can also set the uni base URL with `UNI_BASE_URL`:
 
 ```bash
-export OBOT_BASE_URL=https://obot.example.com/api
-obot tunnel --token YOUR_TUNNEL_SECRET
+export UNI_BASE_URL=https://obot.example.com/api
+uni tunnel --token YOUR_TUNNEL_SECRET
 ```
 
 The tunnel command retries failed connection attempts and lost connections indefinitely, using exponential backoff from 1 second up to 30 seconds. Run it under a service manager or another supervisor for production use.

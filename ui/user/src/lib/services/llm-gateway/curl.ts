@@ -1,7 +1,7 @@
 import type { RenderContext, SnippetBlock } from './types';
 
 function loginSubstitution(obotURL: string): string {
-	return `$(obot login --url ${obotURL} --scope llm --print-token)`;
+	return `$(uni login --url ${obotURL} --scope llm --print-token)`;
 }
 
 /** Build a copy-pasteable curl example for the provider's chat/messages endpoint. */
@@ -24,9 +24,9 @@ export function renderCurlExample(ctx: RenderContext): SnippetBlock {
 			null,
 			2
 		);
-		const apiKeyName = ctx.provider.shortKey === 'anthropic' ? 'ANTHROPIC_API_KEY' : 'OBOT_API_KEY';
+		const apiKeyName = ctx.provider.shortKey === 'anthropic' ? 'ANTHROPIC_API_KEY' : 'UNI_API_KEY';
 		const baseURLName =
-			ctx.provider.shortKey === 'anthropic' ? 'ANTHROPIC_BASE_URL' : 'OBOT_BASE_URL';
+			ctx.provider.shortKey === 'anthropic' ? 'ANTHROPIC_BASE_URL' : 'UNI_BASE_URL';
 		const authHeader =
 			ctx.provider.shortKey === 'anthropic'
 				? `x-api-key: $${apiKeyName}`

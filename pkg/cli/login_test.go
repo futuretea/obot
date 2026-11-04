@@ -38,7 +38,7 @@ func TestLoginOutput(t *testing.T) {
 			)
 			login := &Login{
 				PrintToken: tt.printToken,
-				root:       &Obot{Client: client},
+				root:       &Uni{Client: client},
 			}
 			cmd := &cobra.Command{}
 			cmd.SetContext(t.Context())

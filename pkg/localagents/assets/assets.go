@@ -14,10 +14,10 @@ var (
 	//go:embed files/skills/*/SKILL.md.tmpl
 	templateFS         embed.FS
 	fileSkillTemplates = []string{
-		"files/skills/obot/SKILL.md.tmpl",
-		"files/skills/obot-search-skills/SKILL.md.tmpl",
-		"files/skills/obot-search-mcp-servers/SKILL.md.tmpl",
-		"files/skills/obot-install-skill/SKILL.md.tmpl",
+		"files/skills/uni/SKILL.md.tmpl",
+		"files/skills/uni-search-skills/SKILL.md.tmpl",
+		"files/skills/uni-search-mcp-servers/SKILL.md.tmpl",
+		"files/skills/uni-install-skill/SKILL.md.tmpl",
 	}
 )
 
@@ -54,7 +54,7 @@ func SharedAgentsTemplateData() TemplateData {
 	}
 }
 
-// RenderAgentSkills renders all Obot bootstrap skill assets.
+// RenderAgentSkills renders all uni bootstrap skill assets.
 func RenderAgentSkills(data TemplateData) ([]SkillAsset, error) {
 	if err := validateTemplateData(data); err != nil {
 		return nil, err

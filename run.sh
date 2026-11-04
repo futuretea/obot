@@ -2,7 +2,7 @@
 set -e
 
 if [ "${1:-}" = "tunnel" ]; then
-  exec tini -- obot "$@"
+  exec tini -- uni "$@"
 fi
 
 check_postgres_active() {
@@ -34,4 +34,4 @@ if [ -z "$OBOT_SERVER_DSN" ]; then
   export OBOT_SERVER_DSN="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}"
 fi
 
-exec tini -- obot server
+exec tini -- uni server

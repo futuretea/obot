@@ -7,7 +7,7 @@ import (
 const (
 	// DefaultService is the OS keyring service name used for Obot CLI
 	// credentials.
-	DefaultService = "obot"
+	DefaultService = "uni"
 )
 
 // ErrNotFound is returned when no credential exists for the requested

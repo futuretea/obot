@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	TokenEnvVar = "OBOT_TOKEN"
+	TokenEnvVar = "UNI_TOKEN"
 )
 
 var (

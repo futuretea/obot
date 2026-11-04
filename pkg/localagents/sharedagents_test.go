@@ -24,18 +24,18 @@ func TestSharedAgentsInstallBootstrapWritesExpectedSkills(t *testing.T) {
 		t.Fatalf("Installed count = %d, want 4: %#v", len(result.Installed), result.Installed)
 	}
 
-	for _, name := range []string{"obot", "obot-search-skills", "obot-search-mcp-servers", "obot-install-skill"} {
+	for _, name := range []string{"uni", "uni-search-skills", "uni-search-mcp-servers", "uni-install-skill"} {
 		content := readFile(t, filepath.Join(home, ".agents", "skills", name, skillformat.SkillMainFile))
-		if !strings.Contains(content, "Obot") && !strings.Contains(content, "obot") {
-			t.Fatalf("%s content did not look like an Obot bootstrap skill:\n%s", name, content)
+		if !strings.Contains(content, "uni") {
+			t.Fatalf("%s content did not look like a uni bootstrap skill:\n%s", name, content)
 		}
 	}
-	assertFileContains(t, filepath.Join(home, ".agents", "skills", "obot-search-mcp-servers", skillformat.SkillMainFile), "obot mcp search")
+	assertFileContains(t, filepath.Join(home, ".agents", "skills", "uni-search-mcp-servers", skillformat.SkillMainFile), "uni mcp search")
 }
 
 func TestSharedAgentsInstallBootstrapOverwritesExistingContent(t *testing.T) {
 	home := t.TempDir()
-	oldSkill := filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile)
+	oldSkill := filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile)
 	if err := os.MkdirAll(filepath.Dir(oldSkill), 0755); err != nil {
 		t.Fatal(err)
 	}

@@ -137,12 +137,27 @@ func TestLoadSaveConfig(t *testing.T) {
 		t.Fatalf("expected normalized default URL, got %q", cfg.DefaultURL)
 	}
 
-	data, err := os.ReadFile(filepath.Join(configHome, "obot", "config.json"))
+	data, err := os.ReadFile(filepath.Join(configHome, "uni", "config.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if string(data) != "{\n  \"defaultURL\": \"https://obot.example.com\"\n}\n" {
 		t.Fatalf("unexpected config file:\n%s", string(data))
+	}
+}
+
+func TestSaveWritesOnlyUniConfigPath(t *testing.T) {
+	configHome := useTestXDGConfigHome(t)
+
+	if err := Save(Config{DefaultURL: "https://obot.example.com"}); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := os.Stat(filepath.Join(configHome, "obot", "config.json")); !os.IsNotExist(err) {
+		t.Fatalf("legacy obot config path should not exist, stat err = %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(configHome, "uni", "config.json")); err != nil {
+		t.Fatalf("expected uni config path to exist: %v", err)
 	}
 }
 

@@ -35,6 +35,7 @@
 	import ResponsiveDialog from '../ResponsiveDialog.svelte';
 	import IconButton from '../primitives/IconButton.svelte';
 	import MyAccount from '../profile/MyAccount.svelte';
+	import { versionFieldLabel } from './versionFieldLabel';
 	import {
 		Book,
 		LogOut,
@@ -381,7 +382,7 @@
 				{@const link = getLink(key, value)}
 				{#if canDisplay}
 					<div class="flex justify-between gap-8">
-						<span class="font-semibold">{key.replace('github.com/', '')}:</span>
+						<span class="font-semibold">{versionFieldLabel(key)}:</span>
 						{#if link}
 							<a href={link} target="_blank" rel="external noopener noreferrer">
 								{value}

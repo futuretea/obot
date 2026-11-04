@@ -15,13 +15,13 @@ import (
 )
 
 type Options struct {
-	AWSKMSKeyARN         string `usage:"The ARN of the AWS KMS key to use for encrypting credential storage. Only used with the AWS encryption provider." env:"OBOT_AWS_KMS_KEY_ARN" name:"aws-kms-key-arn"`
-	GCPKMSKeyURI         string `usage:"The URI of the Google Cloud KMS key to use for encrypting credential storage. Only used with the GCP encryption provider." env:"OBOT_GCP_KMS_KEY_URI" name:"gcp-kms-key-uri"`
-	AzureKeyVaultName    string `usage:"The name of the Azure Key Vault to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_VAULT_NAME" name:"azure-key-vault-name"`
-	AzureKeyName         string `usage:"The name of the Azure Key Vault key to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_NAME" name:"azure-key-vault-key-name"`
-	AzureKeyVersion      string `usage:"The version of the Azure Key Vault key to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_VERSION" name:"azure-key-vault-key-version"`
-	EncryptionProvider   string `usage:"The encryption provider to use. Options are AWS, GCP, None, or Custom. Default is None." default:"None"`
-	EncryptionConfigFile string `usage:"The path to the encryption configuration file. Only used with the Custom encryption provider."`
+	AWSKMSKeyARN         string `usage:"The ARN of the AWS KMS key to use for encrypting credential storage. Only used with the AWS encryption provider." env:"OBOT_AWS_KMS_KEY_ARN,OBOT_SERVER_AWS_KMS_KEY_ARN" name:"aws-kms-key-arn"`
+	GCPKMSKeyURI         string `usage:"The URI of the Google Cloud KMS key to use for encrypting credential storage. Only used with the GCP encryption provider." env:"OBOT_GCP_KMS_KEY_URI,OBOT_SERVER_GCP_KMS_KEY_URI" name:"gcp-kms-key-uri"`
+	AzureKeyVaultName    string `usage:"The name of the Azure Key Vault to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_VAULT_NAME,OBOT_SERVER_AZURE_KEY_VAULT_NAME" name:"azure-key-vault-name"`
+	AzureKeyName         string `usage:"The name of the Azure Key Vault key to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_NAME,OBOT_SERVER_AZURE_KEY_VAULT_KEY_NAME" name:"azure-key-vault-key-name"`
+	AzureKeyVersion      string `usage:"The version of the Azure Key Vault key to use for encrypting credential storage. Only used with the Azure encryption provider." env:"OBOT_AZURE_KEY_VERSION,OBOT_SERVER_AZURE_KEY_VAULT_KEY_VERSION" name:"azure-key-vault-key-version"`
+	EncryptionProvider   string `usage:"The encryption provider to use. Options are AWS, GCP, None, or Custom. Default is None." default:"None" env:"OBOT_SERVER_ENCRYPTION_PROVIDER"`
+	EncryptionConfigFile string `usage:"The path to the encryption configuration file. Only used with the Custom encryption provider." env:"OBOT_SERVER_ENCRYPTION_CONFIG_FILE"`
 }
 
 func (o *Options) Validate() error {

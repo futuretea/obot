@@ -219,14 +219,14 @@ func TestNewIncludesSkillsCommands(t *testing.T) {
 	}
 }
 
-func skillsTestRoot(baseURL string) *Obot {
-	return &Obot{Client: &apiclient.Client{
+func skillsTestRoot(baseURL string) *Uni {
+	return &Uni{Client: &apiclient.Client{
 		BaseURL: baseURL,
 		Token:   "test-token",
 	}}
 }
 
-func executeSkillsTestCommand(t *testing.T, root *Obot, args ...string) (string, error) {
+func executeSkillsTestCommand(t *testing.T, root *Uni, args ...string) (string, error) {
 	t.Helper()
 
 	var stdout bytes.Buffer

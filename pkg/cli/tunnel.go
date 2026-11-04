@@ -12,8 +12,8 @@ import (
 // Tunnel connects this machine to an Obot instance so Obot can reach MCP
 // servers that are available from this machine's network.
 type Tunnel struct {
-	Token       string `usage:"Token used to authenticate with the Obot instance"`
-	ObotBaseURL string `usage:"Base URL of the Obot instance" default:"http://localhost:8080/api" env:"OBOT_BASE_URL"`
+	Token      string `usage:"Token used to authenticate with the uni instance"`
+	UniBaseURL string `usage:"Base URL of the uni instance" default:"http://localhost:8080/api" env:"UNI_BASE_URL"`
 }
 
 func (t *Tunnel) Customize(cmd *cobra.Command) {
@@ -26,7 +26,7 @@ func (t *Tunnel) Run(cmd *cobra.Command, _ []string) error {
 	ctx, cancel := signal.NotifyContext(cmd.Context(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 
-	err := obottunnel.Run(ctx, t.ObotBaseURL, t.Token)
+	err := obottunnel.Run(ctx, t.UniBaseURL, t.Token)
 	if ctx.Err() != nil {
 		return nil
 	}

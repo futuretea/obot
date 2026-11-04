@@ -11,7 +11,7 @@ import (
 )
 
 type DiskStoreOptions struct {
-	AuditLogsStoreDir string `usage:"Audit log store directory, defaults to $XDG_DATA_HOME/obot/audit"`
+	AuditLogsStoreDir string `usage:"Audit log store directory, defaults to $XDG_DATA_HOME/obot/audit" env:"OBOT_SERVER_AUDIT_LOGS_STORE_DIR"`
 }
 
 type diskStore struct {

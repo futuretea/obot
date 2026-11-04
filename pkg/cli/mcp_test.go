@@ -167,7 +167,7 @@ func TestMCPSearchRegistryAuthErrors(t *testing.T) {
 	}{
 		{
 			status: http.StatusUnauthorized,
-			want:   `registry search requires login; run "obot login" first`,
+			want:   `registry search requires login; run "uni login" first`,
 		},
 		{
 			status: http.StatusForbidden,
@@ -591,14 +591,14 @@ npxConfig:
 	}
 }
 
-func mcpTestRoot(baseURL string) *Obot {
-	return &Obot{Client: &apiclient.Client{
+func mcpTestRoot(baseURL string) *Uni {
+	return &Uni{Client: &apiclient.Client{
 		BaseURL: baseURL + "/api",
 		Token:   "test-token",
 	}}
 }
 
-func executeMCPTestCommand(t *testing.T, root *Obot, args ...string) (string, error) {
+func executeMCPTestCommand(t *testing.T, root *Uni, args ...string) (string, error) {
 	t.Helper()
 	var stdout bytes.Buffer
 	cmd := cmd.Command(&MCP{root: root})

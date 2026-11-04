@@ -42,53 +42,53 @@ const (
 )
 
 type Options struct {
-	MCPBaseImage                      string   `usage:"The base image to use for MCP containers" default:"ghcr.io/obot-platform/mcp-images/stdio-wrapper:v0.26.2"`
-	MCPHTTPWebhookBaseImage           string   `usage:"The base image to use for HTTP-based MCP webhook containers" default:"ghcr.io/obot-platform/mcp-images/http-webhook-mcp-converter:v0.26.2"`
-	MCPNamespace                      string   `usage:"The namespace to use for MCP containers" default:"obot-mcp"`
-	MCPClusterDomain                  string   `usage:"The cluster domain to use for MCP containers" default:"cluster.local"`
-	DisallowLocalhostMCP              bool     `usage:"Disallow MCP containers from connecting to localhost" default:"true"`
-	DisallowPrivateIPMCP              bool     `usage:"Disallow MCP containers from connecting to private IPs" default:"true"`
-	DisallowLinkLocalMCP              bool     `usage:"Disallow MCP containers from connecting to link-local addresses" default:"true"`
-	MCPRuntimeBackend                 string   `usage:"The runtime backend to use for running MCP servers: docker, kubernetes, or k8s. Defaults to docker" default:"docker"`
-	MCPSecretBindingAllowedLabel      string   `usage:"Kubernetes Secret label key required for admin UI secret-binding lookup and save-time validation" default:"obot.obot.ai/allow-secret-binding"`
-	MCPImagePullSecrets               []string `usage:"The name of the image pull secret to use for pulling MCP images"`
-	SingleUserIdleServerShutdownHours int      `usage:"The interval in hours to check for idle MCP servers designated to a single user and shut them down, set to -1 to disable shutdown" default:"24"`
-	MultiUserIdleServerShutdownHours  int      `usage:"The interval in hours to check for idle multi-user MCP servers and shut them down, set to -1 to disable" default:"168"`
-	IdleAgentShutdownHours            int      `usage:"The interval in hours to check for idle agents and shut them down, set to -1 to disable" default:"72"`
+	MCPBaseImage                      string   `usage:"The base image to use for MCP containers" default:"ghcr.io/obot-platform/mcp-images/stdio-wrapper:v0.26.2" env:"OBOT_SERVER_MCPBASE_IMAGE"`
+	MCPHTTPWebhookBaseImage           string   `usage:"The base image to use for HTTP-based MCP webhook containers" default:"ghcr.io/obot-platform/mcp-images/http-webhook-mcp-converter:v0.26.2" env:"OBOT_SERVER_MCPHTTPWEBHOOK_BASE_IMAGE"`
+	MCPNamespace                      string   `usage:"The namespace to use for MCP containers" default:"obot-mcp" env:"OBOT_SERVER_MCPNAMESPACE"`
+	MCPClusterDomain                  string   `usage:"The cluster domain to use for MCP containers" default:"cluster.local" env:"OBOT_SERVER_MCPCLUSTER_DOMAIN"`
+	DisallowLocalhostMCP              bool     `usage:"Disallow MCP containers from connecting to localhost" default:"true" env:"OBOT_SERVER_DISALLOW_LOCALHOST_MCP"`
+	DisallowPrivateIPMCP              bool     `usage:"Disallow MCP containers from connecting to private IPs" default:"true" env:"OBOT_SERVER_DISALLOW_PRIVATE_IPMCP"`
+	DisallowLinkLocalMCP              bool     `usage:"Disallow MCP containers from connecting to link-local addresses" default:"true" env:"OBOT_SERVER_DISALLOW_LINK_LOCAL_MCP"`
+	MCPRuntimeBackend                 string   `usage:"The runtime backend to use for running MCP servers: docker, kubernetes, or k8s. Defaults to docker" default:"docker" env:"OBOT_SERVER_MCPRUNTIME_BACKEND"`
+	MCPSecretBindingAllowedLabel      string   `usage:"Kubernetes Secret label key required for admin UI secret-binding lookup and save-time validation" default:"obot.obot.ai/allow-secret-binding" env:"OBOT_SERVER_MCPSECRET_BINDING_ALLOWED_LABEL"`
+	MCPImagePullSecrets               []string `usage:"The name of the image pull secret to use for pulling MCP images" env:"OBOT_SERVER_MCPIMAGE_PULL_SECRETS"`
+	SingleUserIdleServerShutdownHours int      `usage:"The interval in hours to check for idle MCP servers designated to a single user and shut them down, set to -1 to disable shutdown" default:"24" env:"OBOT_SERVER_SINGLE_USER_IDLE_SERVER_SHUTDOWN_HOURS"`
+	MultiUserIdleServerShutdownHours  int      `usage:"The interval in hours to check for idle multi-user MCP servers and shut them down, set to -1 to disable" default:"168" env:"OBOT_SERVER_MULTI_USER_IDLE_SERVER_SHUTDOWN_HOURS"`
+	IdleAgentShutdownHours            int      `usage:"The interval in hours to check for idle agents and shut them down, set to -1 to disable" default:"72" env:"OBOT_SERVER_IDLE_AGENT_SHUTDOWN_HOURS"`
 
 	// Kubernetes settings from Helm
-	MCPK8sSettingsAffinity              string `usage:"Affinity rules for MCP server pods (JSON)"`
-	MCPK8sSettingsTolerations           string `usage:"Tolerations for MCP server pods (JSON)"`
-	MCPK8sSettingsResources             string `usage:"Resource requests/limits for MCP server pods (JSON)"`
-	MCPK8sSettingsNanobotAgentResources string `usage:"Resource requests/limits for NanobotAgent pods (JSON)"`
-	MCPK8sSettingsRuntimeClassName      string `usage:"RuntimeClass name for MCP server pods (e.g., gvisor, kata)"`
-	MCPK8sSettingsStorageClassName      string `usage:"StorageClass name for nanobot workspace volumes"`
-	MCPK8sSettingsNanobotWorkspaceSize  string `usage:"Nanobot workspace size for MCP server pods (e.g., 1Gi)"`
-	MCPK8sMaxCPURequest                 string `usage:"Maximum CPU request allowed for normal MCP server pods"`
-	MCPK8sMaxCPULimit                   string `usage:"Maximum CPU limit allowed for normal MCP server pods"`
-	MCPK8sMaxMemoryRequest              string `usage:"Maximum memory request allowed for normal MCP server pods"`
-	MCPK8sMaxMemoryLimit                string `usage:"Maximum memory limit allowed for normal MCP server pods"`
+	MCPK8sSettingsAffinity              string `usage:"Affinity rules for MCP server pods (JSON)" env:"OBOT_SERVER_MCPK8S_SETTINGS_AFFINITY"`
+	MCPK8sSettingsTolerations           string `usage:"Tolerations for MCP server pods (JSON)" env:"OBOT_SERVER_MCPK8S_SETTINGS_TOLERATIONS"`
+	MCPK8sSettingsResources             string `usage:"Resource requests/limits for MCP server pods (JSON)" env:"OBOT_SERVER_MCPK8S_SETTINGS_RESOURCES"`
+	MCPK8sSettingsNanobotAgentResources string `usage:"Resource requests/limits for NanobotAgent pods (JSON)" env:"OBOT_SERVER_MCPK8S_SETTINGS_NANOBOT_AGENT_RESOURCES"`
+	MCPK8sSettingsRuntimeClassName      string `usage:"RuntimeClass name for MCP server pods (e.g., gvisor, kata)" env:"OBOT_SERVER_MCPK8S_SETTINGS_RUNTIME_CLASS_NAME"`
+	MCPK8sSettingsStorageClassName      string `usage:"StorageClass name for nanobot workspace volumes" env:"OBOT_SERVER_MCPK8S_SETTINGS_STORAGE_CLASS_NAME"`
+	MCPK8sSettingsNanobotWorkspaceSize  string `usage:"Nanobot workspace size for MCP server pods (e.g., 1Gi)" env:"OBOT_SERVER_MCPK8S_SETTINGS_NANOBOT_WORKSPACE_SIZE"`
+	MCPK8sMaxCPURequest                 string `usage:"Maximum CPU request allowed for normal MCP server pods" env:"OBOT_SERVER_MCPK8S_MAX_CPUREQUEST"`
+	MCPK8sMaxCPULimit                   string `usage:"Maximum CPU limit allowed for normal MCP server pods" env:"OBOT_SERVER_MCPK8S_MAX_CPULIMIT"`
+	MCPK8sMaxMemoryRequest              string `usage:"Maximum memory request allowed for normal MCP server pods" env:"OBOT_SERVER_MCPK8S_MAX_MEMORY_REQUEST"`
+	MCPK8sMaxMemoryLimit                string `usage:"Maximum memory limit allowed for normal MCP server pods" env:"OBOT_SERVER_MCPK8S_MAX_MEMORY_LIMIT"`
 
 	// Obot service configuration for constructing internal service FQDN
-	ServiceName      string `usage:"The Kubernetes service name for the obot server"`
-	ServiceNamespace string `usage:"The Kubernetes namespace where the obot server runs"`
+	ServiceName      string `usage:"The Kubernetes service name for the obot server" env:"OBOT_SERVER_SERVICE_NAME"`
+	ServiceNamespace string `usage:"The Kubernetes namespace where the obot server runs" env:"OBOT_SERVER_SERVICE_NAMESPACE"`
 
 	// Auto-populated by the Helm chart - used for network policy provider deployment
-	ServiceAccountName string `usage:"The Kubernetes service account name for the obot server"`
+	ServiceAccountName string `usage:"The Kubernetes service account name for the obot server" env:"OBOT_SERVER_SERVICE_ACCOUNT_NAME"`
 
 	// Audit log configuration
-	MCPAuditLogPersistIntervalSeconds int `usage:"The interval in seconds to persist MCP audit logs to the database" default:"5"`
-	MCPAuditLogsPersistBatchSize      int `usage:"The number of MCP audit logs to persist in a single batch" default:"1000"`
-	MCPAuditLogRetentionDays          int `usage:"The number of days to retain MCP audit logs (0 to disable cleanup)" default:"90"`
+	MCPAuditLogPersistIntervalSeconds int `usage:"The interval in seconds to persist MCP audit logs to the database" default:"5" env:"OBOT_SERVER_MCPAUDIT_LOG_PERSIST_INTERVAL_SECONDS"`
+	MCPAuditLogsPersistBatchSize      int `usage:"The number of MCP audit logs to persist in a single batch" default:"1000" env:"OBOT_SERVER_MCPAUDIT_LOGS_PERSIST_BATCH_SIZE"`
+	MCPAuditLogRetentionDays          int `usage:"The number of days to retain MCP audit logs (0 to disable cleanup)" default:"90" env:"OBOT_SERVER_MCPAUDIT_LOG_RETENTION_DAYS"`
 
 	// Pod Security Admission configuration for MCP namespace
-	MCPPodSecurityEnabled        bool   `usage:"Enable Pod Security Admission labels on the MCP namespace" default:"true"`
-	MCPPodSecurityEnforce        string `usage:"Pod Security Standards level to enforce (privileged, baseline, or restricted)" default:"restricted"`
-	MCPPodSecurityEnforceVersion string `usage:"Kubernetes version for the enforce policy" default:"latest"`
-	MCPPodSecurityAudit          string `usage:"Pod Security Standards level to audit (privileged, baseline, or restricted)" default:"restricted"`
-	MCPPodSecurityAuditVersion   string `usage:"Kubernetes version for the audit policy" default:"latest"`
-	MCPPodSecurityWarn           string `usage:"Pod Security Standards level to warn about (privileged, baseline, or restricted)" default:"restricted"`
-	MCPPodSecurityWarnVersion    string `usage:"Kubernetes version for the warn policy" default:"latest"`
+	MCPPodSecurityEnabled        bool   `usage:"Enable Pod Security Admission labels on the MCP namespace" default:"true" env:"OBOT_SERVER_MCPPOD_SECURITY_ENABLED"`
+	MCPPodSecurityEnforce        string `usage:"Pod Security Standards level to enforce (privileged, baseline, or restricted)" default:"restricted" env:"OBOT_SERVER_MCPPOD_SECURITY_ENFORCE"`
+	MCPPodSecurityEnforceVersion string `usage:"Kubernetes version for the enforce policy" default:"latest" env:"OBOT_SERVER_MCPPOD_SECURITY_ENFORCE_VERSION"`
+	MCPPodSecurityAudit          string `usage:"Pod Security Standards level to audit (privileged, baseline, or restricted)" default:"restricted" env:"OBOT_SERVER_MCPPOD_SECURITY_AUDIT"`
+	MCPPodSecurityAuditVersion   string `usage:"Kubernetes version for the audit policy" default:"latest" env:"OBOT_SERVER_MCPPOD_SECURITY_AUDIT_VERSION"`
+	MCPPodSecurityWarn           string `usage:"Pod Security Standards level to warn about (privileged, baseline, or restricted)" default:"restricted" env:"OBOT_SERVER_MCPPOD_SECURITY_WARN"`
+	MCPPodSecurityWarnVersion    string `usage:"Kubernetes version for the warn policy" default:"latest" env:"OBOT_SERVER_MCPPOD_SECURITY_WARN_VERSION"`
 }
 
 type SessionManager struct {

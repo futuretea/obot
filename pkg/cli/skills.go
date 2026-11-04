@@ -17,7 +17,7 @@ import (
 )
 
 type Skills struct {
-	root *Obot
+	root *Uni
 }
 
 type SkillsSearch struct {
@@ -26,7 +26,7 @@ type SkillsSearch struct {
 	Limit int  `usage:"Maximum number of skills to return" default:"50"`
 	JSON  bool `usage:"Print results as JSON"`
 
-	root *Obot
+	root *Uni
 }
 
 type SkillsInstall struct {
@@ -35,7 +35,7 @@ type SkillsInstall struct {
 	Destination string `usage:"Target skills directory, such as ~/.claude/skills or ~/.agents/skills"`
 	JSON        bool   `usage:"Print results as JSON"`
 
-	root *Obot
+	root *Uni
 }
 
 type skillsInstallOutput struct {
@@ -51,7 +51,7 @@ type skillsInstallResult struct {
 
 func (s *Skills) Customize(c *cobra.Command) {
 	c.Use = "skills"
-	c.Short = "Manage Obot skills"
+	c.Short = "Manage uni skills"
 	c.Args = cobra.NoArgs
 	c.AddCommand(cmd.Command(&SkillsSearch{root: s.root}))
 	c.AddCommand(cmd.Command(&SkillsInstall{root: s.root}))
@@ -63,7 +63,7 @@ func (s *Skills) Run(cmd *cobra.Command, _ []string) error {
 
 func (s *SkillsSearch) Customize(cmd *cobra.Command) {
 	cmd.Use = "search [query]"
-	cmd.Short = "Search Obot for installable skills"
+	cmd.Short = "Search uni for installable skills"
 	cmd.Args = cobra.MaximumNArgs(1)
 }
 
@@ -131,7 +131,7 @@ func tableCell(value string) string {
 
 func (s *SkillsInstall) Customize(cmd *cobra.Command) {
 	cmd.Use = "install <skill-id>"
-	cmd.Short = "Install an Obot skill into a local skills directory"
+	cmd.Short = "Install a uni skill into a local skills directory"
 	cmd.Args = cobra.ExactArgs(1)
 }
 

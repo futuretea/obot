@@ -49,7 +49,7 @@ COPY --link --from=encryption-bins /obot-providers /obot-providers
 COPY --chmod=0755 /tools/combine-envrc.sh /
 RUN /combine-envrc.sh && rm /combine-envrc.sh
 COPY --from=encryption-bins /bin/*-encryption-provider /bin/
-COPY --from=bin /app/bin/obot /bin/
+COPY --from=bin /app/bin/uni /bin/
 
 ENV POSTGRES_USER=obot
 ENV POSTGRES_PASSWORD=obot

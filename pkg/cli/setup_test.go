@@ -54,7 +54,7 @@ func TestSetupNonInteractiveExplicitInstallsClaudeCode(t *testing.T) {
 		t.Fatalf("token base URL = %q, want API URL", tokenBaseURL)
 	}
 
-	skillPath := filepath.Join(home, ".claude", "skills", "obot", skillformat.SkillMainFile)
+	skillPath := filepath.Join(home, ".claude", "skills", "uni", skillformat.SkillMainFile)
 	content, err := os.ReadFile(skillPath)
 	if err != nil {
 		t.Fatal(err)
@@ -62,7 +62,7 @@ func TestSetupNonInteractiveExplicitInstallsClaudeCode(t *testing.T) {
 	if !strings.Contains(string(content), "rendered for `claude-code`") {
 		t.Fatalf("unexpected bootstrap content:\n%s", content)
 	}
-	if !strings.Contains(stdout.String(), "Installed Obot bootstrap skills for Claude Code") {
+	if !strings.Contains(stdout.String(), "Installed uni bootstrap skills for Claude Code") {
 		t.Fatalf("expected install message, got stdout:\n%s", stdout.String())
 	}
 	if !strings.Contains(stderr.String(), "Logged in to https://obot.example.com") {
@@ -92,7 +92,7 @@ func TestSetupExplicitSharedAgents(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	skillPath := filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile)
+	skillPath := filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile)
 	content, err := os.ReadFile(skillPath)
 	if err != nil {
 		t.Fatal(err)
@@ -100,7 +100,7 @@ func TestSetupExplicitSharedAgents(t *testing.T) {
 	if !strings.Contains(string(content), "rendered for `agents`") {
 		t.Fatalf("unexpected bootstrap content:\n%s", content)
 	}
-	if !strings.Contains(stdout.String(), "Installed Obot bootstrap skills for All clients that support ~/.agents") {
+	if !strings.Contains(stdout.String(), "Installed uni bootstrap skills for All clients that support ~/.agents") {
 		t.Fatalf("expected install message, got stdout:\n%s", stdout.String())
 	}
 }
@@ -124,8 +124,8 @@ func TestSetupExplicitInstallsMultipleTargets(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assertFileContains(t, filepath.Join(home, ".claude", "skills", "obot", skillformat.SkillMainFile), "rendered for `claude-code`")
-	assertFileContains(t, filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile), "rendered for `agents`")
+	assertFileContains(t, filepath.Join(home, ".claude", "skills", "uni", skillformat.SkillMainFile), "rendered for `claude-code`")
+	assertFileContains(t, filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile), "rendered for `agents`")
 }
 
 func TestSetupNonInteractiveMissingURLFailsWithoutPrompt(t *testing.T) {
@@ -151,7 +151,7 @@ func TestSetupNonInteractiveMissingURLFailsWithoutPrompt(t *testing.T) {
 	if !strings.Contains(err.Error(), "--url is required in non-interactive mode") {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if strings.Contains(stdout.String(), "Obot URL:") {
+	if strings.Contains(stdout.String(), "uni URL:") {
 		t.Fatalf("non-interactive setup should not prompt, got stdout:\n%s", stdout.String())
 	}
 }
@@ -187,7 +187,7 @@ func TestSetupClientsNoneSkipsLocalClientInstall(t *testing.T) {
 	if !strings.Contains(stdout.String(), "Skipping local client bootstrap installation") {
 		t.Fatalf("expected skip message, got stdout:\n%s", stdout.String())
 	}
-	if _, err := os.Stat(filepath.Join(home, ".claude", "skills", "obot", skillformat.SkillMainFile)); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(home, ".claude", "skills", "uni", skillformat.SkillMainFile)); !os.IsNotExist(err) {
 		t.Fatalf("expected no Claude Code skill to be installed, stat err: %v", err)
 	}
 }
@@ -404,7 +404,7 @@ func TestSetupPromptsForClientsWhenOmittedWithoutClaudeCode(t *testing.T) {
 	if strings.Contains(output, "claude-code") {
 		t.Fatalf("claude-code should not be offered when not detected:\n%s", output)
 	}
-	assertFileContains(t, filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile), "rendered for `agents`")
+	assertFileContains(t, filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile), "rendered for `agents`")
 }
 
 func TestSetupPromptsForClientsWhenOmittedWithClaudeCode(t *testing.T) {
@@ -433,8 +433,8 @@ func TestSetupPromptsForClientsWhenOmittedWithClaudeCode(t *testing.T) {
 	if !strings.Contains(output, "claude-code Claude Code (detected)") {
 		t.Fatalf("expected claude-code prompt option, got:\n%s", output)
 	}
-	assertFileContains(t, filepath.Join(home, ".claude", "skills", "obot", skillformat.SkillMainFile), "rendered for `claude-code`")
-	assertFileContains(t, filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile), "rendered for `agents`")
+	assertFileContains(t, filepath.Join(home, ".claude", "skills", "uni", skillformat.SkillMainFile), "rendered for `claude-code`")
+	assertFileContains(t, filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile), "rendered for `agents`")
 }
 
 func TestSetupPromptEmptySelectionSkipsLocalClientInstall(t *testing.T) {
@@ -459,7 +459,7 @@ func TestSetupPromptEmptySelectionSkipsLocalClientInstall(t *testing.T) {
 	if !strings.Contains(stdout.String(), "Skipping local client bootstrap installation") {
 		t.Fatalf("expected skip message, got stdout:\n%s", stdout.String())
 	}
-	if _, err := os.Stat(filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile)); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile)); !os.IsNotExist(err) {
 		t.Fatalf("expected no shared agents skill to be installed, stat err: %v", err)
 	}
 }
@@ -487,7 +487,7 @@ func TestSetupYesDefaultsToSharedAgentsWhenClientsOmitted(t *testing.T) {
 	if strings.Contains(stdout.String(), "Choose local client skill targets") {
 		t.Fatalf("--yes should not prompt for clients, got stdout:\n%s", stdout.String())
 	}
-	assertFileContains(t, filepath.Join(home, ".agents", "skills", "obot", skillformat.SkillMainFile), "rendered for `agents`")
+	assertFileContains(t, filepath.Join(home, ".agents", "skills", "uni", skillformat.SkillMainFile), "rendered for `agents`")
 }
 
 func TestSetupNonInteractiveRequiresClientsWhenOmitted(t *testing.T) {
@@ -674,12 +674,12 @@ func TestSetupDetectClientsJSON(t *testing.T) {
 	}
 }
 
-func setupTestRoot(fetcher func(context.Context, string, apiclient.TokenFetchOptions) (string, error)) *Obot {
+func setupTestRoot(fetcher func(context.Context, string, apiclient.TokenFetchOptions) (string, error)) *Uni {
 	client := &apiclient.Client{}
 	if fetcher != nil {
 		client = client.WithTokenFetcher(fetcher)
 	}
-	return &Obot{Client: client}
+	return &Uni{Client: client}
 }
 
 func setupTestCommand(t *testing.T, stdin *strings.Reader, stdout, stderr *bytes.Buffer) *cobra.Command {

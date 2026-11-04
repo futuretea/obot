@@ -84,7 +84,7 @@
 		<Server class="text-muted-content size-24 opacity-50" />
 		<h4 class="text-muted-content text-lg font-semibold">No MCP servers observed yet</h4>
 		<p class="text-muted-content text-sm font-light">
-			Run <code class="font-mono">obot scan</code> from a managed device with configured MCP servers to
+			Run <code class="font-mono">uni scan</code> from a managed device with configured MCP servers to
 			populate this view.
 		</p>
 	</div>

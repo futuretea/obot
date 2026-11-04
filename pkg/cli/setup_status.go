@@ -55,7 +55,7 @@ type setupDetectedClient struct {
 
 func (s *SetupStatus) Customize(cmd *cobra.Command) {
 	cmd.Use = "status"
-	cmd.Short = "Show local Obot setup status"
+	cmd.Short = "Show local uni setup status"
 	cmd.Args = cobra.NoArgs
 }
 
@@ -81,7 +81,7 @@ func (s *SetupStatus) Run(cmd *cobra.Command, _ []string) error {
 func (s *SetupStatus) status(ctx context.Context) (setupStatusOutput, error) {
 	cfg, err := localconfig.Load()
 	if err != nil {
-		return setupStatusOutput{}, fmt.Errorf("load Obot config: %w", err)
+		return setupStatusOutput{}, fmt.Errorf("load uni config: %w", err)
 	}
 
 	var tokenValid bool

@@ -55,7 +55,7 @@ func TestModelProxyURLConfiguration(t *testing.T) {
 			}
 
 			server := &Server{}
-			command := cmd.Command(&Obot{}, server)
+			command := cmd.Command(&Uni{}, server)
 			command.PersistentPreRunE = nil
 			serverCommand := command.Commands()[0]
 

@@ -14,12 +14,12 @@ import (
 	"golang.org/x/term"
 )
 
-type Obot struct {
+type Uni struct {
 	Debug  bool `usage:"Enable debug logging"`
 	Client *apiclient.Client
 }
 
-func (a *Obot) PersistentPre(*cobra.Command, []string) error {
+func (a *Uni) PersistentPre(*cobra.Command, []string) error {
 	if os.Getenv("NO_COLOR") != "" || !term.IsTerminal(int(os.Stdout.Fd())) {
 		color.NoColor = true
 	}
@@ -40,7 +40,7 @@ func (a *Obot) PersistentPre(*cobra.Command, []string) error {
 }
 
 func New() *cobra.Command {
-	root := &Obot{
+	root := &Uni{
 		Client: newClient(),
 	}
 	return cmd.Command(root,
@@ -56,15 +56,15 @@ func New() *cobra.Command {
 	)
 }
 
-func (a *Obot) Run(cmd *cobra.Command, _ []string) error {
+func (a *Uni) Run(cmd *cobra.Command, _ []string) error {
 	return cmd.Help()
 }
 
 func newClient() *apiclient.Client {
-	baseURL := os.Getenv("OBOT_BASE_URL")
+	baseURL := os.Getenv("UNI_BASE_URL")
 	if baseURL != "" {
 		if appURL, err := internal.AppURLForAPIBaseURL(baseURL); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: invalid OBOT_BASE_URL: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Warning: invalid UNI_BASE_URL: %v\n", err)
 			baseURL = ""
 		} else {
 			baseURL = localconfig.APIBaseURL(appURL)
@@ -72,7 +72,7 @@ func newClient() *apiclient.Client {
 	}
 	if baseURL == "" {
 		if cfg, err := localconfig.Load(); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: failed to load Obot config: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Warning: failed to load uni config: %v\n", err)
 		} else if cfg.DefaultURL != "" {
 			baseURL = localconfig.APIBaseURL(cfg.DefaultURL)
 		}

@@ -34,7 +34,7 @@ func TestGitMaxRepoSizeConfiguration(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv("OBOT_SERVER_GIT_MAX_REPO_SIZE_MB", tt.env)
 			server := &Server{}
-			command := cmd.Command(&Obot{}, server)
+			command := cmd.Command(&Uni{}, server)
 			command.PersistentPreRunE = nil
 			serverCommand := command.Commands()[0]
 			serverCommand.RunE = nil

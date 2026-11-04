@@ -14,9 +14,9 @@ import (
 )
 
 type S3StoreOptions struct {
-	AuditLogsStoreS3Bucket     string `usage:"Audit log store S3 bucket"`
-	AuditLogsStoreS3Endpoint   string `usage:"Audit log store S3 endpoint"`
-	AuditLogsStoreUsePathStyle bool   `usage:"Use path style for S3 object names"`
+	AuditLogsStoreS3Bucket     string `usage:"Audit log store S3 bucket" env:"OBOT_SERVER_AUDIT_LOGS_STORE_S3BUCKET"`
+	AuditLogsStoreS3Endpoint   string `usage:"Audit log store S3 endpoint" env:"OBOT_SERVER_AUDIT_LOGS_STORE_S3ENDPOINT"`
+	AuditLogsStoreUsePathStyle bool   `usage:"Use path style for S3 object names" env:"OBOT_SERVER_AUDIT_LOGS_STORE_USE_PATH_STYLE"`
 }
 
 type s3Store struct {

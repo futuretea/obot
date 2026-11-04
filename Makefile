@@ -34,7 +34,7 @@ GO_LD_FLAGS := "-s -w $(GIT_TAG)"
 # Obot does not load Kustomize Go plugins; omit their dynamic symbol overhead.
 GO_BUILD_TAGS := kustomize_disable_go_plugin_support
 build:
-	go build -trimpath -tags=$(GO_BUILD_TAGS) -ldflags=$(GO_LD_FLAGS) -o bin/obot .
+	go build -trimpath -tags=$(GO_BUILD_TAGS) -ldflags=$(GO_LD_FLAGS) -o bin/uni .
 
 dev:
 	./tools/dev.sh $(ARGS)

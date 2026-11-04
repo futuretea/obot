@@ -10,11 +10,11 @@ import (
 )
 
 type Options struct {
-	Hostname   string
+	Hostname   string `env:"OBOT_SERVER_HOSTNAME"`
 	UIHostname string `name:"ui-hostname" env:"OBOT_SERVER_UI_HOSTNAME"`
 
-	DailyUserInputTokenLimit  int `usage:"The maximum number of daily user input tokens to allow, < 0 disables the limit" default:"10000000"` // default is 10 million
-	DailyUserOutputTokenLimit int `usage:"The maximum number of daily user output tokens to allow, < 0 disables the limit" default:"100000"`  // default is 100 thousand
+	DailyUserInputTokenLimit  int `usage:"The maximum number of daily user input tokens to allow, < 0 disables the limit" default:"10000000" env:"OBOT_SERVER_DAILY_USER_INPUT_TOKEN_LIMIT"` // default is 10 million
+	DailyUserOutputTokenLimit int `usage:"The maximum number of daily user output tokens to allow, < 0 disables the limit" default:"100000" env:"OBOT_SERVER_DAILY_USER_OUTPUT_TOKEN_LIMIT"` // default is 100 thousand
 }
 
 type Server struct {

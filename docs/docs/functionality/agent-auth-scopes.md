@@ -86,7 +86,7 @@ Configure your `.vscode/mcp.json` file to connect to Obot MCP servers using HTTP
   "inputs": [
     {
       "type": "promptString",
-      "id": "obot-api-key",
+      "id": "uni-api-key",
       "description": "Obot API Key",
       "password": true
     }
@@ -96,7 +96,7 @@ Configure your `.vscode/mcp.json` file to connect to Obot MCP servers using HTTP
       "type": "http",
       "url": "<connection URL>",
       "headers": {
-        "Authorization": "Bearer ${input:obot-api-key}"
+        "Authorization": "Bearer ${input:uni-api-key}"
       }
     }
   }
@@ -120,7 +120,7 @@ from os import getenv
 server_params = StreamableHTTPClientParams(
     url="<connection URL>",
     headers={
-        "Authorization": f"Bearer {getenv('OBOT_API_KEY')}",
+        "Authorization": f"Bearer {getenv('UNI_API_KEY')}",
     },
 )
 
@@ -157,7 +157,7 @@ client = MultiServerMCPClient(
             "transport": "http",
             "url": "<connection URL>",
             "headers": {
-                "Authorization": f"Bearer {getenv('OBOT_API_KEY')}",
+                "Authorization": f"Bearer {getenv('UNI_API_KEY')}",
             },
         }
     }
@@ -203,23 +203,23 @@ MCP server access is independent of the optional capabilities. For example, you 
 
 ## Creating an Agent Authorization Scope with the CLI
 
-The `obot login` command creates an agent authorization scope through the browser-based login flow and stores its API key. By default, it requests the `llm`, `skills`, and `device-scans` scopes. The generated key therefore cannot call general Obot API endpoints unless you request the `api` scope explicitly:
+The `uni login` command creates an agent authorization scope through the browser-based login flow and stores its API key. By default, it requests the `llm`, `skills`, and `device-scans` scopes. The generated key therefore cannot call general Obot API endpoints unless you request the `api` scope explicitly:
 
 ```bash
-obot login --url https://obot.example.com
+uni login --url https://obot.example.com
 ```
 
 Use `--scope` to request narrower or additional capabilities:
 
 ```bash
-obot login --url https://obot.example.com --scope llm --print-token
-obot login --url https://obot.example.com --scope all-mcp --scope skills --print-token
+uni login --url https://obot.example.com --scope llm --print-token
+uni login --url https://obot.example.com --scope all-mcp --scope skills --print-token
 ```
 
 Valid values for `--scope` are `api`, `llm`, `skills`, `device-scans`, and `all-mcp`. Passing `--scope` replaces the defaults rather than adding to them, so list every scope the key needs. You can also set a recognizable name and description for the generated authorization scope:
 
 ```bash
-obot login \
+uni login \
   --url https://obot.example.com \
   --token-name "CI gateway scope" \
   --token-description "Used by nightly automation" \

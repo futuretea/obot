@@ -31,10 +31,10 @@ type LogEntry struct {
 }
 
 type Options struct {
-	AuditLogsMode             string `usage:"Enable audit logging" default:"off"`
-	AuditLogsMaxFileSize      int    `usage:"Audit log max file size in bytes, logs will be flushed when this size is exceeded" default:"1073741824"`
-	AuditLogsMaxFlushInterval int    `usage:"Audit log flush interval in seconds regardless of buffer size" default:"120"`
-	AuditLogsCompressFile     bool   `usage:"Compress audit log files" default:"true"`
+	AuditLogsMode             string `usage:"Enable audit logging" default:"off" env:"OBOT_SERVER_AUDIT_LOGS_MODE"`
+	AuditLogsMaxFileSize      int    `usage:"Audit log max file size in bytes, logs will be flushed when this size is exceeded" default:"1073741824" env:"OBOT_SERVER_AUDIT_LOGS_MAX_FILE_SIZE"`
+	AuditLogsMaxFlushInterval int    `usage:"Audit log flush interval in seconds regardless of buffer size" default:"120" env:"OBOT_SERVER_AUDIT_LOGS_MAX_FLUSH_INTERVAL"`
+	AuditLogsCompressFile     bool   `usage:"Compress audit log files" default:"true" env:"OBOT_SERVER_AUDIT_LOGS_COMPRESS_FILE"`
 
 	store.DiskStoreOptions
 	store.S3StoreOptions

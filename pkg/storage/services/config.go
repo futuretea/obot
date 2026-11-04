@@ -13,9 +13,9 @@ import (
 )
 
 type Config struct {
-	StorageListenPort int    `usage:"Port to storage backend will listen on (default: random port)"`
-	StorageToken      string `usage:"Token for storage access, will be generated if not passed"`
-	DSN               string `usage:"Database dsn in driver://connection_string format" default:"sqlite://file:obot.db?_journal=WAL&cache=shared&_busy_timeout=30000"`
+	StorageListenPort int    `usage:"Port to storage backend will listen on (default: random port)" env:"OBOT_SERVER_STORAGE_LISTEN_PORT"`
+	StorageToken      string `usage:"Token for storage access, will be generated if not passed" env:"OBOT_SERVER_STORAGE_TOKEN"`
+	DSN               string `usage:"Database dsn in driver://connection_string format" default:"sqlite://file:obot.db?_journal=WAL&cache=shared&_busy_timeout=30000" env:"OBOT_SERVER_DSN"`
 }
 
 type Services struct {

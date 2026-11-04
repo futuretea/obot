@@ -98,80 +98,80 @@ type (
 )
 
 type Config struct {
-	GitMaxRepoSizeMB                               int      `usage:"Maximum git repository size in MB" default:"100" name:"git-max-repo-size-mb"`
-	ModelProxyURL                                  string   `usage:"MCP Tester model proxy base URL; empty disables the model proxy" default:""`
-	HTTPListenPort                                 int      `usage:"HTTP port to listen on" default:"8080" name:"http-listen-port"`
-	AllowedOrigin                                  string   `usage:"Allowed origin for CORS"`
-	ProviderRegistries                             []string `usage:"Local filesystem paths to provider registries (directories) to load providers from"`
-	EnableAuthentication                           bool     `usage:"Enable authentication" default:"false"`
-	AuthAdminEmails                                []string `usage:"Emails of admin users"`
-	AuthOwnerEmails                                []string `usage:"Emails of owner users"`
+	GitMaxRepoSizeMB                               int      `usage:"Maximum git repository size in MB" default:"100" name:"git-max-repo-size-mb" env:"OBOT_SERVER_GIT_MAX_REPO_SIZE_MB"`
+	ModelProxyURL                                  string   `usage:"MCP Tester model proxy base URL; empty disables the model proxy" default:"" env:"OBOT_SERVER_MODEL_PROXY_URL"`
+	HTTPListenPort                                 int      `usage:"HTTP port to listen on" default:"8080" name:"http-listen-port" env:"OBOT_SERVER_HTTP_LISTEN_PORT"`
+	AllowedOrigin                                  string   `usage:"Allowed origin for CORS" env:"OBOT_SERVER_ALLOWED_ORIGIN"`
+	ProviderRegistries                             []string `usage:"Local filesystem paths to provider registries (directories) to load providers from" env:"OBOT_SERVER_PROVIDER_REGISTRIES"`
+	EnableAuthentication                           bool     `usage:"Enable authentication" default:"false" env:"OBOT_SERVER_ENABLE_AUTHENTICATION"`
+	AuthAdminEmails                                []string `usage:"Emails of admin users" env:"OBOT_SERVER_AUTH_ADMIN_EMAILS"`
+	AuthOwnerEmails                                []string `usage:"Emails of owner users" env:"OBOT_SERVER_AUTH_OWNER_EMAILS"`
 	LocalAuthInitialOwnerEmail                     string   `usage:"Email address for the initial local-auth owner" env:"OBOT_SERVER_LOCAL_AUTH_INITIAL_OWNER_EMAIL"`
 	LocalAuthInitialOwnerSetupToken                string   `usage:"High-entropy setup token for the initial local-auth owner" env:"OBOT_SERVER_LOCAL_AUTH_INITIAL_OWNER_SETUP_TOKEN"`
 	LocalAuthInitialOwnerSetupTokenExpirationHours int      `usage:"Hours the initial local-auth owner setup link remains valid" default:"168" env:"OBOT_SERVER_LOCAL_AUTH_INITIAL_OWNER_SETUP_TOKEN_EXPIRATION_HOURS"`
-	TunnelPeerID                                   string   `usage:"Unique Pod UID of this Obot replica for tunnel peering"`
-	TunnelPeerToken                                string   `usage:"Shared internal credential for tunnel peering"`
+	TunnelPeerID                                   string   `usage:"Unique Pod UID of this Obot replica for tunnel peering" env:"OBOT_SERVER_TUNNEL_PEER_ID"`
+	TunnelPeerToken                                string   `usage:"Shared internal credential for tunnel peering" env:"OBOT_SERVER_TUNNEL_PEER_TOKEN"`
 
-	MCPOAuthClientExpiration       string                `usage:"The expiration time in dynamically registered MCP OAuth clients, must be a valid duration string and may include days, hours, or minutes" default:"30d"`
-	MCPOAuthClientNativeExceptions []string              `usage:"Additional Client ID Metadata Document URLs that default to the native application type when application_type is omitted"`
-	ForceDynamicClient             bool                  `usage:"Force Dynamic Client Registration for MCP OAuth instead of Client ID Metadata Documents"`
+	MCPOAuthClientExpiration       string                `usage:"The expiration time in dynamically registered MCP OAuth clients, must be a valid duration string and may include days, hours, or minutes" default:"30d" env:"OBOT_SERVER_MCPOAUTH_CLIENT_EXPIRATION"`
+	MCPOAuthClientNativeExceptions []string              `usage:"Additional Client ID Metadata Document URLs that default to the native application type when application_type is omitted" env:"OBOT_SERVER_MCPOAUTH_CLIENT_NATIVE_EXCEPTIONS"`
+	ForceDynamicClient             bool                  `usage:"Force Dynamic Client Registration for MCP OAuth instead of Client ID Metadata Documents" env:"OBOT_SERVER_FORCE_DYNAMIC_CLIENT"`
 	ProductAnalyticsMode           producttelemetry.Mode `usage:"Product analytics mode: consent, on, or off" default:"off" env:"OBOT_SERVER_PRODUCT_ANALYTICS_MODE"`
 
-	DevMode              bool   `usage:"Enable development mode" default:"false" name:"dev-mode" env:"OBOT_DEV_MODE"`
-	DevUIPort            int    `usage:"The port on localhost running the dev instance of the UI" default:"5174"`
-	UserUIPort           int    `usage:"The port on localhost running the user production instance of the UI" env:"OBOT_SERVER_USER_UI_PORT"`
-	ElectionFile         string `usage:"Use this file for leader election instead of database leases"`
-	ForceEnableBootstrap bool   `usage:"Enables the bootstrap user even if other admin users have been created" default:"false"`
-	MetricsBearerToken   string `usage:"Bearer token for metrics endpoint authentication" name:"metrics-bearer-token"`
+	DevMode              bool   `usage:"Enable development mode" default:"false" name:"dev-mode" env:"OBOT_DEV_MODE,OBOT_SERVER_DEV_MODE"`
+	DevUIPort            int    `usage:"The port on localhost running the dev instance of the UI" default:"5174" env:"OBOT_SERVER_DEV_UIPORT"`
+	UserUIPort           int    `usage:"The port on localhost running the user production instance of the UI" env:"OBOT_SERVER_USER_UI_PORT,OBOT_SERVER_USER_UIPORT"`
+	ElectionFile         string `usage:"Use this file for leader election instead of database leases" env:"OBOT_SERVER_ELECTION_FILE"`
+	ForceEnableBootstrap bool   `usage:"Enables the bootstrap user even if other admin users have been created" default:"false" env:"OBOT_SERVER_FORCE_ENABLE_BOOTSTRAP"`
+	MetricsBearerToken   string `usage:"Bearer token for metrics endpoint authentication" name:"metrics-bearer-token" env:"OBOT_SERVER_METRICS_BEARER_TOKEN"`
 
-	DefaultMCPCatalogPath                string `usage:"The path to the default MCP catalog (accessible to all users)" default:""`
-	DefaultSystemMCPCatalogPath          string `usage:"The path to the default System MCP catalog" default:""`
-	MDMAssetSource                       string `usage:"The source for MDM assets (a local directory, a tar archive path, or an HTTP(S) tarball URL)" default:"" env:"OBOT_SERVER_MDM_ASSET_SOURCE"`
-	DefaultSkillRepoURL                  string `usage:"The default skill repository URL (must be HTTPS GitHub URL)" default:"" env:"OBOT_DEFAULT_SKILL_REPO_URL"`
-	DefaultSkillRepoRef                  string `usage:"The ref (branch/tag) for the default skill repository" default:"" env:"OBOT_DEFAULT_SKILL_REPO_REF"`
-	DefaultHostedAgentsCatalogURL        string `usage:"The default hosted agent catalog repository URL (must be HTTPS)" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_URL"`
-	DefaultHostedAgentsCatalogRef        string `usage:"The ref (branch/tag) for the default hosted agent catalog repository" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_REF"`
-	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:""`
-	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks" default:"true"`
-	HideK8sDetails                       bool   `usage:"Hide Kubernetes configuration details such as the Server Scheduling page from the UI" default:"false"`
+	DefaultMCPCatalogPath                string `usage:"The path to the default MCP catalog (accessible to all users)" default:"" env:"OBOT_SERVER_DEFAULT_MCPCATALOG_PATH"`
+	DefaultSystemMCPCatalogPath          string `usage:"The path to the default System MCP catalog" default:"" env:"OBOT_SERVER_DEFAULT_SYSTEM_MCPCATALOG_PATH"`
+	MDMAssetSource                       string `usage:"The source for MDM assets (a local directory, a tar archive path, or an HTTP(S) tarball URL)" default:"" env:"OBOT_SERVER_MDM_ASSET_SOURCE,OBOT_SERVER_MDMASSET_SOURCE"`
+	DefaultSkillRepoURL                  string `usage:"The default skill repository URL (must be HTTPS GitHub URL)" default:"" env:"OBOT_DEFAULT_SKILL_REPO_URL,OBOT_SERVER_DEFAULT_SKILL_REPO_URL"`
+	DefaultSkillRepoRef                  string `usage:"The ref (branch/tag) for the default skill repository" default:"" env:"OBOT_DEFAULT_SKILL_REPO_REF,OBOT_SERVER_DEFAULT_SKILL_REPO_REF"`
+	DefaultHostedAgentsCatalogURL        string `usage:"The default hosted agent catalog repository URL (must be HTTPS)" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_URL,OBOT_SERVER_DEFAULT_HOSTED_AGENTS_CATALOG_URL"`
+	DefaultHostedAgentsCatalogRef        string `usage:"The ref (branch/tag) for the default hosted agent catalog repository" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_REF,OBOT_SERVER_DEFAULT_HOSTED_AGENTS_CATALOG_REF"`
+	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:"" env:"OBOT_SERVER_MODEL_INFO_SOURCE_URL"`
+	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks" default:"true" env:"OBOT_SERVER_DISABLE_UPDATE_CHECK"`
+	HideK8sDetails                       bool   `usage:"Hide Kubernetes configuration details such as the Server Scheduling page from the UI" default:"false" env:"OBOT_SERVER_HIDE_K8S_DETAILS"`
 	EnableRegistryAuth                   bool   `usage:"Enable authentication for the MCP registry API" default:"false" env:"OBOT_SERVER_ENABLE_REGISTRY_AUTH"`
-	EnableMessagePolicies                bool   `usage:"Enable message policies for LLM proxy content enforcement" default:"false"`
-	LLMAuditLogRetentionDays             int    `usage:"Number of days to retain LLM audit logs (0 to disable cleanup)." default:"90"`
-	DisableLLMAuditLog                   bool   `usage:"Disable LLM gateway audit logging" default:"false"`
-	DisableMCPAuditLog                   bool   `usage:"Disable recording new MCP audit logs; existing audit logs are kept" default:"false"`
-	DeviceScanRetentionDays              int    `usage:"Number of days to retain submitted device scans (0 to disable cleanup)." default:"90"`
-	EnableAgents                         *bool  `usage:"Enable Obot Agent features. When unset, agents are disabled for new deployments but grandfathered in for deployments that already have agents. Explicitly set to true to force-enable, or false to force-disable, regardless of grandfathering." env:"OBOT_ENABLE_AGENTS"`
-	EnableHostedAgents                   bool   `usage:"Enable Hosted Agents features" default:"false"`
-	HostedAgentsBackend                  string `usage:"Hosted agent runtime backend (disabled, fake, or kubernetes). Defaults to the MCP runtime backend: kubernetes when MCP servers run on Kubernetes, and otherwise fake, since there is no docker agent backend." name:"hosted-agents-backend" env:"OBOT_HOSTED_AGENTS_BACKEND"`
-	HostedAgentsStorageClassName         string `usage:"StorageClass for hosted agent pool volumes. It should use volumeBindingMode WaitForFirstConsumer, which is what keeps a pool on one node." name:"hosted-agents-storage-class-name"`
-	HostedAgentsPodSecurityLevel         string `usage:"Pod Security Admission level enforced on the namespace hosted agent sandboxes run in (privileged, baseline, or restricted). Must match the namespace's own label or sandboxes are refused at admission. Empty means restricted." name:"hosted-agents-pod-security-level" env:"OBOT_HOSTED_AGENTS_POD_SECURITY_LEVEL"`
-	HostedAgentsImagePullPolicy          string `usage:"Pull policy for hosted agent sandbox images (Always, IfNotPresent, Never)" default:"" name:"hosted-agents-image-pull-policy" env:"OBOT_HOSTED_AGENTS_IMAGE_PULL_POLICY"`
-	HostedAgentsCleanupImage             string `usage:"Image used to erase a deleted sandbox's directory from its pool volume. Needs a shell and coreutils." name:"hosted-agents-cleanup-image" default:"busybox:1.36"`
-	HostedAgentsRuntimeClassName         string `usage:"RuntimeClass for hosted agent deployments" name:"hosted-agents-runtime-class-name"`
-	HostedAgentsAffinity                 string `usage:"Affinity rules for hosted agent pods (JSON)" name:"hosted-agents-affinity"`
-	HostedAgentsTolerations              string `usage:"Tolerations for hosted agent pods (JSON)" name:"hosted-agents-tolerations"`
-	HostedAgentsNodeSelector             string `usage:"Node selector for hosted agent pods (JSON)" name:"hosted-agents-node-selector"`
-	MCPServerSearchImage                 string `usage:"Container image for the obot MCP server" default:"ghcr.io/obot-platform/obot-mcp-server:v0.2.0"`
-	NanobotAgentImage                    string `usage:"Container image for the Nanobot agent MCP server" default:"ghcr.io/obot-platform/nanobot-agent:v0.0.92"`
-	MCPNetworkPolicyProviderChartRepo    string `usage:"Helm repository URL for the network policy provider chart"`
-	MCPNetworkPolicyProviderChartName    string `usage:"Helm chart name for the network policy provider chart"`
-	MCPNetworkPolicyProviderChartVersion string `usage:"Helm chart version for the network policy provider chart"`
-	MCPNetworkPolicyProviderChartPath    string `usage:"Local filesystem path to the network policy provider chart"`
-	MCPNetworkPolicyProviderValues       string `usage:"YAML or JSON values blob merged into the network policy provider chart values"`
-	MCPDefaultDenyAllEgress              bool   `usage:"Default new MCP servers to deny all egress when network policy enforcement is enabled" default:"false"`
+	EnableMessagePolicies                bool   `usage:"Enable message policies for LLM proxy content enforcement" default:"false" env:"OBOT_SERVER_ENABLE_MESSAGE_POLICIES"`
+	LLMAuditLogRetentionDays             int    `usage:"Number of days to retain LLM audit logs (0 to disable cleanup)." default:"90" env:"OBOT_SERVER_LLMAUDIT_LOG_RETENTION_DAYS"`
+	DisableLLMAuditLog                   bool   `usage:"Disable LLM gateway audit logging" default:"false" env:"OBOT_SERVER_DISABLE_LLMAUDIT_LOG"`
+	DisableMCPAuditLog                   bool   `usage:"Disable recording new MCP audit logs; existing audit logs are kept" default:"false" env:"OBOT_SERVER_DISABLE_MCPAUDIT_LOG"`
+	DeviceScanRetentionDays              int    `usage:"Number of days to retain submitted device scans (0 to disable cleanup)." default:"90" env:"OBOT_SERVER_DEVICE_SCAN_RETENTION_DAYS"`
+	EnableAgents                         *bool  `usage:"Enable Obot Agent features. When unset, agents are disabled for new deployments but grandfathered in for deployments that already have agents. Explicitly set to true to force-enable, or false to force-disable, regardless of grandfathering." env:"OBOT_ENABLE_AGENTS,OBOT_SERVER_ENABLE_AGENTS"`
+	EnableHostedAgents                   bool   `usage:"Enable Hosted Agents features" default:"false" env:"OBOT_SERVER_ENABLE_HOSTED_AGENTS"`
+	HostedAgentsBackend                  string `usage:"Hosted agent runtime backend (disabled, fake, or kubernetes). Defaults to the MCP runtime backend: kubernetes when MCP servers run on Kubernetes, and otherwise fake, since there is no docker agent backend." name:"hosted-agents-backend" env:"OBOT_HOSTED_AGENTS_BACKEND,OBOT_SERVER_HOSTED_AGENTS_BACKEND"`
+	HostedAgentsStorageClassName         string `usage:"StorageClass for hosted agent pool volumes. It should use volumeBindingMode WaitForFirstConsumer, which is what keeps a pool on one node." name:"hosted-agents-storage-class-name" env:"OBOT_SERVER_HOSTED_AGENTS_STORAGE_CLASS_NAME"`
+	HostedAgentsPodSecurityLevel         string `usage:"Pod Security Admission level enforced on the namespace hosted agent sandboxes run in (privileged, baseline, or restricted). Must match the namespace's own label or sandboxes are refused at admission. Empty means restricted." name:"hosted-agents-pod-security-level" env:"OBOT_HOSTED_AGENTS_POD_SECURITY_LEVEL,OBOT_SERVER_HOSTED_AGENTS_POD_SECURITY_LEVEL"`
+	HostedAgentsImagePullPolicy          string `usage:"Pull policy for hosted agent sandbox images (Always, IfNotPresent, Never)" default:"" name:"hosted-agents-image-pull-policy" env:"OBOT_HOSTED_AGENTS_IMAGE_PULL_POLICY,OBOT_SERVER_HOSTED_AGENTS_IMAGE_PULL_POLICY"`
+	HostedAgentsCleanupImage             string `usage:"Image used to erase a deleted sandbox's directory from its pool volume. Needs a shell and coreutils." name:"hosted-agents-cleanup-image" default:"busybox:1.36" env:"OBOT_SERVER_HOSTED_AGENTS_CLEANUP_IMAGE"`
+	HostedAgentsRuntimeClassName         string `usage:"RuntimeClass for hosted agent deployments" name:"hosted-agents-runtime-class-name" env:"OBOT_SERVER_HOSTED_AGENTS_RUNTIME_CLASS_NAME"`
+	HostedAgentsAffinity                 string `usage:"Affinity rules for hosted agent pods (JSON)" name:"hosted-agents-affinity" env:"OBOT_SERVER_HOSTED_AGENTS_AFFINITY"`
+	HostedAgentsTolerations              string `usage:"Tolerations for hosted agent pods (JSON)" name:"hosted-agents-tolerations" env:"OBOT_SERVER_HOSTED_AGENTS_TOLERATIONS"`
+	HostedAgentsNodeSelector             string `usage:"Node selector for hosted agent pods (JSON)" name:"hosted-agents-node-selector" env:"OBOT_SERVER_HOSTED_AGENTS_NODE_SELECTOR"`
+	MCPServerSearchImage                 string `usage:"Container image for the obot MCP server" default:"ghcr.io/obot-platform/obot-mcp-server:v0.2.0" env:"OBOT_SERVER_MCPSERVER_SEARCH_IMAGE"`
+	NanobotAgentImage                    string `usage:"Container image for the Nanobot agent MCP server" default:"ghcr.io/obot-platform/nanobot-agent:v0.0.92" env:"OBOT_SERVER_NANOBOT_AGENT_IMAGE"`
+	MCPNetworkPolicyProviderChartRepo    string `usage:"Helm repository URL for the network policy provider chart" env:"OBOT_SERVER_MCPNETWORK_POLICY_PROVIDER_CHART_REPO"`
+	MCPNetworkPolicyProviderChartName    string `usage:"Helm chart name for the network policy provider chart" env:"OBOT_SERVER_MCPNETWORK_POLICY_PROVIDER_CHART_NAME"`
+	MCPNetworkPolicyProviderChartVersion string `usage:"Helm chart version for the network policy provider chart" env:"OBOT_SERVER_MCPNETWORK_POLICY_PROVIDER_CHART_VERSION"`
+	MCPNetworkPolicyProviderChartPath    string `usage:"Local filesystem path to the network policy provider chart" env:"OBOT_SERVER_MCPNETWORK_POLICY_PROVIDER_CHART_PATH"`
+	MCPNetworkPolicyProviderValues       string `usage:"YAML or JSON values blob merged into the network policy provider chart values" env:"OBOT_SERVER_MCPNETWORK_POLICY_PROVIDER_VALUES"`
+	MCPDefaultDenyAllEgress              bool   `usage:"Default new MCP servers to deny all egress when network policy enforcement is enabled" default:"false" env:"OBOT_SERVER_MCPDEFAULT_DENY_ALL_EGRESS"`
 
 	// Published artifact storage
-	ArtifactStorageProvider       string `usage:"Storage provider for published artifacts (s3, gcs, azure, custom)" name:"artifact-storage-provider" env:"OBOT_ARTIFACT_STORAGE_PROVIDER"`
-	ArtifactStorageBucket         string `usage:"Bucket for published artifacts" name:"artifact-storage-bucket" env:"OBOT_ARTIFACT_STORAGE_BUCKET"`
-	ArtifactS3Region              string `usage:"S3 region for artifact storage" name:"artifact-s3-region" env:"OBOT_ARTIFACT_S3_REGION"`
-	ArtifactS3AccessKeyID         string `usage:"S3 access key ID for artifact storage" name:"artifact-s3-access-key-id" env:"OBOT_ARTIFACT_S3_ACCESS_KEY_ID"`
-	ArtifactS3SecretAccessKey     string `usage:"S3 secret access key for artifact storage" name:"artifact-s3-secret-access-key" env:"OBOT_ARTIFACT_S3_SECRET_ACCESS_KEY"`
-	ArtifactS3Endpoint            string `usage:"Custom S3 endpoint for artifact storage" name:"artifact-s3-endpoint" env:"OBOT_ARTIFACT_S3_ENDPOINT"`
-	ArtifactGCSServiceAccountJSON string `usage:"GCS service account JSON for artifact storage (omit to use Application Default Credentials)" name:"artifact-gcs-service-account-json" env:"OBOT_ARTIFACT_GCS_SERVICE_ACCOUNT_JSON"`
-	ArtifactAzureStorageAccount   string `usage:"Azure storage account name for artifact storage" name:"artifact-azure-storage-account" env:"OBOT_ARTIFACT_AZURE_STORAGE_ACCOUNT"`
-	ArtifactAzureTenantID         string `usage:"Azure tenant ID for artifact storage" name:"artifact-azure-tenant-id" env:"OBOT_ARTIFACT_AZURE_TENANT_ID"`
-	ArtifactAzureClientID         string `usage:"Azure client ID for artifact storage" name:"artifact-azure-client-id" env:"OBOT_ARTIFACT_AZURE_CLIENT_ID"`
-	ArtifactAzureClientSecret     string `usage:"Azure client secret for artifact storage" name:"artifact-azure-client-secret" env:"OBOT_ARTIFACT_AZURE_CLIENT_SECRET"`
+	ArtifactStorageProvider       string `usage:"Storage provider for published artifacts (s3, gcs, azure, custom)" name:"artifact-storage-provider" env:"OBOT_ARTIFACT_STORAGE_PROVIDER,OBOT_SERVER_ARTIFACT_STORAGE_PROVIDER"`
+	ArtifactStorageBucket         string `usage:"Bucket for published artifacts" name:"artifact-storage-bucket" env:"OBOT_ARTIFACT_STORAGE_BUCKET,OBOT_SERVER_ARTIFACT_STORAGE_BUCKET"`
+	ArtifactS3Region              string `usage:"S3 region for artifact storage" name:"artifact-s3-region" env:"OBOT_ARTIFACT_S3_REGION,OBOT_SERVER_ARTIFACT_S3_REGION"`
+	ArtifactS3AccessKeyID         string `usage:"S3 access key ID for artifact storage" name:"artifact-s3-access-key-id" env:"OBOT_ARTIFACT_S3_ACCESS_KEY_ID,OBOT_SERVER_ARTIFACT_S3_ACCESS_KEY_ID"`
+	ArtifactS3SecretAccessKey     string `usage:"S3 secret access key for artifact storage" name:"artifact-s3-secret-access-key" env:"OBOT_ARTIFACT_S3_SECRET_ACCESS_KEY,OBOT_SERVER_ARTIFACT_S3_SECRET_ACCESS_KEY"`
+	ArtifactS3Endpoint            string `usage:"Custom S3 endpoint for artifact storage" name:"artifact-s3-endpoint" env:"OBOT_ARTIFACT_S3_ENDPOINT,OBOT_SERVER_ARTIFACT_S3_ENDPOINT"`
+	ArtifactGCSServiceAccountJSON string `usage:"GCS service account JSON for artifact storage (omit to use Application Default Credentials)" name:"artifact-gcs-service-account-json" env:"OBOT_ARTIFACT_GCS_SERVICE_ACCOUNT_JSON,OBOT_SERVER_ARTIFACT_GCS_SERVICE_ACCOUNT_JSON"`
+	ArtifactAzureStorageAccount   string `usage:"Azure storage account name for artifact storage" name:"artifact-azure-storage-account" env:"OBOT_ARTIFACT_AZURE_STORAGE_ACCOUNT,OBOT_SERVER_ARTIFACT_AZURE_STORAGE_ACCOUNT"`
+	ArtifactAzureTenantID         string `usage:"Azure tenant ID for artifact storage" name:"artifact-azure-tenant-id" env:"OBOT_ARTIFACT_AZURE_TENANT_ID,OBOT_SERVER_ARTIFACT_AZURE_TENANT_ID"`
+	ArtifactAzureClientID         string `usage:"Azure client ID for artifact storage" name:"artifact-azure-client-id" env:"OBOT_ARTIFACT_AZURE_CLIENT_ID,OBOT_SERVER_ARTIFACT_AZURE_CLIENT_ID"`
+	ArtifactAzureClientSecret     string `usage:"Azure client secret for artifact storage" name:"artifact-azure-client-secret" env:"OBOT_ARTIFACT_AZURE_CLIENT_SECRET,OBOT_SERVER_ARTIFACT_AZURE_CLIENT_SECRET"`
 
 	GatewayConfig
 	EncryptionConfig

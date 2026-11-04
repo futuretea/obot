@@ -29,7 +29,7 @@ const (
 )
 
 type MCP struct {
-	root *Obot
+	root *Uni
 }
 
 type MCPValidateCatalog struct {
@@ -48,7 +48,7 @@ type MCPSearch struct {
 	Limit int  `usage:"Maximum number of MCP servers to return; 0 means no limit" default:"50"`
 	JSON  bool `usage:"Print results as JSON"`
 
-	root *Obot
+	root *Uni
 }
 
 type mcpSearchOutput struct {
@@ -371,7 +371,7 @@ func validateSystemMCPCatalogFile(ctx context.Context, path string, seenSanitize
 
 func (m *MCPSearch) Customize(cmd *cobra.Command) {
 	cmd.Use = "search [query...]"
-	cmd.Short = "Search Obot for MCP servers"
+	cmd.Short = "Search uni for MCP servers"
 	cmd.Args = cobra.ArbitraryArgs
 }
 
@@ -387,7 +387,7 @@ func (m *MCPSearch) Run(cmd *cobra.Command, args []string) error {
 	if m.JSON && client.Token == "" {
 		token, err := internal.ExistingToken(cmd.Context(), client.BaseURL)
 		if err != nil {
-			return fmt.Errorf(`mcp search --json requires an existing login; run "obot login" first`)
+			return fmt.Errorf(`mcp search --json requires an existing login; run "uni login" first`)
 		}
 		client = client.WithTokenFetcher(nil).WithToken(token)
 	}
@@ -532,7 +532,7 @@ func registrySearchError(err error) error {
 	}
 	switch httpErr.Code {
 	case http.StatusUnauthorized:
-		return fmt.Errorf(`registry search requires login; run "obot login" first`)
+		return fmt.Errorf(`registry search requires login; run "uni login" first`)
 	case http.StatusForbidden:
 		return fmt.Errorf("authenticated user is not authorized to access the registry endpoint")
 	default:

@@ -159,7 +159,7 @@
 		<Laptop class="text-muted-content size-24 opacity-50" />
 		<h4 class="text-muted-content text-lg font-semibold">No devices scanned yet</h4>
 		<p class="text-muted-content text-sm font-light">
-			Run <code class="font-mono">obot scan</code> from a managed device to populate this view.
+			Run <code class="font-mono">uni scan</code> from a managed device to populate this view.
 		</p>
 	</div>
 {:else}

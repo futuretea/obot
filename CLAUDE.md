@@ -28,7 +28,7 @@ make dev-open         # Same as above, but opens browser automatically
 
 ### Building
 ```bash
-make build            # Build Go binary to bin/obot
+make build            # Build Go binary to bin/uni
 make ui               # Build user UI (both browser and Node targets)
 make all              # Build UI + Go binary
 ```

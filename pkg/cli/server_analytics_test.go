@@ -11,7 +11,7 @@ import (
 func TestProductAnalyticsModeEnvironment(t *testing.T) {
 	t.Setenv("OBOT_SERVER_PRODUCT_ANALYTICS_MODE", "off")
 	server := &Server{}
-	command := cmd.Command(&Obot{}, server)
+	command := cmd.Command(&Uni{}, server)
 	command.PersistentPreRunE = nil
 	serverCommand := command.Commands()[0]
 	serverCommand.RunE = nil

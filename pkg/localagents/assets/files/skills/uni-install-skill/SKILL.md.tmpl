@@ -1,10 +1,10 @@
 ---
-name: obot-install-skill
-description: Install a skill from Obot.
+name: uni-install-skill
+description: Install a skill from uni.
 disable-model-invocation: true
 ---
 
-# Install Obot Skill
+# Install uni Skill
 
 Use this flow to determine which skill to install:
 
@@ -13,7 +13,7 @@ Use this flow to determine which skill to install:
 - If the user provided anything other than a skill ID, use it as a search query:
 
 ```sh
-obot skills search --non-interactive "<query>"
+uni skills search --non-interactive "<query>"
 ```
 
 Handle the search results this way:
@@ -22,10 +22,10 @@ Handle the search results this way:
 - If there is one result, ask the user whether they want to install it.
 - If there is more than one result, ask the user which skill they want to install.
 
-When a skill has been selected, run the Obot CLI install command for this client:
+When a skill has been selected, run the uni CLI install command for this client:
 
 ```sh
-obot skills install --non-interactive --destination {{ .InstallDestination }} <skill>
+uni skills install --non-interactive --destination {{ .InstallDestination }} <skill>
 ```
 
 Report the CLI result to the user.

@@ -52,7 +52,7 @@ func (a SharedAgents) InstallBootstrap(ctx context.Context, home string) (Instal
 		AgentID:     a.ID(),
 		DisplayName: a.DisplayName(),
 		Installed:   installed,
-		Message:     "Installed Obot bootstrap skills for All clients that support ~/.agents",
+		Message:     "Installed uni bootstrap skills for All clients that support ~/.agents",
 	}, nil
 }
 

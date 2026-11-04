@@ -76,7 +76,7 @@
 		<h2 class="text-muted-content text-lg font-semibold">No MCP tunnels</h2>
 		<p class="text-muted-content text-sm font-light">
 			MCP tunnels let uni securely connect to private MCP servers that are not directly reachable
-			from uni's network. You run a lightweight <code class="font-mono">obot tunnel</code>
+			from uni's network. You run a lightweight <code class="font-mono">uni tunnel</code>
 			process on the private network and it opens an authenticated outbound connection to uni.
 		</p>
 		{#if !isReadonly}
@@ -90,7 +90,7 @@
 	<div class="flex flex-col gap-6">
 		<p class="text-muted-content text-sm">
 			MCP tunnels let uni securely connect to private MCP servers that are not directly reachable
-			from uni's network. You run a lightweight <code class="font-mono">obot tunnel</code>
+			from uni's network. You run a lightweight <code class="font-mono">uni tunnel</code>
 			process on the private network and it opens an authenticated outbound connection to uni.
 		</p>
 		<Table

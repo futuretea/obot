@@ -183,7 +183,7 @@
 		<ScanLine class="text-muted-content size-24 opacity-50" />
 		<h4 class="text-muted-content text-lg font-semibold">No device scans in this window</h4>
 		<p class="text-muted-content text-sm font-light">
-			Adjust the date range or run <code class="font-mono">obot scan</code> from a managed device.
+			Adjust the date range or run <code class="font-mono">uni scan</code> from a managed device.
 		</p>
 	</div>
 {:else}

@@ -326,7 +326,7 @@ func TestTokenRequestIncludesRequestedScopes(t *testing.T) {
 
 			_, err := Token(WithNonInteractive(t.Context()), srv.URL+"/api", apiclient.TokenFetchOptions{
 				Name:         "CLI token",
-				Description:  "Created by obot login",
+				Description:  "Created by uni login",
 				NoExpiration: tt.noExpiration,
 				Scopes:       tt.scopes,
 			})
@@ -346,8 +346,8 @@ func TestTokenRequestIncludesRequestedScopes(t *testing.T) {
 			if got.Name != "CLI token" {
 				t.Fatalf("name = %q, want CLI token", got.Name)
 			}
-			if got.Description != "Created by obot login" {
-				t.Fatalf("description = %q, want Created by obot login", got.Description)
+			if got.Description != "Created by uni login" {
+				t.Fatalf("description = %q, want Created by uni login", got.Description)
 			}
 			assertCreateRequestScopes(t, got, tt.want)
 		})
@@ -686,7 +686,7 @@ func TestLegacyTokenFileIsIgnored(t *testing.T) {
 	defer restore()
 
 	configHome := useTestXDGConfigHome(t)
-	tokenFile := filepath.Join(configHome, "obot", "token")
+	tokenFile := filepath.Join(configHome, "uni", "token")
 	if err := os.MkdirAll(filepath.Dir(tokenFile), 0o700); err != nil {
 		t.Fatal(err)
 	}

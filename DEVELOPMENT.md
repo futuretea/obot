@@ -109,7 +109,7 @@ The documentation for Obot is in the main repo. You can serve the documentation 
 
 ## Other Configuration
 
-Obot is configured via environment variables. You can see the relevant environment variables by building the binary (as above) and running `./bin/obot server --help`. There is also documentation available. You can serve the documentation locally as above.
+Obot is configured via environment variables. You can see the relevant environment variables by building the binary (as above) and running `./bin/uni server --help`. There is also documentation available. You can serve the documentation locally as above.
 
 ## Running Obot Locally with Kubernetes (Nanobot Agents)
 

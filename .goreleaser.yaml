@@ -1,6 +1,6 @@
 version: 2
 
-project_name: "obot"
+project_name: "uni"
 
 builds:
   - id: build-darwin
@@ -56,10 +56,10 @@ release:
   prerelease: auto
 
 brews:
-  - name: obot
-    description: "Obot CLI"
+  - name: uni
+    description: "uni CLI"
     install: |
-      bin.install "obot"
+      bin.install "uni"
     homepage: "https://github.com/obot-platform/obot"
     skip_upload: auto
     directory: "Formula"

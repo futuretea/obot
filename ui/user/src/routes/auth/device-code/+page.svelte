@@ -90,7 +90,7 @@
 			<div class="flex flex-col gap-1 text-center">
 				<h1 class="text-xl font-semibold">Connect your device</h1>
 				<p class="text-muted-content text-sm font-light">
-					Enter the code shown by <span class="font-medium">obot login</span> in your terminal.
+					Enter the code shown by <span class="font-medium">uni login</span> in your terminal.
 				</p>
 			</div>
 

@@ -19,7 +19,7 @@ func TestNewClientUsesEnvOverrides(t *testing.T) {
 	if err := localconfig.Save(localconfig.Config{DefaultURL: "https://stored.example.com"}); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Setenv("OBOT_BASE_URL", "https://env.example.com/api"); err != nil {
+	if err := os.Setenv("UNI_BASE_URL", "https://env.example.com/api"); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.Setenv(internal.TokenEnvVar, "env-token"); err != nil {
@@ -58,7 +58,7 @@ func TestNewClientNormalizesEnvBaseURL(t *testing.T) {
 			restore := useRootTestEnv(t)
 			defer restore()
 
-			if err := os.Setenv("OBOT_BASE_URL", tt.env); err != nil {
+			if err := os.Setenv("UNI_BASE_URL", tt.env); err != nil {
 				t.Fatal(err)
 			}
 
@@ -98,7 +98,7 @@ func TestNewClientWarnsOnInvalidConfig(t *testing.T) {
 	restore := useRootTestEnv(t)
 	defer restore()
 
-	configPath := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "obot", "config.json")
+	configPath := filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "uni", "config.json")
 	if err := os.MkdirAll(filepath.Dir(configPath), 0o700); err != nil {
 		t.Fatal(err)
 	}
@@ -114,7 +114,7 @@ func TestNewClientWarnsOnInvalidConfig(t *testing.T) {
 	if baseURL != "http://localhost:8080/api" {
 		t.Fatalf("expected localhost fallback, got %q", baseURL)
 	}
-	if !strings.Contains(stderr, "Warning: failed to load Obot config:") {
+	if !strings.Contains(stderr, "Warning: failed to load uni config:") {
 		t.Fatalf("expected config warning, got %q", stderr)
 	}
 }
@@ -124,13 +124,13 @@ func useRootTestEnv(t *testing.T) func() {
 
 	configHome := filepath.Join(t.TempDir(), "config")
 	oldConfigHome, hadConfigHome := os.LookupEnv("XDG_CONFIG_HOME")
-	oldBaseURL, hadBaseURL := os.LookupEnv("OBOT_BASE_URL")
+	oldBaseURL, hadBaseURL := os.LookupEnv("UNI_BASE_URL")
 	oldToken, hadToken := os.LookupEnv(internal.TokenEnvVar)
 
 	if err := os.Setenv("XDG_CONFIG_HOME", configHome); err != nil {
 		t.Fatal(err)
 	}
-	_ = os.Unsetenv("OBOT_BASE_URL")
+	_ = os.Unsetenv("UNI_BASE_URL")
 	_ = os.Unsetenv(internal.TokenEnvVar)
 	xdg.Reload()
 
@@ -141,9 +141,9 @@ func useRootTestEnv(t *testing.T) func() {
 			_ = os.Unsetenv("XDG_CONFIG_HOME")
 		}
 		if hadBaseURL {
-			_ = os.Setenv("OBOT_BASE_URL", oldBaseURL)
+			_ = os.Setenv("UNI_BASE_URL", oldBaseURL)
 		} else {
-			_ = os.Unsetenv("OBOT_BASE_URL")
+			_ = os.Unsetenv("UNI_BASE_URL")
 		}
 		if hadToken {
 			_ = os.Setenv(internal.TokenEnvVar, oldToken)

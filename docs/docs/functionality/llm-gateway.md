@@ -33,7 +33,7 @@ For each provider you have access to, the page shows:
     - API key auth: `/api/llm-proxy/azure`
     - Entra auth: `/api/llm-proxy/azure-entra`
     - The gateway detects the API request format from the requested `/messages` or `/responses` endpoint. The deployment name does not determine the format.
-- **Example request** — a ready-to-run `curl` command, pre-filled with one of your available models and with the API key wired to `obot login --scope llm --print-token`.
+- **Example request** — a ready-to-run `curl` command, pre-filled with one of your available models and with the API key wired to `uni login --scope llm --print-token`.
 - **Available models** — a searchable list of the models you can call. Each entry has a copy button for the exact model name to send in your requests.
 
 If you don't have access to any gateway models, the page shows a **"No gateway models available"** message — contact an administrator to request access through a [Model Access Policy](./model-access-policies.md).
@@ -55,14 +55,14 @@ To use the gateway you need:
 
 1. **A configured provider.** An administrator must configure a supported [Model Provider](../configuration/model-providers.md) with valid credentials. This includes OpenAI, Anthropic, Generic Responses Compatible, Amazon Bedrock, Amazon Bedrock API key, Azure, and Azure Entra.
 2. **Model access.** An administrator must grant you access to one or more of those models through a [Model Access Policy](./model-access-policies.md). The [Models page](#the-models-page) reflects exactly what you can call.
-3. **The Obot CLI.** Install and set up the `obot` CLI to obtain an API key. See [Obot CLI Setup](../installation/cli-setup.md).
+3. **The Obot CLI.** Install and set up the `uni` CLI to obtain an API key. See [Obot CLI Setup](../installation/cli-setup.md).
 
 ## Getting your API key
 
 Your API key for the gateway must include LLM proxy access. Print one with the CLI:
 
 ```bash
-obot login --url https://obot.example.com --scope llm --print-token
+uni login --url https://obot.example.com --scope llm --print-token
 ```
 
 :::note
@@ -75,7 +75,7 @@ Add `--no-expiration` if you want a key that doesn't expire.
 
 ```bash
 export ANTHROPIC_BASE_URL="https://obot.example.com/api/llm-proxy/anthropic"
-export ANTHROPIC_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # Assumes you have access to claude-opus-4.8 via a Model Access Policy
 curl $ANTHROPIC_BASE_URL/v1/messages \
@@ -91,7 +91,7 @@ The OpenAI passthrough serves the OpenAI **Responses API** (`/v1/responses`).
 
 ```bash
 export OPENAI_BASE_URL="https://obot.example.com/api/llm-proxy/openai"
-export OPENAI_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export OPENAI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # Assumes you have access to gpt-5.5 via a Model Access Policy
 curl $OPENAI_BASE_URL/v1/responses \
@@ -106,7 +106,7 @@ The Generic Responses route serves the **Responses API** using the base URL conf
 
 ```bash
 export OPENAI_BASE_URL="https://obot.example.com/api/llm-proxy/generic-responses"
-export OPENAI_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export OPENAI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # Use a model name shown in the Generic Responses Compatible section of the Models page
 curl $OPENAI_BASE_URL/v1/responses \
@@ -132,48 +132,48 @@ Select the authentication method configured by your administrator. The selection
   <TabItem value="static-credentials" label="Static credentials" default>
 
 ```bash
-export OBOT_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export UNI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # Anthropic-compatible Bedrock model
 curl https://obot.example.com/api/llm-proxy/aws-bedrock/v1/messages \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
   -d '{"model":"anthropic.claude-sonnet-5","max_tokens":1024,"messages":[{"role":"user","content":"hi"}]}'
 
 # OpenAI-compatible Bedrock model
 curl https://obot.example.com/api/llm-proxy/aws-bedrock/v1/responses \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "content-type: application/json" \
   -d '{"model":"openai.gpt-5.4","input":[{"role":"user","content":"hi"}]}'
 
 # List available Bedrock models
 curl https://obot.example.com/api/llm-proxy/aws-bedrock/v1/models \
-  -H "Authorization: Bearer $OBOT_API_KEY"
+  -H "Authorization: Bearer $UNI_API_KEY"
 ```
 
   </TabItem>
   <TabItem value="api-key" label="API key">
 
 ```bash
-export OBOT_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export UNI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # Anthropic-compatible Bedrock model
 curl https://obot.example.com/api/llm-proxy/aws-bedrock-api-key/v1/messages \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
   -d '{"model":"anthropic.claude-sonnet-5","max_tokens":1024,"messages":[{"role":"user","content":"hi"}]}'
 
 # OpenAI-compatible Bedrock model
 curl https://obot.example.com/api/llm-proxy/aws-bedrock-api-key/v1/responses \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "content-type: application/json" \
   -d '{"model":"openai.gpt-5.4","input":[{"role":"user","content":"hi"}]}'
 
 # List available Bedrock models
 curl https://obot.example.com/api/llm-proxy/aws-bedrock-api-key/v1/models \
-  -H "Authorization: Bearer $OBOT_API_KEY"
+  -H "Authorization: Bearer $UNI_API_KEY"
 ```
 
   </TabItem>
@@ -193,48 +193,48 @@ Select the authentication method configured by your administrator. The selection
   <TabItem value="api-key" label="API key" default>
 
 ```bash
-export OBOT_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export UNI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # AnthropicMessages deployment
 curl https://obot.example.com/api/llm-proxy/azure/v1/messages \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
   -d '{"model":"my-claude-deployment","max_tokens":1024,"messages":[{"role":"user","content":"hi"}]}'
 
 # OpenAIResponses deployment
 curl https://obot.example.com/api/llm-proxy/azure/v1/responses \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "content-type: application/json" \
   -d '{"model":"my-gpt-deployment","input":[{"role":"user","content":"hi"}]}'
 
 # List available OpenAI-compatible Azure models
 curl https://obot.example.com/api/llm-proxy/azure/v1/models \
-  -H "Authorization: Bearer $OBOT_API_KEY"
+  -H "Authorization: Bearer $UNI_API_KEY"
 ```
 
   </TabItem>
   <TabItem value="entra-id" label="Entra ID">
 
 ```bash
-export OBOT_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export UNI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # AnthropicMessages deployment
 curl https://obot.example.com/api/llm-proxy/azure-entra/v1/messages \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "content-type: application/json" \
   -d '{"model":"my-claude-deployment","max_tokens":1024,"messages":[{"role":"user","content":"hi"}]}'
 
 # OpenAIResponses deployment
 curl https://obot.example.com/api/llm-proxy/azure-entra/v1/responses \
-  -H "Authorization: Bearer $OBOT_API_KEY" \
+  -H "Authorization: Bearer $UNI_API_KEY" \
   -H "content-type: application/json" \
   -d '{"model":"my-gpt-deployment","input":[{"role":"user","content":"hi"}]}'
 
 # List available OpenAI-compatible Azure models
 curl https://obot.example.com/api/llm-proxy/azure-entra/v1/models \
-  -H "Authorization: Bearer $OBOT_API_KEY"
+  -H "Authorization: Bearer $UNI_API_KEY"
 ```
 
   </TabItem>
@@ -260,7 +260,7 @@ Claude Code can route through the Anthropic passthrough and even discover which 
 ```bash
 # 1. Point Claude Code at the gateway and authenticate with your Obot API key.
 export ANTHROPIC_BASE_URL="https://obot.example.com/api/llm-proxy/anthropic"
-export ANTHROPIC_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 
 # 2. (Optional) Discover the models you have access to at startup.
 #    Claude Code queries the gateway's /v1/models endpoint and adds the results
@@ -285,7 +285,7 @@ Claude Code can also route Bedrock Mantle traffic through Obot. Use this mode fo
 
 ```bash
 export ANTHROPIC_BEDROCK_MANTLE_BASE_URL="https://obot.example.com/api/llm-proxy/aws-bedrock"
-export ANTHROPIC_AUTH_TOKEN="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_AUTH_TOKEN="$(uni login --url https://obot.example.com --scope llm --print-token)"
 export CLAUDE_CODE_SKIP_MANTLE_AUTH=1
 export CLAUDE_CODE_USE_MANTLE=1
 
@@ -297,7 +297,7 @@ claude --model anthropic.claude-sonnet-5
 
 ```bash
 export ANTHROPIC_BEDROCK_MANTLE_BASE_URL="https://obot.example.com/api/llm-proxy/aws-bedrock-api-key"
-export ANTHROPIC_AUTH_TOKEN="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_AUTH_TOKEN="$(uni login --url https://obot.example.com --scope llm --print-token)"
 export CLAUDE_CODE_SKIP_MANTLE_AUTH=1
 export CLAUDE_CODE_USE_MANTLE=1
 
@@ -322,7 +322,7 @@ Claude Code can use an Azure deployment whose model dialect is `AnthropicMessage
 
 ```bash
 export ANTHROPIC_FOUNDRY_BASE_URL="https://obot.example.com/api/llm-proxy/azure"
-export ANTHROPIC_FOUNDRY_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_FOUNDRY_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 export CLAUDE_CODE_USE_FOUNDRY=1
 
 claude --model my-claude-deployment
@@ -333,7 +333,7 @@ claude --model my-claude-deployment
 
 ```bash
 export ANTHROPIC_FOUNDRY_BASE_URL="https://obot.example.com/api/llm-proxy/azure-entra"
-export ANTHROPIC_FOUNDRY_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+export ANTHROPIC_FOUNDRY_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
 export CLAUDE_CODE_USE_FOUNDRY=1
 
 claude --model my-claude-deployment
@@ -342,7 +342,7 @@ claude --model my-claude-deployment
   </TabItem>
 </Tabs>
 
-For a local Obot server, replace `https://obot.example.com` with `http://localhost:8080` in both the selected base URL and the `obot login` command.
+For a local Obot server, replace `https://obot.example.com` with `http://localhost:8080` in both the selected base URL and the `uni login` command.
 
 `ANTHROPIC_FOUNDRY_API_KEY` contains an Obot gateway token in this setup, not an Azure API key; Obot replaces it with the configured Azure credential before forwarding the request. The value passed to `--model` must be the exact Azure deployment name listed in the Anthropic-compatible Azure section on the Models page.
 
@@ -371,8 +371,8 @@ Codex works with the OpenAI passthrough. Because Codex uses the OpenAI **Respons
    [model_providers.obot_openai]
    name = "OpenAI Obot LLM Gateway"
    base_url = "https://obot.example.com/api/llm-proxy/openai"
-   env_key = "OBOT_API_KEY"
-   env_key_instructions = "Set OBOT_API_KEY and restart to authenticate with the Obot LLM Gateway"
+   env_key = "UNI_API_KEY"
+   env_key_instructions = "Set UNI_API_KEY and restart to authenticate with the Obot LLM Gateway"
    supports_websockets = false
    ```
 
@@ -381,7 +381,7 @@ Codex works with the OpenAI passthrough. Because Codex uses the OpenAI **Respons
 2. Set your API key and start Codex:
 
    ```bash
-   export OBOT_API_KEY="$(obot login --url https://obot.example.com --scope llm --print-token)"
+   export UNI_API_KEY="$(uni login --url https://obot.example.com --scope llm --print-token)"
    codex        # Codex CLI
    # or
    codex app    # Codex App
@@ -413,8 +413,8 @@ web_search = "disabled"
 [model_providers.obot_bedrock]
 name = "Amazon Bedrock Obot LLM Gateway"
 base_url = "https://obot.example.com/api/llm-proxy/aws-bedrock"
-env_key = "OBOT_API_KEY"
-env_key_instructions = "Set OBOT_API_KEY and restart to authenticate with the Obot LLM Gateway"
+env_key = "UNI_API_KEY"
+env_key_instructions = "Set UNI_API_KEY and restart to authenticate with the Obot LLM Gateway"
 supports_websockets = false
 ```
 
@@ -431,8 +431,8 @@ web_search = "disabled"
 [model_providers.obot_bedrock]
 name = "Amazon Bedrock Obot LLM Gateway"
 base_url = "https://obot.example.com/api/llm-proxy/aws-bedrock-api-key"
-env_key = "OBOT_API_KEY"
-env_key_instructions = "Set OBOT_API_KEY and restart to authenticate with the Obot LLM Gateway"
+env_key = "UNI_API_KEY"
+env_key_instructions = "Set UNI_API_KEY and restart to authenticate with the Obot LLM Gateway"
 supports_websockets = false
 ```
 
@@ -457,8 +457,8 @@ web_search = "disabled"
 [model_providers.obot_azure]
 name = "Azure via Obot LLM Gateway"
 base_url = "https://obot.example.com/api/llm-proxy/azure"
-env_key = "OBOT_API_KEY"
-env_key_instructions = "Set OBOT_API_KEY and restart to authenticate with the Obot LLM Gateway"
+env_key = "UNI_API_KEY"
+env_key_instructions = "Set UNI_API_KEY and restart to authenticate with the Obot LLM Gateway"
 supports_websockets = false
 ```
 
@@ -473,8 +473,8 @@ web_search = "disabled"
 [model_providers.obot_azure]
 name = "Azure via Obot LLM Gateway"
 base_url = "https://obot.example.com/api/llm-proxy/azure-entra"
-env_key = "OBOT_API_KEY"
-env_key_instructions = "Set OBOT_API_KEY and restart to authenticate with the Obot LLM Gateway"
+env_key = "UNI_API_KEY"
+env_key_instructions = "Set UNI_API_KEY and restart to authenticate with the Obot LLM Gateway"
 supports_websockets = false
 ```
 
@@ -503,7 +503,7 @@ See the Codex documentation for details:
 
 - [Model Providers](../configuration/model-providers.md) — configure supported providers and their models
 - [Model Access Policies](./model-access-policies.md) — grant users access to specific models
-- [Obot CLI Setup](../installation/cli-setup.md) — install and configure the `obot` CLI
+- [Obot CLI Setup](../installation/cli-setup.md) — install and configure the `uni` CLI
 - [Audit Logs and Usage](./audit-logs-and-usage.md) — monitor token usage
 - [Claude Code: Route Mantle through a gateway](https://code.claude.com/docs/en/amazon-bedrock#route-mantle-through-a-gateway)
 - [AWS Bedrock Anthropic model cards](https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards-anthropic.html) — check Anthropic model region availability

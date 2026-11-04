@@ -9,13 +9,13 @@ import (
 )
 
 type Logout struct {
-	URL  string `usage:"Obot app URL whose stored credentials should be removed"`
-	root *Obot
+	URL  string `usage:"uni app URL whose stored credentials should be removed"`
+	root *Uni
 }
 
 func (l *Logout) Customize(cmd *cobra.Command) {
 	cmd.Use = "logout"
-	cmd.Short = "Remove locally stored Obot credentials"
+	cmd.Short = "Remove locally stored uni credentials"
 	cmd.Args = cobra.NoArgs
 }
 

@@ -34,8 +34,8 @@ var (
 )
 
 type Options struct {
-	UnauthenticatedRateLimit int `usage:"Rate limit for unauthenticated requests (req/sec)" default:"100"`
-	AuthenticatedRateLimit   int `usage:"Rate limit for authenticated non-admin requests (req/sec)" default:"200"`
+	UnauthenticatedRateLimit int `usage:"Rate limit for unauthenticated requests (req/sec)" default:"100" env:"OBOT_SERVER_UNAUTHENTICATED_RATE_LIMIT"`
+	AuthenticatedRateLimit   int `usage:"Rate limit for authenticated non-admin requests (req/sec)" default:"200" env:"OBOT_SERVER_AUTHENTICATED_RATE_LIMIT"`
 }
 
 // RateLimiter limits the number of HTTP requests per second a user can make.

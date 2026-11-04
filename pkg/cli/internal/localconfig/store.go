@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	configRelPath = "obot/config.json"
+	configRelPath = "uni/config.json"
 )
 
 // Config is the setup-managed CLI configuration written under the
