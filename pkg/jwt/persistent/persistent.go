@@ -55,9 +55,6 @@ type TokenContext struct {
 	MCPID            string
 	AuthorizedMCPIDs StringSlice
 
-	// This is used for requesting community license
-	InstallationID string `json:"installation_id,omitempty"`
-
 	// The following fields are for runs
 	Namespace     string
 	ModelProvider string

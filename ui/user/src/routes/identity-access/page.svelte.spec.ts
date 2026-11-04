@@ -470,42 +470,31 @@ describe('Identity & Access Page', () => {
 		});
 
 		describe('license required auth provider', () => {
-			it('offers Obot Community signup in the license dialog on Configure', async () => {
+			it('shows the license required dialog without community signup on Configure', async () => {
 				await renderIdentityAccessPage({ authProviders: [entraProvider] });
 
 				await expect
-					.element(
-						providerCard('Microsoft Entra').getByText('Registration Required', { exact: true })
-					)
+					.element(providerCard('Microsoft Entra').getByText('License Required', { exact: true }))
 					.toBeVisible();
 
 				await providerCard('Microsoft Entra')
 					.getByRole('button', { name: 'Configure', exact: true })
 					.click();
 
-				const signup = page.getByRole('dialog').filter({ hasText: 'Get Access Now!' });
+				const dialog = page.getByRole('dialog');
 				await expect
-					.element(signup.getByRole('heading', { name: 'Microsoft Entra', exact: true }))
+					.element(dialog.getByRole('heading', { name: 'Microsoft Entra', exact: true }))
 					.toBeVisible();
+				await expect.element(dialog.getByText('License Required', { exact: true })).toBeVisible();
 				await expect
-					.element(signup.getByRole('heading', { name: 'Get Access Now!', exact: true }))
-					.toBeVisible();
+					.element(dialog.getByLabelText('Name', { exact: true }))
+					.not.toBeInTheDocument();
 				await expect
-					.element(
-						signup.getByText(
-							/Register to get free access to all additional providers supported by uni/,
-							{
-								exact: false
-							}
-						)
-					)
-					.toBeVisible();
-				await expect.element(signup.getByLabelText('Name', { exact: true })).toBeVisible();
-				await expect.element(signup.getByLabelText('Email', { exact: true })).toBeVisible();
-				await expect.element(signup.getByLabelText('Company', { exact: false })).toBeVisible();
+					.element(dialog.getByLabelText('Email', { exact: true }))
+					.not.toBeInTheDocument();
 				await expect
-					.element(signup.getByRole('button', { name: 'Register', exact: true }))
-					.toBeVisible();
+					.element(dialog.getByRole('button', { name: 'Register', exact: true }))
+					.not.toBeInTheDocument();
 				await expect
 					.element(page.getByText('Set Up Microsoft Entra', { exact: true }))
 					.not.toBeInTheDocument();

@@ -16,7 +16,6 @@ import (
 	"github.com/obot-platform/obot/pkg/license"
 	v1 "github.com/obot-platform/obot/pkg/storage/apis/obot.obot.ai/v1"
 	"github.com/obot-platform/obot/pkg/system"
-	"github.com/obot-platform/obot/pkg/upgrade"
 	"k8s.io/client-go/util/retry"
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -39,9 +38,6 @@ type LicenseProvider interface {
 
 type LicenseHandler struct {
 	licenseProvider        LicenseProvider
-	communityIssuer        upgrade.CommunityLicenseIssuer
-	communityLock          sync.Mutex
-	communityInFlight      bool
 	manualCheckLock        sync.RWMutex
 	lastManualLicenseCheck time.Time
 }
@@ -59,10 +55,9 @@ type LicenseUpdate struct {
 	LicenseKey string `json:"licenseKey"`
 }
 
-func NewLicenseHandler(licenseProvider LicenseProvider, communityIssuer upgrade.CommunityLicenseIssuer) *LicenseHandler {
+func NewLicenseHandler(licenseProvider LicenseProvider) *LicenseHandler {
 	return &LicenseHandler{
 		licenseProvider: licenseProvider,
-		communityIssuer: communityIssuer,
 	}
 }
 

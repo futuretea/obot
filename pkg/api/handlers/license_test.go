@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -72,7 +73,7 @@ func TestDisplayLicenseKey(t *testing.T) {
 func TestCheckLicenseCooldown(t *testing.T) {
 	t.Parallel()
 
-	handler := NewLicenseHandler(nil, nil)
+	handler := NewLicenseHandler(nil)
 	handler.lastManualLicenseCheck = time.Now()
 
 	recorder := httptest.NewRecorder()
@@ -123,10 +124,10 @@ func TestCheckLicenseSignalsAfterSuccessfulValidation(t *testing.T) {
 				},
 			}
 			storage := fake.NewClientBuilder().WithScheme(storagescheme.Scheme).WithObjects(daemonSync).Build()
-			handler := NewLicenseHandler(&fakeCommunityLicenseProvider{
+			handler := NewLicenseHandler(&fakeLicenseProvider{
 				valid:         true,
 				validateError: tt.validateErr,
-			}, nil)
+			})
 
 			err := handler.CheckLicense(api.Context{
 				ResponseWriter: httptest.NewRecorder(),
@@ -151,4 +152,21 @@ func TestCheckLicenseSignalsAfterSuccessfulValidation(t *testing.T) {
 			}
 		})
 	}
+}
+
+type fakeLicenseProvider struct {
+	valid         bool
+	validateError error
+}
+
+func (f *fakeLicenseProvider) LicenseKey(context.Context) (string, error)  { return "", nil }
+func (f *fakeLicenseProvider) LicenseKeyViaConfiguration() bool            { return false }
+func (f *fakeLicenseProvider) SetLicenseKey(context.Context, string) error { return nil }
+func (f *fakeLicenseProvider) RemoveLicenseKey(context.Context) error      { return nil }
+func (f *fakeLicenseProvider) Validate(context.Context) error              { return f.validateError }
+func (f *fakeLicenseProvider) HasValidLicense(context.Context) (bool, error) {
+	return f.valid, nil
+}
+func (f *fakeLicenseProvider) Entitlements(context.Context) ([]string, error) {
+	return nil, nil
 }

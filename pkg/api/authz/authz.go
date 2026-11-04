@@ -70,7 +70,6 @@ var (
 		"GET /debug/metrics",
 		"PUT /api/license",
 		"POST /api/license",
-		"POST /api/license/community",
 		"DELETE /api/license",
 		"POST /api/auth-providers/{id}/configure",
 		"POST /api/auth-providers/{id}/deconfigure",

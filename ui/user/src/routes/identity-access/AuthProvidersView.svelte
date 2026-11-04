@@ -19,7 +19,7 @@
 	import { reloadPage } from '$lib/navigation';
 	import { AdminService, UserService } from '$lib/services';
 	import type { AuthProvider } from '$lib/services/admin/types.js';
-	import { errors, license, profile, version } from '$lib/stores';
+	import { errors, license, profile } from '$lib/stores';
 	import { adminConfigStore } from '$lib/stores/adminConfig.svelte.js';
 	import { clearUrlParams } from '$lib/url';
 	import { TriangleAlert, Info, CircleAlert, ArrowLeft, Trash2 } from '@lucide/svelte';
@@ -411,29 +411,6 @@
 			loading = false;
 		}
 	}
-
-	async function handleCommunitySubmit() {
-		if (!licenseRequiredProvider) return;
-
-		const newVersion = await UserService.getVersion();
-		version.initialize(newVersion);
-
-		authProviders = await AdminService.listAuthProviders();
-		adminConfigStore.updateAuthProviders(authProviders);
-
-		const updatedMatch = authProviders.find(
-			(provider) => provider.id === licenseRequiredProvider?.id
-		);
-
-		if (updatedMatch) {
-			handleClickConfigure(updatedMatch);
-		} else {
-			errors.append('There was an issue fetching the auth provider configuration.');
-		}
-
-		licenseRequiredProvider = undefined;
-	}
-
 	async function handleClickConfigure(authProvider: AuthProvider) {
 		if (authProvider.missingEntitlements && authProvider.missingEntitlements.length > 0) {
 			licenseRequiredProvider = authProvider;
@@ -788,9 +765,5 @@
 
 <LicenseProviderDialog
 	bind:provider={licenseRequiredProvider}
-	allowSignup={!licenseRequiredProvider?.configured}
 	licenseKey={license.current.licenseKey}
-	endpoint={AdminService.createCommunityLicense}
-	onSubmit={handleCommunitySubmit}
-	signUpMessage="Register to get free access to all additional providers supported by uni."
 />

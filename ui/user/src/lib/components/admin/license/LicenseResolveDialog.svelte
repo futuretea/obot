@@ -8,10 +8,9 @@
 		type LicenseEntitlementViolation,
 		type ModelProvider
 	} from '$lib/services';
-	import { version, license, darkMode } from '$lib/stores';
+	import { version, darkMode } from '$lib/stores';
 	import { adminConfigStore } from '$lib/stores/adminConfig.svelte';
-	import LicenseProviderDialog from './LicenseProviderDialog.svelte';
-	import { KeyRound, Mail } from '@lucide/svelte';
+	import { Mail } from '@lucide/svelte';
 	import { slide } from 'svelte/transition';
 
 	interface Props {
@@ -23,8 +22,6 @@
 	let licenseViolationDialog = $state<ReturnType<typeof ResponsiveDialog>>();
 	let confirmDowngradeDialog = $state<ReturnType<typeof ProviderDeconfigureConfirm>>();
 	let providersToDeconfigure = $state<(AuthProvider | ModelProvider)[]>([]);
-
-	let licenseRequiredProvider = $state<AuthProvider>();
 
 	let downgrading = $state(false);
 	let error = $state('');
@@ -114,30 +111,10 @@
 						class="text-link">info@obot.ai</a
 					> to upgrade.
 				{:else}
-					To re-enable access to existing functionality,
-					{#if violations.authProvider}
-						register your email below or
-					{/if}
-					contact support at
+					To re-enable access to existing functionality, contact support at
 					<a href="mailto:info@obot.ai" class="text-link">info@obot.ai</a> to renew an Enterprise license.
 				{/if}
 			</p>
-			{#if violations.authProvider}
-				<button
-					class="btn btn-primary"
-					onclick={() => {
-						const violationId = version.current.licenseEntitlementViolations?.find(
-							(v) => v.type === 'authProvider'
-						)?.name;
-						licenseRequiredProvider = violationId
-							? $adminConfigStore.authProviders.find((p) => p.id === violationId)
-							: undefined;
-					}}
-				>
-					<KeyRound class="size-4" />
-					Register Your Email
-				</button>
-			{/if}
 			<a href="mailto:info@obot.ai" class="btn btn-secondary">
 				<Mail class="size-4" />
 				Contact Support
@@ -224,13 +201,4 @@
 	providers={providersToDeconfigure}
 	title="Confirm Downgrade"
 	confirmButtonText="Downgrade"
-/>
-
-<LicenseProviderDialog
-	bind:provider={licenseRequiredProvider}
-	licenseKey={license.current.licenseKey}
-	endpoint={AdminService.createCommunityLicense}
-	onSubmit={() => reloadPage()}
-	allowSignup
-	signUpMessage="Get permanent, free access to additional authentication providers, including Entra, Okta, JumpCloud, and Auth0, with a one-time registration up to 100 users."
 />

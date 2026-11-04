@@ -125,9 +125,6 @@ import type {
 	OAuthToken,
 	AppPreferencesManifest,
 	AppNotificationManifest,
-	License,
-	LicenseManifest,
-	CommunityLicenseEnrollment,
 	LLMAuditLog,
 	LLMAuditLogURLFilters,
 	EnforcementDecisionAllowlistCheck,
@@ -2524,33 +2521,6 @@ export async function listAllUserWorkspaceAccessControlRules(opts?: { fetch?: Fe
 		opts
 	)) as ItemsResponse<AccessControlRule>;
 	return response.items ?? [];
-}
-
-// License
-
-export async function deleteLicense(): Promise<void> {
-	await doDelete('/license');
-}
-
-export async function recheckLicense(opts?: {
-	fetch?: Fetcher;
-	dontLogErrors?: boolean;
-}): Promise<License> {
-	return (await doPost('/license', {}, opts)) as License;
-}
-
-export async function updateLicense(
-	manifest: LicenseManifest,
-	opts?: { fetch?: Fetcher; dontLogErrors?: boolean }
-): Promise<License> {
-	return (await doPut('/license', manifest, opts)) as License;
-}
-
-export async function createCommunityLicense(
-	enrollment: CommunityLicenseEnrollment,
-	opts?: { fetch?: Fetcher; dontLogErrors?: boolean }
-): Promise<License> {
-	return (await doPost('/license/community', enrollment, opts)) as License;
 }
 
 // MDM configurations

@@ -457,6 +457,3 @@ export const CLOUD_ENTITLEMENT = 'OBOT_CLOUD';
 export const COMMUNITY_ENTITLEMENT = 'OBOT_COMMUNITY';
 export const ENTERPRISE_ENTITLEMENT = 'OBOT_ENTERPRISE';
 export const MODEL_PROVIDERS_ENTITLEMENT = 'OBOT_ENTERPRISE_MODEL_PROVIDERS';
-
-export const COMMUNITY_SIGNUP_BANNER_COPY =
-	'Register your email to unlock all remaining IDPs and to receive the uni Community Newsletter!';

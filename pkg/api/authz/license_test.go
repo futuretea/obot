@@ -71,11 +71,6 @@ func TestLicenseRouteAuthorization(t *testing.T) {
 			method: http.MethodDelete,
 			path:   "/api/license",
 		},
-		{
-			name:   "create community license",
-			method: http.MethodPost,
-			path:   "/api/license/community",
-		},
 	}
 
 	for _, route := range routes {
