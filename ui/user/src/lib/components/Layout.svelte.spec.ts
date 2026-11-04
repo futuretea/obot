@@ -304,4 +304,14 @@ describe('Layout.svelte', () => {
 			await expect.element(page.getByText(copy, { exact: true })).toBeVisible();
 		});
 	});
+
+	describe('profile menu', () => {
+		it('links a signed-in user to the CLI install page', async () => {
+			await renderLayout();
+			await clickButton('btn-navbar-profile');
+			const link = page.getByRole('link', { name: 'Install uni CLI' });
+			await expect.element(link).toBeInTheDocument();
+			await expect.element(link).toHaveAttribute('href', '/install-cli');
+		});
+	});
 });
