@@ -48,6 +48,7 @@ func NewRouter(ctx context.Context, services *services.Services) (*Router, error
 		AgentsEnabled:           agentsEnabled,
 		HostedAgentsEnabled:     services.HostedAgentsEnabled,
 		HideK8sDetails:          services.HideK8sDetails,
+		CLIDownloadBaseURL:      services.CLIDownloadBaseURL,
 		UpgradeStatusReader:     services.VersionChecker,
 		ProviderConfiguration:   services.ProviderDispatcher,
 		ModelProxyURL:           services.ModelProxyURL,

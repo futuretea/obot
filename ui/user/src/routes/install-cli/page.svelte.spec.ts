@@ -42,12 +42,14 @@ const installToPath = 'sudo install -m 0755 uni /usr/local/bin/uni';
 function archiveCommand(os: string, arch: string) {
 	const archive = `uni_v0.26.3-uni_${os}_${arch}.tar.gz`;
 	return new RegExp(
-		`curl -O \\S+/${archive.replace(/\./g, '\\.')} && tar xzf ${archive.replace(/\./g, '\\.')} && ${installToPath.replace(/[/.]/g, '\\$&')} && uni --help`
+		`curl -LO \\S+/${archive.replace(/\./g, '\\.')} && tar xzf ${archive.replace(/\./g, '\\.')} && ${installToPath.replace(/[/.]/g, '\\$&')} && uni --help`
 	);
 }
 
-async function renderPage() {
-	await preparePageData();
+const downloadBaseURL = 'https://downloads.example.com/releases/v0.26.3-uni';
+
+async function renderPage(cliDownloadBaseURL: string | undefined = downloadBaseURL) {
+	await preparePageData({ version: { cliDownloadBaseURL } });
 	return render(InstallCliPage);
 }
 
@@ -62,6 +64,65 @@ describe('install-cli page', () => {
 	it('provides a checksums.txt download for integrity verification', async () => {
 		await renderPage();
 		await expect.element(page.getByRole('link', { name: 'checksums.txt' })).toBeInTheDocument();
+	});
+
+	it.each([downloadBaseURL, `${downloadBaseURL}/`])(
+		'uses the configured download directory %s for every link and command',
+		async (baseURL) => {
+			await renderPage(baseURL);
+			for (const file of [...goreleaserArchives, 'checksums.txt']) {
+				await expect
+					.element(page.getByRole('link', { name: file }))
+					.toHaveAttribute('href', `${downloadBaseURL}/${file}`);
+			}
+			for (const file of goreleaserArchives.filter((file) => file.endsWith('.tar.gz'))) {
+				await expect
+					.element(page.getByText(`curl -LO '${downloadBaseURL}'/${file}`, { exact: false }))
+					.toBeInTheDocument();
+			}
+			await expect
+				.element(page.getByText('CLI download URL is not configured.'))
+				.not.toBeInTheDocument();
+		}
+	);
+
+	it.each(['', '   '])(
+		'shows the unconfigured state for %j without hiding usage',
+		async (baseURL) => {
+			await renderPage(baseURL);
+			await expect
+				.element(page.getByText('CLI download URL is not configured.'))
+				.toBeInTheDocument();
+			for (const file of [...goreleaserArchives, 'checksums.txt']) {
+				await expect.element(page.getByRole('link', { name: file })).not.toBeInTheDocument();
+			}
+			await expect.element(page.getByText(/curl -LO/)).not.toBeInTheDocument();
+			await expect
+				.element(page.getByText('uni setup --url https://uni.internal.example'))
+				.toBeInTheDocument();
+			await expect
+				.element(page.getByRole('heading', { name: 'uni CLI Commands' }))
+				.toBeInTheDocument();
+		}
+	);
+
+	it('supports a version response without download configuration', async () => {
+		await preparePageData({ version: {} });
+		render(InstallCliPage);
+		await expect.element(page.getByText('CLI download URL is not configured.')).toBeInTheDocument();
+		await expect.element(page.getByText(/curl -LO/)).not.toBeInTheDocument();
+	});
+
+	it('quotes shell metacharacters in the configured download directory', async () => {
+		await renderPage("https://downloads.example.com/uni's$builds");
+		await expect
+			.element(
+				page.getByText(
+					String.raw`curl -LO 'https://downloads.example.com/uni'\''s$builds'/uni_v0.26.3-uni_darwin_arm64.tar.gz`,
+					{ exact: false }
+				)
+			)
+			.toBeInTheDocument();
 	});
 
 	it.each([

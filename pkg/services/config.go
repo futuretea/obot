@@ -132,6 +132,7 @@ type Config struct {
 	DefaultHostedAgentsCatalogURL        string `usage:"The default hosted agent catalog repository URL (must be HTTPS)" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_URL,OBOT_SERVER_DEFAULT_HOSTED_AGENTS_CATALOG_URL"`
 	DefaultHostedAgentsCatalogRef        string `usage:"The ref (branch/tag) for the default hosted agent catalog repository" default:"" env:"OBOT_DEFAULT_HOSTED_AGENTS_CATALOG_REF,OBOT_SERVER_DEFAULT_HOSTED_AGENTS_CATALOG_REF"`
 	ModelInfoSourceURL                   string `usage:"Authoritative URL for the model info (pricing) source synced into model costs; changes take effect on restart, empty disables it" default:"" env:"OBOT_SERVER_MODEL_INFO_SOURCE_URL"`
+	CLIDownloadBaseURL                   string `usage:"Full URL of the directory containing CLI release archives; empty hides downloads" default:"" name:"cli-download-base-url" env:"OBOT_SERVER_CLI_DOWNLOAD_BASE_URL"`
 	DisableUpdateCheck                   bool   `usage:"Disable Obot server update checks" default:"true" env:"OBOT_SERVER_DISABLE_UPDATE_CHECK"`
 	HideK8sDetails                       bool   `usage:"Hide Kubernetes configuration details such as the Server Scheduling page from the UI" default:"false" env:"OBOT_SERVER_HIDE_K8S_DETAILS"`
 	EnableRegistryAuth                   bool   `usage:"Enable authentication for the MCP registry API" default:"false" env:"OBOT_SERVER_ENABLE_REGISTRY_AUTH"`
@@ -229,6 +230,7 @@ type Services struct {
 	DefaultHostedAgentsCatalogURL string
 	DefaultHostedAgentsCatalogRef string
 	ModelInfoSourceURL            string
+	CLIDownloadBaseURL            string
 
 	// Used for indexed lookups of access control rules.
 	AccessControlRuleHelper *accesscontrolrule.Helper
@@ -1433,6 +1435,7 @@ func New(ctx context.Context, config Config) (*Services, error) {
 		DefaultHostedAgentsCatalogURL:  config.DefaultHostedAgentsCatalogURL,
 		DefaultHostedAgentsCatalogRef:  config.DefaultHostedAgentsCatalogRef,
 		ModelInfoSourceURL:             config.ModelInfoSourceURL,
+		CLIDownloadBaseURL:             config.CLIDownloadBaseURL,
 		MCPOAuthClientSecretExpiration: oauthClientExpiration,
 		MCPOAuthClientNativeExceptions: config.MCPOAuthClientNativeExceptions,
 		ForceDynamicClient:             config.ForceDynamicClient,

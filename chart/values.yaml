@@ -193,6 +193,8 @@ config:
   OBOT_SERVER_AUTH_ADMIN_EMAILS: ""
   # config.OBOT_SERVER_HOSTNAME -- The hostname of your Obot instance, including protocol
   OBOT_SERVER_HOSTNAME: ""
+  # config.OBOT_SERVER_CLI_DOWNLOAD_BASE_URL -- Full URL of the directory containing CLI archives and checksums.txt, including the version path. Empty shows a not-configured message on the CLI install page. Changes take effect after a server restart.
+  OBOT_SERVER_CLI_DOWNLOAD_BASE_URL: ""
 
   # config.OBOT_SERVER_DAILY_USER_INPUT_TOKEN_LIMIT -- The maximum number of prompt/input tokens allowed per user per day. Set to a negative value to disable this limit. Defaults to 10000000.
   OBOT_SERVER_DAILY_USER_INPUT_TOKEN_LIMIT: ""

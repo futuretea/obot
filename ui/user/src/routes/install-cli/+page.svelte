@@ -4,7 +4,7 @@
 	import Layout from '$lib/components/Layout.svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import { COMMON_AI_CLIENTS } from '$lib/services/user/constants';
-	import { darkMode, profile } from '$lib/stores';
+	import { darkMode, profile, version } from '$lib/stores';
 	import {
 		AntennaIcon,
 		CheckIcon,
@@ -40,8 +40,10 @@
 	];
 
 	const marks = COMMON_AI_CLIENTS;
-	// Internal download host serving the release archives for one version; replace at deploy time.
-	const downloadBase = 'https://uni-download.internal.example/v0.26.3-uni';
+	const downloadBase = $derived(
+		version.current.cliDownloadBaseURL?.trim().replace(/\/+$/, '') ?? ''
+	);
+	const shellDownloadBase = $derived(`'${downloadBase.replaceAll("'", "'\\''")}'`);
 	const downloads = [
 		{ os: 'macOS (Apple silicon)', file: 'uni_v0.26.3-uni_darwin_arm64.tar.gz' },
 		{ os: 'macOS (Intel)', file: 'uni_v0.26.3-uni_darwin_amd64.tar.gz' },
@@ -96,70 +98,84 @@
 			<div class="p-8 @2xl/cli:pb-8 pb-0 flex flex-col gap-1" id="uni-cli-installation">
 				<h3 class="text-2xl font-bold">How to Install uni CLI</h3>
 
-				<p class="text-sm mt-1">Download the archive for your system and unpack it:</p>
-				<div class="overflow-x-auto mt-2">
-					<table class="table table-sm">
-						<tbody>
-							{#each downloads as item (item.file)}
-								<tr>
-									<td class="whitespace-nowrap">{item.os}</td>
-									<td>
-										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- downloadBase is an internal static file host, not an in-app route -->
-										<a
-											class="link link-primary"
-											href={`${downloadBase}/${item.file}`}
-											target="_blank"
-											rel="external noopener noreferrer"
-										>
-											{item.file}
-										</a>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
+				{#if downloadBase}
+					<p class="text-sm mt-1">Download the archive for your system and unpack it:</p>
+					<div class="overflow-x-auto mt-2">
+						<table class="table table-sm">
+							<tbody>
+								{#each downloads as item (item.file)}
+									<tr>
+										<td class="whitespace-nowrap">{item.os}</td>
+										<td>
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- configured archive URL, not an in-app route -->
+											<a
+												class="link link-primary"
+												href={`${downloadBase}/${item.file}`}
+												target="_blank"
+												rel="external noopener noreferrer"
+											>
+												{item.file}
+											</a>
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+
+					{@render codesnippet(
+						'macOS (Apple silicon): download, unpack, install, and verify:',
+						`curl -LO ${shellDownloadBase}/uni_v0.26.3-uni_darwin_arm64.tar.gz && tar xzf uni_v0.26.3-uni_darwin_arm64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
+						'uni-cli-macos-arm64-install'
+					)}
+
+					{@render codesnippet(
+						'macOS (Intel): download, unpack, install, and verify:',
+						`curl -LO ${shellDownloadBase}/uni_v0.26.3-uni_darwin_amd64.tar.gz && tar xzf uni_v0.26.3-uni_darwin_amd64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
+						'uni-cli-macos-amd64-install'
+					)}
+
+					{@render codesnippet(
+						'Linux (x86_64): download, unpack, install, and verify:',
+						`curl -LO ${shellDownloadBase}/uni_v0.26.3-uni_linux_amd64.tar.gz && tar xzf uni_v0.26.3-uni_linux_amd64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
+						'uni-cli-linux-amd64-install'
+					)}
+
+					{@render codesnippet(
+						'Linux (ARM64): download, unpack, install, and verify:',
+						`curl -LO ${shellDownloadBase}/uni_v0.26.3-uni_linux_arm64.tar.gz && tar xzf uni_v0.26.3-uni_linux_arm64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
+						'uni-cli-linux-arm64-install'
+					)}
+
+					<p class="text-xs opacity-70">
+						No admin rights? Install into a user-writable directory on your PATH instead, for
+						example <code class="inline-code"
+							>mkdir -p ~/.local/bin && install -m 0755 uni ~/.local/bin/uni</code
+						>
+						(make sure
+						<code class="inline-code">~/.local/bin</code> is on your PATH).
+					</p>
+
+					{@render codesnippet(
+						'Windows (PowerShell): unpack and run:',
+						String.raw`Expand-Archive .\uni_v0.26.3-uni_windows_amd64.zip -DestinationPath .; .\uni.exe --help`,
+						'uni-cli-windows-install'
+					)}
+
+					<p class="text-xs opacity-70">
+						Verify each archive against <code class="inline-code">checksums.txt</code> above: on
+						macOS run <code class="inline-code">shasum -a 256 &lt;file&gt;</code>, on Linux
+						<code class="inline-code">sha256sum -c checksums.txt</code>, on Windows PowerShell
+						<code class="inline-code">Get-FileHash &lt;file&gt; -Algorithm SHA256</code>. If macOS
+						blocks the unpacked binary after a browser download, follow your organization's security
+						policy to allow it.
+					</p>
+				{:else}
+					<p class="text-sm mt-1" role="status">CLI download URL is not configured.</p>
+				{/if}
 
 				{@render codesnippet(
-					'macOS (Apple silicon): download, unpack, install, and verify:',
-					`curl -O ${downloadBase}/uni_v0.26.3-uni_darwin_arm64.tar.gz && tar xzf uni_v0.26.3-uni_darwin_arm64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
-					'uni-cli-macos-arm64-install'
-				)}
-
-				{@render codesnippet(
-					'macOS (Intel): download, unpack, install, and verify:',
-					`curl -O ${downloadBase}/uni_v0.26.3-uni_darwin_amd64.tar.gz && tar xzf uni_v0.26.3-uni_darwin_amd64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
-					'uni-cli-macos-amd64-install'
-				)}
-
-				{@render codesnippet(
-					'Linux (x86_64): download, unpack, install, and verify:',
-					`curl -O ${downloadBase}/uni_v0.26.3-uni_linux_amd64.tar.gz && tar xzf uni_v0.26.3-uni_linux_amd64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
-					'uni-cli-linux-amd64-install'
-				)}
-
-				{@render codesnippet(
-					'Linux (ARM64): download, unpack, install, and verify:',
-					`curl -O ${downloadBase}/uni_v0.26.3-uni_linux_arm64.tar.gz && tar xzf uni_v0.26.3-uni_linux_arm64.tar.gz && sudo install -m 0755 uni /usr/local/bin/uni && uni --help`,
-					'uni-cli-linux-arm64-install'
-				)}
-
-				<p class="text-xs opacity-70">
-					No admin rights? Install into a user-writable directory on your PATH instead, for example <code
-						class="inline-code">mkdir -p ~/.local/bin && install -m 0755 uni ~/.local/bin/uni</code
-					>
-					(make sure
-					<code class="inline-code">~/.local/bin</code> is on your PATH).
-				</p>
-
-				{@render codesnippet(
-					'Windows (PowerShell): unpack and run:',
-					String.raw`Expand-Archive .\uni_v0.26.3-uni_windows_amd64.zip -DestinationPath .; .\uni.exe --help`,
-					'uni-cli-windows-install'
-				)}
-
-				{@render codesnippet(
-					'Windows (PowerShell): then run the following command:',
+					'Windows (PowerShell): with uni installed, run:',
 					windowsSetupCommand,
 					'uni-cli-windows-setup-command'
 				)}
@@ -168,15 +184,6 @@
 					On Windows, optionally move <code class="inline-code">uni.exe</code> into a folder on your
 					PATH so you can run it as <code class="inline-code">uni</code> (as shown in the commands
 					below) without the <code class="inline-code">.\</code> prefix.
-				</p>
-
-				<p class="text-xs opacity-70">
-					Verify each archive against <code class="inline-code">checksums.txt</code> above: on macOS
-					run <code class="inline-code">shasum -a 256 &lt;file&gt;</code>, on Linux
-					<code class="inline-code">sha256sum -c checksums.txt</code>, on Windows PowerShell
-					<code class="inline-code">Get-FileHash &lt;file&gt; -Algorithm SHA256</code>. If macOS
-					blocks the unpacked binary after a browser download, follow your organization's security
-					policy to allow it.
 				</p>
 
 				{@render codesnippet(

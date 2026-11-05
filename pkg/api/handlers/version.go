@@ -45,6 +45,7 @@ type VersionHandlerOptions struct {
 	AgentsEnabled           bool
 	HostedAgentsEnabled     bool
 	HideK8sDetails          bool
+	CLIDownloadBaseURL      string
 	UpgradeStatusReader     UpgradeStatusReader
 }
 
@@ -108,6 +109,7 @@ func (v *VersionHandler) getVersionResponse(ctx context.Context) (map[string]any
 		"upgradeAvailable":             upgradeStatus.UpgradeAvailable,
 		"latestVersion":                upgradeStatus.LatestVersion,
 		"obot":                         version.Get().String(),
+		"cliDownloadBaseURL":           v.CLIDownloadBaseURL,
 		"authEnabled":                  v.AuthEnabled,
 		"sessionStore":                 v.sessionStore,
 		"enterprise":                   slices.Contains(entitlements, license.EnterpriseEntitlement),

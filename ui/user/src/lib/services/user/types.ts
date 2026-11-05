@@ -1038,6 +1038,7 @@ export interface ToolReferenceList {
 // Version
 
 export interface Version {
+	cliDownloadBaseURL?: string;
 	hasModelProvider?: boolean | null;
 	hasValidLicense?: boolean;
 	mcpTesterModelProxyAvailable?: boolean;
